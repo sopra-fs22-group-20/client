@@ -60,6 +60,7 @@ const Login = props => {
 
   return (
     <BaseContainer>
+      <h1>sopra-fs22-group-20</h1>
       <div className="login container">
         <div className="login form">
           <FormField
