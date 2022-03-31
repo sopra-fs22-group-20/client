@@ -6,6 +6,7 @@ import {useHistory} from 'react-router-dom';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
 import "styles/views/Game.scss";
+import Navbar from "./Navbar";
 
 const Player = ({user}) => (
   <div className="player container">
@@ -93,13 +94,18 @@ const Game = () => {
   }
 
   return (
+      <div>
+      <Navbar></Navbar>
     <BaseContainer className="game container">
       <h2>Happy Coding!</h2>
-      <p className="game paragraph">
+
+
+        <p className="game paragraph">
         Get all users from secure endpoint:
       </p>
       {content}
     </BaseContainer>
+      </div>
   );
 }
 

@@ -2,10 +2,17 @@ import React, {useState} from 'react';
 import {api, handleError} from 'helpers/api';
 import User from 'models/User';
 import {useHistory} from 'react-router-dom';
-import {Button} from 'components/ui/Button';
+//import {Button} from 'components/ui/Button';
 import 'styles/views/Login.scss';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
+import Navbar from "./Navbar";
+//new material ui
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+
+
 
 /*
 It is possible to add multiple components inside a single file,
@@ -37,12 +44,12 @@ FormField.propTypes = {
 
 const Login = props => {
   const history = useHistory();
-  const [name, setName] = useState(null);
+  const [password, setPassword] = useState(null);
   const [username, setUsername] = useState(null);
 
   const doLogin = async () => {
     try {
-      const requestBody = JSON.stringify({username, name});
+      const requestBody = JSON.stringify({username, password});
       const response = await api.post('/users', requestBody);
 
       // Get the returned user and update a new object.
@@ -59,23 +66,32 @@ const Login = props => {
   };
 
   return (
-    <BaseContainer>
-      <h1>sopra-fs22-group-20</h1>
-      <div className="login container">
+      <Box
+          component="form"
+          sx={{
+            '& .MuiTextField-root': { m: 1, width: '25ch' },
+          }}
+          noValidate
+          autoComplete="off"
+      >
+      <h1>Login</h1>
+          <Navbar></Navbar>©
+
+    <div className="login container">
         <div className="login form">
           <FormField
             label="Username"
-            value={username}
+            defaultValue={username}
             onChange={un => setUsername(un)}
           />
           <FormField
-            label="Name"
-            value={name}
-            onChange={n => setName(n)}
+            label="Password"
+            defaultValue={password}
+            onChange={n => setPassword(n)}
           />
           <div className="login button-container">
-            <Button
-              disabled={!username || !name}
+            <Button variant="contained"
+              disabled={!username || !password}
               width="100%"
               onClick={() => doLogin()}
             >
@@ -84,7 +100,7 @@ const Login = props => {
           </div>
         </div>
       </div>
-    </BaseContainer>
+      </Box>
   );
 };
 
