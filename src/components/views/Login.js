@@ -74,8 +74,9 @@ const Login = props => {
           noValidate
           autoComplete="off"
       >
+          <Navbar></Navbar>
       <h1>Login</h1>
-          <Navbar></Navbar>©
+
 
     <div className="login container">
         <div className="login form">
