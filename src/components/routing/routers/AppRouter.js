@@ -4,6 +4,7 @@ import GameRouter from "components/routing/routers/GameRouter";
 import {LoginGuard} from "components/routing/routeProtectors/LoginGuard";
 import Login from "components/views/Login";
 import Register from "../../views/Register";
+import Settings from "components/views/Settings";
 
 /**
  * Main router of your application.
@@ -36,6 +37,7 @@ const AppRouter = () => {
         <Route exact path="/">
           <Redirect to="/game"/>
         </Route>
+        <Route exact path={'/Settings/'}><Settings/></Route>
       </Switch>
     </BrowserRouter>
   );
