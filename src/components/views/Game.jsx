@@ -1,26 +1,31 @@
-import {useEffect, useState} from 'react';
-import {api, handleError} from 'helpers/api';
-import {Spinner} from 'components/ui/Spinner';
-import {Button} from 'components/ui/Button';
-import {useHistory} from 'react-router-dom';
-import BaseContainer from "components/ui/BaseContainer";
-import PropTypes from "prop-types";
-import "styles/views/Game.scss";
-import Navbar from "./Navbar";
+import React, { useEffect, useState } from 'react';
+import { api, handleError } from 'helpers/api';
+import { Spinner } from 'components/ui/Spinner';
+import { Button } from 'components/ui/Button';
+import { useHistory } from 'react-router-dom';
+import BaseContainer from 'components/ui/BaseContainer';
+import PropTypes from 'prop-types';
+import 'styles/views/Game.scss';
+import Navbar from './Navbar';
 
-const Player = ({user}) => (
-  <div className="player container">
-    <div className="player username">{user.username}</div>
-    <div className="player name">{user.name}</div>
-    <div className="player id">id: {user.id}</div>
-  </div>
-);
+function Player({ user }) {
+  return (
+    <div className="player container">
+      <div className="player username">{user.username}</div>
+      <div className="player name">{user.name}</div>
+      <div className="player id">
+        id:
+        {user.id}
+      </div>
+    </div>
+  );
+}
 
 Player.propTypes = {
-  user: PropTypes.object
+  user: PropTypes.object.isRequired,
 };
 
-const Game = () => {
+function Game() {
   // use react-router-dom's hook to access the history
   const history = useHistory();
 
@@ -34,7 +39,7 @@ const Game = () => {
   const logout = () => {
     localStorage.removeItem('token');
     history.push('/login');
-  }
+  };
 
   // the effect hook can be used to react to change in your component.
   // in this case, the effect hook is only run once, the first time the component is mounted
@@ -49,7 +54,8 @@ const Game = () => {
         // delays continuous execution of an async operation for 1 second.
         // This is just a fake async call, so that the spinner can be displayed
         // feel free to remove it :)
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // eslint-disable-next-line
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Get the returned users and update the state.
         setUsers(response.data);
@@ -65,22 +71,22 @@ const Game = () => {
         console.log(response);
       } catch (error) {
         console.error(`Something went wrong while fetching the users: \n${handleError(error)}`);
-        console.error("Details:", error);
-        alert("Something went wrong while fetching the users! See the console for details.");
+        console.error('Details:', error);
+        alert('Something went wrong while fetching the users! See the console for details.');
       }
     }
 
     fetchData();
   }, []);
 
-  let content = <Spinner/>;
+  let content = <Spinner />;
 
   if (users) {
     content = (
       <div className="game">
         <ul className="game user-list">
-          {users.map(user => (
-            <Player user={user} key={user.id}/>
+          {users.map((user) => (
+            <Player user={user} key={user.id} />
           ))}
         </ul>
         <Button
@@ -94,18 +100,17 @@ const Game = () => {
   }
 
   return (
-      <div>
-      <Navbar></Navbar>
-    <BaseContainer className="game container">
-      <h2>Happy Coding!</h2>
-
+    <div>
+      <Navbar />
+      <BaseContainer className="game container">
+        <h2>Happy Coding!</h2>
 
         <p className="game paragraph">
-        Get all users from secure endpoint:
-      </p>
-      {content}
-    </BaseContainer>
-      </div>
+          Get all users from secure endpoint:
+        </p>
+        {content}
+      </BaseContainer>
+    </div>
   );
 }
 
