@@ -11,6 +11,7 @@ import Home from '../../views/Home';
 import Settings from '../../views/Settings';
 import Pictures from '../../views/Pictures';
 import Application from '../../views/Application';
+import Upload from '../../views/Upload';
 
 /**
  * Main router of your application.
@@ -31,6 +32,7 @@ function AppRouter() {
             { path: '/highlights', component: <Highlights /> },
             { path: '/settings', component: <Settings /> },
             { path: '/pictures', component: <Pictures /> },
+            { path: '/upload', component: <Upload /> },
           ].map((element, index) => (
             <Route path={element.path} key={`${index}_application_element`}>
               <HomeGuard>
