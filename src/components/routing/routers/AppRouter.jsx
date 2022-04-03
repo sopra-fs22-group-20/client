@@ -2,11 +2,15 @@ import {
   BrowserRouter, Redirect, Route, Switch,
 } from 'react-router-dom';
 import { HomeGuard } from 'components/routing/routeProtectors/HomeGuard';
-import HomeRouter from 'components/routing/routers/HomeRouter';
 import { LoginGuard } from 'components/routing/routeProtectors/LoginGuard';
 import Login from 'components/views/Login';
 import React from 'react';
 import Register from '../../views/Register';
+import Highlights from '../../views/Highlights';
+import Home from '../../views/Home';
+import Settings from '../../views/Settings';
+import Pictures from '../../views/Pictures';
+import Application from '../../views/Application';
 
 /**
  * Main router of your application.
@@ -17,15 +21,26 @@ import Register from '../../views/Register';
  * /home renders a Router that contains other sub-routes that render in turn other react components
  * Documentation about routing in React: https://reacttraining.com/react-router/web/guides/quick-start
  */
+
 function AppRouter() {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/home">
-          <HomeGuard>
-            <HomeRouter base="/home" />
-          </HomeGuard>
-        </Route>
+        {
+          [{ path: '/home', component: <Home /> },
+            { path: '/highlights', component: <Highlights /> },
+            { path: '/settings', component: <Settings /> },
+            { path: '/pictures', component: <Pictures /> },
+          ].map((element, index) => (
+            <Route path={element.path} key={`${index}_application_element`}>
+              <HomeGuard>
+                <Application>
+                  {element.component}
+                </Application>
+              </HomeGuard>
+            </Route>
+          ))
+        }
         <Route exact path="/login">
           <LoginGuard>
             <Login />

@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { api, handleError } from 'helpers/api';
 import { Spinner } from 'components/ui/Spinner';
-import { Button } from 'components/ui/Button';
-import { useHistory } from 'react-router-dom';
 import BaseContainer from 'components/ui/BaseContainer';
 import PropTypes from 'prop-types';
 import 'styles/views/Game.scss';
-import Navbar from './Navbar';
 
 function Player({ user }) {
   return (
@@ -27,7 +24,6 @@ Player.propTypes = {
 
 function Home() {
   // use react-router-dom's hook to access the history
-  const history = useHistory();
 
   // define a state variable (using the state hook).
   // if this variable changes, the component will re-render, but the variable will
@@ -35,11 +31,6 @@ function Home() {
   // a component can have as many state variables as you like.
   // more information can be found under https://reactjs.org/docs/hooks-state.html
   const [users, setUsers] = useState(null);
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    history.push('/login');
-  };
 
   // the effect hook can be used to react to change in your component.
   // in this case, the effect hook is only run once, the first time the component is mounted
@@ -89,19 +80,12 @@ function Home() {
             <Player user={user} key={`${user.id}_with_index_${index}`} />
           ))}
         </ul>
-        <Button
-          width="100%"
-          onClick={() => logout()}
-        >
-          Logout
-        </Button>
       </div>
     );
   }
 
   return (
     <div>
-      <Navbar />
       <BaseContainer className="game container">
         <h2>Happy Coding!</h2>
 
