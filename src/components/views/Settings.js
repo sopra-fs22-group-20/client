@@ -18,6 +18,7 @@ import User from "../../models/User";
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
+import SettingsIcon from '@mui/icons-material/Settings';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -40,12 +41,24 @@ const Settings = () => {
         <CssBaseline />
         <AppBar position="relative">
             <Toolbar>
-                <PhotoCamera />
+                <SettingsIcon />
                 <Typography variant="h6">
                     Settings
                 </Typography>
             </Toolbar>
         </AppBar>
+            <main>
+                <div>
+                    <Container maxWidth="sm">
+                        <Typography variant="h2" align="left" color="textPrimary" gutterBottom>
+                            Settings
+                        </Typography>
+                        <Typography variant="h5" align="center" color = "textSecondary" paragraph>
+                            On the settings page, you can update your account settings.
+                        </Typography>
+                    </Container>
+                </div>
+            </main>
         </>
     )
 }
