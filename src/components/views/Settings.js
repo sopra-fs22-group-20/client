@@ -34,19 +34,24 @@ import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 //import {PhotoCamera} from "@mui/icons-material";
+import ButtonGroup from '@mui/material/ButtonGroup';
+import { styled } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
+
+
+const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+}));
 
 const Settings = () => {
     return (
         <>
         <CssBaseline />
-        <AppBar position="relative">
-            <Toolbar>
-                <SettingsIcon />
-                <Typography variant="h6">
-                    Settings
-                </Typography>
-            </Toolbar>
-        </AppBar>
+
             <main>
                 <div>
                     <Container maxWidth="sm">
@@ -56,8 +61,56 @@ const Settings = () => {
                         <Typography variant="h5" align="center" color = "textSecondary" paragraph>
                             On the settings page, you can update your account settings.
                         </Typography>
+                        <div>
+                            <Typography variant="subtitle2" gutterBottom component="div">
+                                username:
+                            </Typography>
+                            <Grid container spacing={6}>
+                                <Grid item xs={6}>
+                                    <Item>New Username</Item>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Button variant="contained">Change Username</Button>
+                                </Grid>
+
+                            </Grid>
+
+                        </div>
+                        <div> </div>
+                        <div>
+                            <Typography variant="subtitle2" gutterBottom component="div">
+                                password:
+                            </Typography>
+                            <Grid container spacing={6}>
+                                <Grid item xs={6}>
+                                    <Item>Your Password</Item>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Button variant="contained">Change Password</Button>
+                                </Grid>
+
+                            </Grid>
+
+                        </div>
+                        <div>
+                            <Typography variant="subtitle2" gutterBottom component="div">
+                                Instagram:
+                            </Typography>
+                            <Grid container spacing={6}>
+                                <Grid item xs={6}>
+                                    <Item>Instagram Account</Item>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Button variant="contained">Change Instagram</Button>
+                                </Grid>
+
+                            </Grid>
+
+                        </div>
+
                     </Container>
                 </div>
+
             </main>
         </>
     )
