@@ -9,7 +9,9 @@ As a rule of thumb, use one file per component and only add small,
 specific components that belong to the main one in the same file.
  */
 function FormField(props) {
-  const { label, value, onChange } = props;
+  const {
+    label, value, onChange, type,
+  } = props;
   return (
     <div className="login field">
       <label className="login label">
@@ -20,6 +22,7 @@ function FormField(props) {
         placeholder="enter here.."
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        type={type}
       />
     </div>
   );
@@ -28,6 +31,7 @@ function FormField(props) {
 FormField.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
+  type: PropTypes.string,
   onChange: PropTypes.func,
 };
 
@@ -35,6 +39,7 @@ FormField.defaultProps = {
   label: '',
   value: '',
   onChange: null,
+  type: 'value',
 };
 
 export default FormField;

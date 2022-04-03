@@ -22,7 +22,7 @@ Button.propTypes = {
   width: PropTypes.string.isRequired,
   children: PropTypes.any.isRequired,
   style: PropTypes.object,
-  className: PropTypes.object,
+  className: PropTypes.string,
 };
 
 Button.defaultProps = {

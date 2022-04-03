@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { api, handleError } from 'helpers/api';
 import User from 'models/User';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import 'styles/views/Login.scss';
 // new material ui
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Navbar from './Navbar';
+
 import FormField from './FormField';
+import BaseContainer from '../ui/BaseContainer';
+import { Button } from '../ui/Button';
 
 function Login() {
   const history = useHistory();
-  const [password, setPassword] = useState(null);
-  const [username, setUsername] = useState(null);
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
 
   const doLogin = async () => {
     try {
@@ -24,6 +24,7 @@ function Login() {
 
       // Store the token into the local storage.
       localStorage.setItem('token', user.token);
+      localStorage.setItem('id', user.id);
 
       // Login successfully worked --> navigate to the route /game in the GameRouter
       history.push('/game');
@@ -33,32 +34,22 @@ function Login() {
   };
 
   return (
-    <Box
-      component="form"
-      sx={{
-        '& .MuiTextField-root': { m: 1, width: '25ch' },
-      }}
-      noValidate
-      autoComplete="off"
-    >
-      <Navbar />
-      <h1>Login</h1>
-
+    <BaseContainer>
       <div className="login container">
         <div className="login form">
           <FormField
             label="Username"
-            defaultValue={username}
+            value={username}
             onChange={(un) => setUsername(un)}
           />
           <FormField
             label="Password"
-            defaultValue={password}
+            value={password}
             onChange={(n) => setPassword(n)}
+            type="password"
           />
           <div className="login button-container">
             <Button
-              variant="contained"
               disabled={!username || !password}
               width="100%"
               onClick={() => doLogin()}
@@ -67,8 +58,12 @@ function Login() {
             </Button>
           </div>
         </div>
+        {
+            // adds link element/component under the login component
+          }
+        <Link to="/register">Register</Link>
       </div>
-    </Box>
+    </BaseContainer>
   );
 }
 
