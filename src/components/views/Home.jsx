@@ -25,7 +25,7 @@ Player.propTypes = {
   user: PropTypes.object.isRequired,
 };
 
-function Game() {
+function Home() {
   // use react-router-dom's hook to access the history
   const history = useHistory();
 
@@ -85,8 +85,8 @@ function Game() {
     content = (
       <div className="game">
         <ul className="game user-list">
-          {users.map((user) => (
-            <Player user={user} key={user.id} />
+          {users.map((user, index) => (
+            <Player user={user} key={`${user.id}_with_index_${index}`} />
           ))}
         </ul>
         <Button
@@ -114,4 +114,4 @@ function Game() {
   );
 }
 
-export default Game;
+export default Home;

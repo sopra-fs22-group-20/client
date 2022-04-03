@@ -11,7 +11,7 @@ export function LoginGuard(props) {
     return children;
   }
   // if user is already logged in, redirects to the main /app
-  return <Redirect to="/game" />;
+  return <Redirect to="/home" />;
 }
 
 LoginGuard.propTypes = {

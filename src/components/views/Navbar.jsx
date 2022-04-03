@@ -8,7 +8,7 @@ function Navbar() {
         <li><a href="/highlights">Highlights</a></li>
         <li><a href="/settings">Settings</a></li>
         <li><a href="/pictures">Pictures</a></li>
-        <li><a href="/game">Home</a></li>
+        <li><a href="/home">Home</a></li>
       </ul>
     </div>
   );
