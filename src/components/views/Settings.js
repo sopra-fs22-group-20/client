@@ -2,7 +2,6 @@ import {useEffect, useState} from 'react';
 
 import {api, handleError} from 'helpers/api';
 
-//import {Button} from 'components/ui/Button';
 import {Spinner} from 'components/ui/Spinner';
 import {useHistory, useParams} from 'react-router-dom';
 import BaseContainer from "components/ui/BaseContainer";
@@ -11,15 +10,10 @@ import "styles/views/Game.scss";
 import PropTypes from "prop-types";
 import User from "../../models/User";
 
-//import React from 'react';
-//import {Typography, AppBar, Card, CardActions, CardContent, CardMedia, CssBaseLine, Grid, Toolbar, Container } from '@material-ui/core';
-//import { PhotoCamera } from '@material-ui/icons';
 
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
-import SettingsIcon from '@mui/icons-material/Settings';
-import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -33,13 +27,17 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-//import {PhotoCamera} from "@mui/icons-material";
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 
 
-const Item = styled(Paper)(({ theme }) => ({
+
+
+
+
+
+    const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
     padding: theme.spacing(1),
@@ -48,7 +46,94 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const Settings = () => {
+
+    const history = useHistory();
+
+    const [username, setUsername] = useState(null);
+    const [password, setPassword] = useState(null);
+    const [instagram, setInstagram] = useState(null);
+    const { id } = useParams()
+
+    const urla=window.location.href;
+    const urla2 = urla.charAt(urla.length-1);
+    const [id2, setId] =urla2;
+
+
+
+//This function is responsible for sending request to server to change the username
+
+    const changeUsername = async () => {
+
+        try {
+
+
+            const requestBody = JSON.stringify({id:id2,username});
+            const response = await api.put('/users/'+urla2, requestBody);
+
+            // Get the returned user and update a new object.
+            const user = new User(response.data);
+
+            //This command reloads the page
+           // window.location.reload(false);
+            console.log(username);
+
+
+        } catch (error) {
+            console.log(username);
+            alert(`Something went wrong while changing the username. \n${handleError(error)}`);
+        }
+    };
+
+
+//This function is responsible for sending request to server to change the password
+
+    const changePassword = async () => {
+
+        try {
+
+
+            const requestBody = JSON.stringify({id:id2,password});
+            const response = await api.put('/users/'+urla2, requestBody);
+
+            // Get the returned user and update a new object.
+            const user = new User(response.data);
+
+            //This command reloads the page
+            window.location.reload(false);
+
+
+        } catch (error) {
+            alert(`Something went wrong while changing the password. \n${handleError(error)}`);
+        }
+    };
+
+
+//This function is responsible for sending request to server to change the Instagram account name
+
+    const changeInstagram = async () => {
+
+        try {
+
+
+            const requestBody = JSON.stringify({id:id2,instagram});
+            const response = await api.put('/users/'+urla2, requestBody);
+
+            // Get the returned user and update a new object.
+            const user = new User(response.data);
+
+            //This command reloads the page
+            window.location.reload(false);
+
+
+        } catch (error) {
+            alert(`Something went wrong while changing the instagram account. \n${handleError(error)}`);
+        }
+    };
+
+
+
     return (
+
         <>
         <CssBaseline />
 
@@ -63,30 +148,61 @@ const Settings = () => {
                         </Typography>
                         <div>
                             <Typography variant="subtitle2" gutterBottom component="div">
-                                username:
+                                Your username: Michael
                             </Typography>
                             <Grid container spacing={6}>
                                 <Grid item xs={6}>
-                                    <Item>New Username</Item>
+                                    <Box
+                                        component="form"
+                                        sx={{
+                                            '& > :not(style)': { m: 1, width: '25ch' },
+                                        }}
+                                        noValidate
+                                        autoComplete="off"
+                                    >
+                                        <TextField id="outlined-basic" label="Enter a new username" variant="outlined"
+                                                   onChange={un => setUsername(un)}/>
+                                    </Box>
                                 </Grid>
+
                                 <Grid item xs={6}>
-                                    <Button variant="contained">Change Username</Button>
+                                    <Button variant="contained" onClick={() => {
+                                        changeUsername();
+                                    }}>Change Username</Button>
                                 </Grid>
 
                             </Grid>
 
                         </div>
-                        <div> </div>
+
+                        //TODO:
+                        Before you put here onChange in the TextField wait to see how it works for ChangeUsername. Wait until server is ready for that.
                         <div>
                             <Typography variant="subtitle2" gutterBottom component="div">
-                                password:
+                                Your password: **********
                             </Typography>
                             <Grid container spacing={6}>
                                 <Grid item xs={6}>
-                                    <Item>Your Password</Item>
+                                    <Box
+                                        component="form"
+                                        sx={{
+                                            '& > :not(style)': { m: 1, width: '25ch' },
+                                        }}
+                                        noValidate
+                                        autoComplete="off"
+                                    >
+                                        <TextField
+                                            id="outlined-password-input"
+                                            label="Password"
+                                            type="password"
+                                            autoComplete="current-password"
+                                        />
+                                    </Box>
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <Button variant="contained">Change Password</Button>
+                                    <Button variant="contained" onClick={() => {
+                                        changePassword();
+                                    }}>Change Password</Button>
                                 </Grid>
 
                             </Grid>
@@ -94,14 +210,25 @@ const Settings = () => {
                         </div>
                         <div>
                             <Typography variant="subtitle2" gutterBottom component="div">
-                                Instagram:
+                                Instagram: XYZ
                             </Typography>
                             <Grid container spacing={6}>
                                 <Grid item xs={6}>
-                                    <Item>Instagram Account</Item>
+                                    <Box
+                                        component="form"
+                                        sx={{
+                                            '& > :not(style)': { m: 1, width: '25ch' },
+                                        }}
+                                        noValidate
+                                        autoComplete="off"
+                                    >
+                                        <TextField id="outlined-basic" label="Enter a new Instagram Account" variant="outlined" />
+                                    </Box>
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <Button variant="contained">Change Instagram</Button>
+                                    <Button variant="contained" onClick={() => {
+                                        changeInstagram();
+                                    }}>Change Instagram</Button>
                                 </Grid>
 
                             </Grid>
