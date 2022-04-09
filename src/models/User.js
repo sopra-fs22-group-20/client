@@ -10,6 +10,7 @@ class User {
     this.username = null;
     this.token = null;
     this.status = null;
+    //TO DO: We need here attributes: CreationDate, PicturesCounter, AverageRating
     Object.assign(this, data);
   }
 }
