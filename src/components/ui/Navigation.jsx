@@ -48,6 +48,7 @@ export function Navigation() {
                       { path: '/highlights', name: 'Highlights' },
                       { path: '/settings', name: 'Settings' },
                       { path: '/pictures', name: 'Pictures' },
+                      { path: '/upload', name: 'Upload' },
                     ].map((element, index) => (
                       <li key={`${index}_${element.name}`}>
                         <Link to={element.path} className="page-scroll">
