@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import styled from 'styled-components';
 import { api, handleError } from '../../helpers/api';
 import FormField from './FormField';
 import { Button } from '../ui/Button';
@@ -35,29 +36,27 @@ function Upload() {
       <h2>Upload</h2>
       <p>On this page, you can upload a new picture to RateMe!</p>
       <BaseContainer>
-        <div className="login container">
+        <div className="upload container">
           <div
-            className="login form"
+            className="upload form"
             style={{
-              height: '400px',
+              height: '800px',
             }}
           >
             <FormField
-              label="Username"
+              label="Title"
               value={title}
               onChange={(un) => setTitle(un)}
             />
             <FormField
-              label="email"
+              label="category"
               value={category}
               onChange={(n) => setCategory(n)}
-              type="email"
             />
             <FormField
-              label="password"
+              label="location"
               value={location}
               onChange={(n) => setLocation(n)}
-              type="password"
             />
             <div className="login button-container">
               <Button
@@ -65,14 +64,13 @@ function Upload() {
                 width="100%"
                 onClick={() => doUpload()}
               >
-                Sign up and Login
+                Upload!
               </Button>
             </div>
           </div>
           {
                     // adds link element/component under the login component
                 }
-          <Link to="/login">Back to Login</Link>
         </div>
       </BaseContainer>
     </div>
