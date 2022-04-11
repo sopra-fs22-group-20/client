@@ -12,7 +12,7 @@ function Player({ user }) {
       <div className="player name">{user.name}</div>
       <div className="player id">
         id:
-        {user.id}
+        {user.userId}
       </div>
     </div>
   );
@@ -77,7 +77,7 @@ function Home() {
       <div className="game">
         <ul className="game user-list">
           {users.map((user, index) => (
-            <Player user={user} key={`${user.id}_with_index_${index}`} />
+            <Player user={user} key={`${user.userId}_with_index_${index}`} />
           ))}
         </ul>
       </div>

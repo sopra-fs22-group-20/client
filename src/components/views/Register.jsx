@@ -37,7 +37,7 @@ function Register() {
 
       // Store the token into the local storage.
       localStorage.setItem('token', user.token);
-      localStorage.setItem('id', user.user_id);
+      localStorage.setItem('id', user.userId);
 
       // Login successfully worked --> navigate to the route /home in the HomeRouter
       history.push('/home');
