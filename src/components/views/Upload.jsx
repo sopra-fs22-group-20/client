@@ -9,7 +9,7 @@ import { Button } from '../ui/Button';
 import BaseContainer from '../ui/BaseContainer';
 import { storage } from './firebase';
 
-function uploadFile(file) {
+function uploadFile(file, title, category, location) {
   // defines the name of the image => uploaded image.png stays the same
   const fileName = file.name;
   // will put the file to images, the name is given by the userId and the timestamp
@@ -34,8 +34,10 @@ function uploadFile(file) {
         // return URL of the image
 
         console.log('File available at', downloadURL);
+        console.log('title', title);
+        console.log('cat', category);
+        console.log('loca', location);
       });
-
       console.log('Uploaded a blob or file!');
       // Store the new downloadURL together with credentials in Databse:
     },
@@ -78,21 +80,39 @@ function Upload() {
     <div>
       <h2>Upload</h2>
       <p>On this page, you can upload a new picture to RateMe!</p>
-      <h2>Upload image</h2>
+      <center>
+        <h2>Select image</h2>
 
-      <input
-        type="file"
-        onChange={(e) => setFile(e.target.files[0])}
-        multiple={false}
-      />
-      <button
-        onClick={() => {
-          uploadFile(selectedFile);
-        }}
-      >
-        Upload
-      </button>
+        <input
+          type="file"
+          onChange={(e) => setFile(e.target.files[0])}
+          multiple={false}
+        />
+        <h2>Add credentials</h2>
 
+        <FormField
+          label="Title"
+          value={title}
+          onChange={(n) => setTitle(n)}
+        />
+        <FormField
+          label="Category"
+          value={category}
+          onChange={(n) => setCategory(n)}
+        />
+        <FormField
+          label="Location"
+          value={location}
+          onChange={(n) => setLocation(n)}
+        />
+        <button
+          onClick={() => {
+            uploadFile(selectedFile, title, category, location);
+          }}
+        >
+          Upload
+        </button>
+      </center>
     </div>
   );
 }
