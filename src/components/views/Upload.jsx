@@ -3,13 +3,18 @@ import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 // import for ref in firebase, getDownloadURL return url to access the image
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useCookies, setCookie } from 'react-cookie';
+import axios from 'axios';
 import { api, handleError } from '../../helpers/api';
 import FormField from './FormField';
 import { Button } from '../ui/Button';
 import BaseContainer from '../ui/BaseContainer';
 import { storage } from './firebase';
+import { getDomain } from '../../helpers/getDomain';
 
 function uploadFile(file, title, category, location) {
+  document.cookie = 'userId=1';
+
   // defines the name of the image => uploaded image.png stays the same
   const fileName = file.name;
   // will put the file to images, the name is given by the userId and the timestamp
@@ -37,6 +42,23 @@ function uploadFile(file, title, category, location) {
         console.log('title', title);
         console.log('cat', category);
         console.log('loca', location);
+        const name = title;
+        const storageLink = downloadURL;
+        const requestBody = JSON.stringify({
+          name,
+          location,
+          storageLink,
+        });
+        console.log('Request:', requestBody);
+        localStorage.setItem('userId', '1');
+
+        const authAxios = axios.create({
+          baseURL: getDomain(),
+          header: { 'userId': '1' },
+
+        });
+        console.log('Header:', authAxios());
+        const response = authAxios.post('/imagesTemp', requestBody);
       });
       console.log('Uploaded a blob or file!');
       // Store the new downloadURL together with credentials in Databse:
