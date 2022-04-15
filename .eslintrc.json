@@ -41,6 +41,14 @@
         "no-promise-executor-return": "warn",
         "react/jsx-props-no-spreading": "off",
         "react/button-has-type": "off",
-        "react/no-array-index-key": "off"
+        "react/no-array-index-key": "off",
+        "no-unused-vars": [
+            "warn",
+            {
+                "argsIgnorePattern": "^_",
+                "varsIgnorePattern": "^_",
+                "caughtErrorsIgnorePattern": "^_"
+            }
+        ]
     }
 }

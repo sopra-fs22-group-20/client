@@ -1,6 +1,7 @@
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useCookies } from 'react-cookie';
 
 /**
  * routeProtectors interfaces can tell the router whether or not it should allow navigation to a requested route.
@@ -12,8 +13,9 @@ import React from 'react';
  * @param props
  */
 export function HomeGuard(props) {
+  const [cookies, _setCookie] = useCookies(['userId', 'token']);
   const { children } = props;
-  if (localStorage.getItem('token')) {
+  if (cookies.token) {
     return children;
   }
   return <Redirect to="/login" />;

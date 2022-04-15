@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Button, Grid } from '@mui/material';
+import { useCookies } from 'react-cookie';
 
 export function Navigation() {
   const history = useHistory();
+  const [cookies, _setCookie, removeCookie] = useCookies(['userId', 'token']);
 
   return (
     <nav id="menu" className="navbar navbar-default navbar-fixed-top">
@@ -66,8 +68,8 @@ export function Navigation() {
             variant="outlined"
             size="large"
             onClick={() => {
-              localStorage.removeItem('token');
-              localStorage.removeItem('id');
+              removeCookie('token', { path: '/' });
+              removeCookie('id', { path: '/' });
               history.push('/login');
             }}
           >

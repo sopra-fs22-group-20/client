@@ -4,6 +4,7 @@ import User from 'models/User';
 import { Link, useHistory } from 'react-router-dom';
 import 'styles/views/Login.scss';
 import BaseContainer from 'components/ui/BaseContainer';
+import { useCookies } from 'react-cookie';
 import FormField from './FormField';
 import { Button } from '../ui/Button';
 
@@ -20,6 +21,7 @@ function Register() {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [_cookies, setCookie] = useCookies(['userId', 'token']);
 
   const doRegistration = async () => {
     try {
@@ -36,8 +38,8 @@ function Register() {
       const user = new User(response.data);
 
       // Store the token into the local storage.
-      localStorage.setItem('token', user.token);
-      localStorage.setItem('id', user.userId);
+      setCookie('id', user.userId, { path: '/' });
+      setCookie('token', user.token, { path: '/' });
 
       // Login successfully worked --> navigate to the route /home in the HomeRouter
       history.push('/home');

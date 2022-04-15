@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import styled from 'styled-components';
 // import for ref in firebase, getDownloadURL return url to access the image
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { useCookies, setCookie } from 'react-cookie';
+import {
+  ref, uploadBytes, getDownloadURL, getStorage,
+} from 'firebase/storage';
+
 import axios from 'axios';
 import { api, handleError } from '../../helpers/api';
 import FormField from './FormField';
 import { Button } from '../ui/Button';
 import BaseContainer from '../ui/BaseContainer';
-import { storage } from './firebase';
 import { getDomain } from '../../helpers/getDomain';
 
 function uploadFile(file, title, category, location) {
   document.cookie = 'userId=1';
-
+  const storage = getStorage();
   // defines the name of the image => uploaded image.png stays the same
   const fileName = file.name;
   // will put the file to images, the name is given by the userId and the timestamp
@@ -54,7 +54,7 @@ function uploadFile(file, title, category, location) {
 
         const authAxios = axios.create({
           baseURL: getDomain(),
-          header: { 'userId': '1' },
+          header: { userId: '1' },
 
         });
         console.log('Header:', authAxios());

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import AppRouter from 'components/routing/routers/AppRouter';
-
+import { CookiesProvider } from 'react-cookie';
 /**
  * Happy coding!
  * React Template by Lucas Pelloni
@@ -9,9 +9,9 @@ import AppRouter from 'components/routing/routers/AppRouter';
  */
 function App() {
   return (
-    <div>
+    <CookiesProvider>
       <AppRouter />
-    </div>
+    </CookiesProvider>
   );
 }
 

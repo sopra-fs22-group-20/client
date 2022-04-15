@@ -3,6 +3,7 @@ import { api, handleError } from 'helpers/api';
 import User from 'models/User';
 import { Link, useHistory } from 'react-router-dom';
 import 'styles/views/Login.scss';
+import { useCookies } from 'react-cookie';
 // new material ui
 
 import FormField from './FormField';
@@ -13,6 +14,7 @@ function Login() {
   const history = useHistory();
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [_cookies, setCookie] = useCookies(['userId', 'token']);
 
   const doLogin = async () => {
     try {
@@ -23,9 +25,8 @@ function Login() {
       const user = new User(response.data);
 
       // Store the token into the local storage.
-      localStorage.setItem('token', user.token);
-      localStorage.setItem('id', user.userId);
-
+      setCookie('id', user.userId, { path: '/' });
+      setCookie('token', user.token, { path: '/' });
       // Login successfully worked --> navigate to the route /home in the HomeRouter
       history.push('/home');
     } catch (error) {
