@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 
 import axios from 'axios';
+import { useCookies } from 'react-cookie';
 import { api, handleError } from '../../helpers/api';
 import FormField from './FormField';
 import BaseContainer from '../ui/BaseContainer';
@@ -42,6 +43,10 @@ function Upload() {
   const [location, setLocation] = useState('');
   const [isNewCategory, setIsNewCategory] = useState(false);
   const [newCategorySuggestion, setNewCategorySuggestion] = useState('');
+  const [cookies, _setCookie] = useCookies(['userId']);
+
+  const storage = getStorage();
+  // Create a storage reference from our storage service
 
   const doUpload = async () => {
     try {
@@ -64,17 +69,15 @@ function Upload() {
   };
 
   const uploadFile = () => {
-    document.cookie = 'userId=1';
-    const storage = getStorage();
     // defines the name of the image => uploaded image.png stays the same
     const fileName = selectedFile.name;
     // will put the file to images, the name is given by the userId and the timestamp
     const timestamp = Date.now().toString();
     console.log('Time of upload', timestamp);
     // get id out of local storage
-    const id = localStorage.getItem('id');
+    const { id: userId } = cookies;
     // create the timestamp in this format: id_timestamp_NameOfPicture
-    const fileNameToStore = id.concat('_', timestamp.toString());
+    const fileNameToStore = userId.concat('_', timestamp.toString());
     const fileNameToStoreTimestamp = fileNameToStore.concat('_', fileName.toString());
     console.log('fileNameToStore:', fileNameToStoreTimestamp);
     // store in storage
@@ -85,7 +88,7 @@ function Upload() {
       // successfully uploaded
 
       (snapshot) => {
-        getDownloadURL(snapshot.ref).then((downloadURL) => {
+        getDownloadURL(snapshot.ref).then(async (downloadURL) => {
           // write this to database
           // return URL of the image
 
@@ -101,15 +104,15 @@ function Upload() {
             storageLink,
           });
           console.log('Request:', requestBody);
-          localStorage.setItem('userId', '1');
 
           const authAxios = axios.create({
             baseURL: getDomain(),
-            header: { userId: '1' },
+            headers: { userId, 'Content-Type': 'application/json' },
 
           });
           console.log('Header:', authAxios());
-          const response = authAxios.post('/imagesTemp', requestBody);
+          const response = await authAxios.post('/imagesTemp', requestBody);
+          console.log(response);
         });
         console.log('Uploaded a blob or file!');
         // Store the new downloadURL together with credentials in Databse:

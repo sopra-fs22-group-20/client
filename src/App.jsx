@@ -1,5 +1,5 @@
 import React from 'react';
-
+import 'helpers/firebase';
 import AppRouter from 'components/routing/routers/AppRouter';
 import { CookiesProvider } from 'react-cookie';
 /**
@@ -7,6 +7,7 @@ import { CookiesProvider } from 'react-cookie';
  * React Template by Lucas Pelloni
  * Overhauled by Kyrill Hux
  */
+
 function App() {
   return (
     <CookiesProvider>
