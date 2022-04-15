@@ -26,67 +26,6 @@ import FormField from './FormField';
 import BaseContainer from '../ui/BaseContainer';
 import { getDomain } from '../../helpers/getDomain';
 
-function uploadFile(file, title, category, location) {
-  document.cookie = 'userId=1';
-  const storage = getStorage();
-  // defines the name of the image => uploaded image.png stays the same
-  const fileName = file.name;
-  // will put the file to images, the name is given by the userId and the timestamp
-  const timestamp = Date.now().toString();
-  console.log('Time of upload', timestamp);
-  // get id out of local storage
-  const id = localStorage.getItem('id');
-  // create the timestamp in this format: id_timestamp_NameOfPicture
-  const fileNameToStore = id.concat('_', timestamp.toString());
-  const fileNameToStoreTimestamp = fileNameToStore.concat('_', fileName.toString());
-  console.log('fileNameToStore:', fileNameToStoreTimestamp);
-  // store in storage
-  const fileRef = ref(storage, `images/${fileNameToStoreTimestamp}`);
-
-  uploadBytes(fileRef, file).then(
-
-    // successfully uploaded
-
-    (snapshot) => {
-      getDownloadURL(snapshot.ref).then((downloadURL) => {
-        // write this to database
-        // return URL of the image
-
-        console.log('File available at', downloadURL);
-        console.log('title', title);
-        console.log('cat', category);
-        console.log('loca', location);
-        const name = title;
-        const storageLink = downloadURL;
-        const requestBody = JSON.stringify({
-          name,
-          location,
-          storageLink,
-        });
-        console.log('Request:', requestBody);
-        localStorage.setItem('userId', '1');
-
-        const authAxios = axios.create({
-          baseURL: getDomain(),
-          header: { userId: '1' },
-
-        });
-        console.log('Header:', authAxios());
-        const response = authAxios.post('/imagesTemp', requestBody);
-      });
-      console.log('Uploaded a blob or file!');
-      // Store the new downloadURL together with credentials in Databse:
-    },
-
-    // error
-
-    (error) => {
-      console.log(`error => ${error}`);
-    },
-
-  );
-}
-
 // TODO: fetch categories from backend
 const CATEGORIES = [
   { value: 'Autos', name: 'Autos' },
@@ -122,6 +61,67 @@ function Upload() {
     } catch (error) {
       alert(`Something went wrong during the creation of your picture: \n${handleError(error)}`);
     }
+  };
+
+  const uploadFile = () => {
+    document.cookie = 'userId=1';
+    const storage = getStorage();
+    // defines the name of the image => uploaded image.png stays the same
+    const fileName = selectedFile.name;
+    // will put the file to images, the name is given by the userId and the timestamp
+    const timestamp = Date.now().toString();
+    console.log('Time of upload', timestamp);
+    // get id out of local storage
+    const id = localStorage.getItem('id');
+    // create the timestamp in this format: id_timestamp_NameOfPicture
+    const fileNameToStore = id.concat('_', timestamp.toString());
+    const fileNameToStoreTimestamp = fileNameToStore.concat('_', fileName.toString());
+    console.log('fileNameToStore:', fileNameToStoreTimestamp);
+    // store in storage
+    const fileRef = ref(storage, `images/${fileNameToStoreTimestamp}`);
+
+    uploadBytes(fileRef, selectedFile).then(
+
+      // successfully uploaded
+
+      (snapshot) => {
+        getDownloadURL(snapshot.ref).then((downloadURL) => {
+          // write this to database
+          // return URL of the image
+
+          console.log('File available at', downloadURL);
+          console.log('title', title);
+          console.log('cat', category);
+          console.log('loca', location);
+          const name = title;
+          const storageLink = downloadURL;
+          const requestBody = JSON.stringify({
+            name,
+            location,
+            storageLink,
+          });
+          console.log('Request:', requestBody);
+          localStorage.setItem('userId', '1');
+
+          const authAxios = axios.create({
+            baseURL: getDomain(),
+            header: { userId: '1' },
+
+          });
+          console.log('Header:', authAxios());
+          const response = authAxios.post('/imagesTemp', requestBody);
+        });
+        console.log('Uploaded a blob or file!');
+        // Store the new downloadURL together with credentials in Databse:
+      },
+
+      // error
+
+      (error) => {
+        console.log(`error => ${error}`);
+      },
+
+    );
   };
 
   const handleSubmitNewCategory = () => {
