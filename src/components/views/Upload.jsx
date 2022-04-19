@@ -26,6 +26,9 @@ import { api, handleError } from '../../helpers/api';
 import FormField from './FormField';
 import BaseContainer from '../ui/BaseContainer';
 import { getDomain } from '../../helpers/getDomain';
+import {
+  MailUsername, MailPassword, MailTo, MailFrom,
+} from '../../helpers/mailCredentials';
 
 // TODO: fetch categories from backend
 const CATEGORIES = [
@@ -129,6 +132,26 @@ function Upload() {
 
   const handleSubmitNewCategory = () => {
     // TODO: make api call to backend to submit new category suggestion
+    // use Id to indetify the user
+    const { id: userId } = cookies;
+    const empty = '';
+    const mailMessageBody = empty.concat('A suggestion came from user with id: ', userId.toString());
+
+    const Email = {
+      send(a) { return new Promise((n, e) => { a.nocache = Math.floor(1e6 * Math.random() + 1), a.Action = 'Send'; const t = JSON.stringify(a); Email.ajaxPost('https://smtpjs.com/v3/smtpjs.aspx?', t, (e) => { n(e); }); }); }, ajaxPost(e, n, t) { const a = Email.createCORSRequest('POST', e); a.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'), a.onload = function () { const e = a.responseText; t != null && t(e); }, a.send(n); }, ajax(e, n) { const t = Email.createCORSRequest('GET', e); t.onload = function () { const e = t.responseText; n != null && n(e); }, t.send(); }, createCORSRequest(e, n) { let t = new XMLHttpRequest(); return 'withCredentials' in t ? t.open(e, n, !0) : typeof XDomainRequest !== 'undefined' ? (t = new XDomainRequest()).open(e, n) : t = null, t; },
+    };
+    Email.send({
+      Host: 'smtp.gmail.com',
+      Username: MailUsername,
+      Password: MailPassword,
+      To: MailTo,
+      From: MailFrom,
+      Subject: mailMessageBody,
+      Body: newCategorySuggestion,
+    }).then(
+      (message) => alert(message),
+    );
+
     setIsNewCategory(false);
   };
 
@@ -246,7 +269,7 @@ function Upload() {
           <DialogTitle>Suggest new category</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              To suggest new cateogry enter text below and press `&quot;`submit request`&quot;` button.
+              To suggest new category enter text below and press `&quot;`submit request`&quot;` button.
             </DialogContentText>
             <TextField
               autoFocus

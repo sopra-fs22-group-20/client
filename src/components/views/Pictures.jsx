@@ -88,7 +88,7 @@ function Pictures() {
     <div>
       <h2>Pictures</h2>
       <p>On this page, you can see your uploaded pictures and you can upload new ones!</p>
-      <Button variant="contained" href="/pictures/upload" color="success">
+      <Button variant="contained" href="/upload/" color="success">
         Upload a new picture!
       </Button>
       <h3>Your pictures</h3>
