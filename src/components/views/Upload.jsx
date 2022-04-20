@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 // import for ref in firebase, getDownloadURL return url to access the image
 import {
   ref, uploadBytes, getDownloadURL, getStorage,
 } from 'firebase/storage';
-
+import 'mapbox-gl/dist/mapbox-gl.css';
 import {
   Grid,
   Typography,
@@ -22,6 +22,8 @@ import {
 
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
+// eslint-disable-next-line import/no-unresolved,import/no-webpack-loader-syntax
+import mapboxgl from '!mapbox-gl';
 import { api, handleError } from '../../helpers/api';
 import FormField from './FormField';
 import BaseContainer from '../ui/BaseContainer';
@@ -29,6 +31,8 @@ import { getDomain } from '../../helpers/getDomain';
 import {
   MailUsername, MailPassword, MailTo, MailFrom,
 } from '../../helpers/mailCredentials';
+// DO NOT COMMIT!
+mapboxgl.accessToken = '';
 
 // TODO: fetch categories from backend
 const CATEGORIES = [
@@ -47,6 +51,22 @@ function Upload() {
   const [isNewCategory, setIsNewCategory] = useState(false);
   const [newCategorySuggestion, setNewCategorySuggestion] = useState('');
   const [cookies, _setCookie] = useCookies(['userId']);
+
+  const mapContainer = useRef(null);
+  const map = useRef(null);
+  const [lng, setLng] = useState(-70.9);
+  const [lat, setLat] = useState(42.35);
+  const [zoom, setZoom] = useState(9);
+
+  useEffect(() => {
+    // if (map.current) return; // initialize map only once
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [lng, lat],
+      zoom,
+    });
+  });
 
   const storage = getStorage();
   // Create a storage reference from our storage service
@@ -138,6 +158,7 @@ function Upload() {
     const mailMessageBody = empty.concat('A suggestion came from user with id: ', userId.toString());
 
     const Email = {
+      // eslint-disable-next-line no-param-reassign,no-unused-expressions,no-sequences,no-shadow
       send(a) { return new Promise((n, e) => { a.nocache = Math.floor(1e6 * Math.random() + 1), a.Action = 'Send'; const t = JSON.stringify(a); Email.ajaxPost('https://smtpjs.com/v3/smtpjs.aspx?', t, (e) => { n(e); }); }); }, ajaxPost(e, n, t) { const a = Email.createCORSRequest('POST', e); a.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'), a.onload = function () { const e = a.responseText; t != null && t(e); }, a.send(n); }, ajax(e, n) { const t = Email.createCORSRequest('GET', e); t.onload = function () { const e = t.responseText; n != null && n(e); }, t.send(); }, createCORSRequest(e, n) { let t = new XMLHttpRequest(); return 'withCredentials' in t ? t.open(e, n, !0) : typeof XDomainRequest !== 'undefined' ? (t = new XDomainRequest()).open(e, n) : t = null, t; },
     };
     Email.send({
@@ -174,6 +195,12 @@ function Upload() {
       justifyContent="flex-start"
       alignItems="flex-start"
     >
+      <div id="vorher" />
+      <Grid item>
+        <p>Map</p>
+        <div ref={mapContainer} className="map-container" height="800px" width="400px" />
+      </Grid>
+      <div id="nachher" />
       <Grid item xs={12}>
         <Grid
           container
