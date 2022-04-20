@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import mapboxgl from '!mapbox-gl';
+import 'styles/ui/mapContainer.scss';
 // import for ref in firebase, getDownloadURL return url to access the image
 import {
   ref, uploadBytes, getDownloadURL, getStorage,
@@ -37,6 +39,24 @@ const CATEGORIES = [
   { value: 'Hunde', name: 'Hunde' },
   { value: 'New', name: '...suggest new category' },
 ];
+
+const mapContainer = useRef(null);
+const map = useRef(null);
+const [lng, setLng] = useState(-70.9);
+const [lat, setLat] = useState(42.35);
+const [zoom, setZoom] = useState(9);
+
+mapboxgl.accessToken = 'pk.eyJ1IjoibWVsb2RsZWJyb24iLCJhIjoiY2wyNjF0MXExMDEydDNsbjZjcWozZDRqeSJ9.s2bvFZrFOZDLfQ-XJZYrOg';
+
+useEffect(() => {
+  // if (map.current) return; // initialize map only once
+  map.current = new mapboxgl.Map({
+    container: mapContainer.current,
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [lng, lat],
+    zoom: zoom,
+  });
+});
 
 function Upload() {
   const [selectedFile, setFile] = useState(null);
@@ -185,6 +205,7 @@ function Upload() {
             <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
               Upload
             </Typography>
+            </Typography>
           </Grid>
           <Grid item xs={12}>
             <p align="center">
@@ -251,6 +272,10 @@ function Upload() {
               value={location}
               onChange={(event) => setLocation(event.target.value)}
             />
+            <Grid item>
+              <p>Map</p>
+              <div ref={mapContainer} className="map-container" />
+            </Grid>
           </Grid>
           <Grid item>
             <Button
