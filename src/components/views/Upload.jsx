@@ -24,7 +24,7 @@ import {
 
 
 
-mapboxgl.accessToken = 'pk.eyJ1IjoibWVsb2RsZWJyb24iLCJhIjoiY2wyNjF0MXExMDEydDNsbjZjcWozZDRqeSJ9.s2bvFZrFOZDLfQ-XJZYrOg';
+mapboxgl.accessToken = '';
 
 // TODO: fetch categories from backend
 const CATEGORIES = [
