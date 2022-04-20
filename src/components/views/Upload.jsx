@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 // import for ref in firebase, getDownloadURL return url to access the image
 import {
   ref, uploadBytes, getDownloadURL, getStorage,
 } from 'firebase/storage';
+import mapboxgl from '!mapbox-gl';
+import 'styles/ui/mapContainer.scss';
 
 import {
   Grid,
@@ -48,8 +50,27 @@ function Upload() {
   const [newCategorySuggestion, setNewCategorySuggestion] = useState('');
   const [cookies, _setCookie] = useCookies(['userId']);
 
+  // const for map api
+  const mapContainer = useRef(null);
+  const map = useRef(null);
+  const [lng, setLng] = useState(-70.9);
+  const [lat, setLat] = useState(42.35);
+  const [zoom, setZoom] = useState(9);
+
   const storage = getStorage();
+  mapboxgl.accessToken = '';
+
+  useEffect(() => {
+    // if (map.current) return; // initialize map only once
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [lng, lat],
+      zoom: zoom,
+    });
+  });
   // Create a storage reference from our storage service
+
 
   const doUpload = async () => {
     try {
@@ -174,6 +195,10 @@ function Upload() {
       justifyContent="flex-start"
       alignItems="flex-start"
     >
+      <Grid item>
+      <p>Map</p>
+      <div ref={mapContainer} className="map-container" />
+    </Grid>
       <Grid item xs={12}>
         <Grid
           container
