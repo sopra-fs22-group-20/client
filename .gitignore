@@ -26,3 +26,4 @@ yarn-error.log*
 src/helpers/firebase.js
 src/helpers/mailCredentials.js
 src/helpers/mailCredentials.js
+src/helpers/mapboxConfig.js

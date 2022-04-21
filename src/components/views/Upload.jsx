@@ -6,7 +6,7 @@ import {
 } from 'firebase/storage';
 import mapboxgl from '!mapbox-gl';
 import 'styles/ui/mapContainer.scss';
-
+import {mapboxAccessToken} from "../../helpers/mapboxConfig";
 import {
   Grid,
   Typography,
@@ -51,25 +51,51 @@ function Upload() {
   const [cookies, _setCookie] = useCookies(['userId']);
 
   // const for map api
-  const mapContainer = useRef(null);
-  const map = useRef(null);
-  const [lng, setLng] = useState(-70.9);
-  const [lat, setLat] = useState(42.35);
-  const [zoom, setZoom] = useState(9);
 
-  const storage = getStorage();
-  mapboxgl.accessToken = '';
+  mapboxgl.accessToken =  mapboxAccessToken;
 
+  const mapContainerRef = useRef(null);
+
+  const [lng, setLng] = useState(8.5);
+  const [lat, setLat] = useState(47);
+  const [zoom, setZoom] = useState(5);
+
+  // Initialize map when component mounts
   useEffect(() => {
-    if (map.current) return; // initialize map only once
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [lng, lat],
-      zoom: zoom,
+      zoom: zoom
     });
-  });
+
+    // Add navigation control (the +/- zoom buttons)
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    map.on('move', () => {
+      setLng(map.getCenter().lng.toFixed(4));
+      setLat(map.getCenter().lat.toFixed(4));
+      setZoom(map.getZoom().toFixed(2));
+    });
+
+    const marker = new mapboxgl.Marker({
+      draggable: true
+    })
+        .setLngLat([11, 51])
+        .addTo(map);
+    function onDragEnd() {
+      console.log(marker._lngLat)
+      setLocation(marker._lngLat)
+      console.log(location)
+
+    }
+
+    marker.on('dragend', onDragEnd);
+
+    // Clean up on unmount
+  }, []);
   // Create a storage reference from our storage service
+  const storage = getStorage();
 
 
   const doUpload = async () => {
@@ -270,6 +296,7 @@ function Upload() {
               <TextField
                   label="Location"
                   value={location}
+                  disabled="true"
                   onChange={(event) => setLocation(event.target.value)}
               />
             </Grid>
@@ -279,6 +306,7 @@ function Upload() {
                   size="large"
                   onClick={() => {
                     uploadFile(selectedFile, title, category, location);
+                    window.location='/pictures/';
                   }}
                   disabled={selectedFile === null || title === '' || category === ''}
               >
@@ -315,7 +343,7 @@ function Upload() {
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <div ref={mapContainer} className="map-container"/>
+            <div ref={mapContainerRef} className="map-container"/>
           </Grid>
         </Grid>
       </Grid>
