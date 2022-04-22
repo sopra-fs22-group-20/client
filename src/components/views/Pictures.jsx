@@ -1,9 +1,28 @@
-import { Button } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { api, handleError } from 'helpers/api';
 import { Spinner } from 'components/ui/Spinner';
 import PropTypes from 'prop-types';
 import 'styles/views/Game.scss';
+import { styled } from '@mui/material/styles';
+
+import {
+  Grid,
+  Typography,
+  Button,
+  Box,
+  Paper,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Menu,
+  Dialog,
+  DialogTitle,
+  DialogContent, DialogContentText, DialogActions,
+} from '@mui/material';
+import { useCookies } from 'react-cookie';
+import User from '../../models/User';
 
 function Player({ user }) {
   return (
@@ -31,11 +50,25 @@ function Pictures() {
   // a component can have as many state variables as you like.
   // more information can be found under https://reactjs.org/docs/hooks-state.html
   const [users, setUsers] = useState(null);
+  const [images, setImages] = useState(null);
+  const [cookies, _setCookie] = useCookies(['userId']);
 
-  // the effect hook can be used to react to change in your component.
-  // in this case, the effect hook is only run once, the first time the component is mounted
-  // this can be achieved by leaving the second argument an empty array.
-  // for more information on the effect hook, please see https://reactjs.org/docs/hooks-effect.html
+  // delete request
+
+  const deleteImage = async (imageId) => {
+    try {
+      // formerly: isRegistrationProcess: for server to decide how to handle passed object (login or registration process)
+      const { id: userId } = cookies;
+      const requestBody = JSON.stringify({
+        userId,
+      });
+
+      const response = await api.post(`/images/${imageId}`, requestBody);
+    } catch (error) {
+      alert(`Something went wrong during the registration: \n${handleError(error)}`);
+    }
+  };
+
   useEffect(() => {
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
     async function fetchData() {
@@ -70,7 +103,35 @@ function Pictures() {
     fetchData();
   }, []);
 
+  // fetching pictures
+  useEffect(() => {
+    // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
+    async function fetchPictures() {
+      try {
+        const response = await api.get('/images/all/1');
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Get the returned users and update the state.
+        setImages(response.data);
+      } catch (error) {
+        console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
+        console.error('Details:', error);
+        alert('Something went wrong while fetching the images! See the console for details.');
+      }
+    }
+
+    fetchPictures();
+  }, []);
+
   let content = <Spinner />;
+
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  }));
 
   if (users) {
     content = (
@@ -83,8 +144,38 @@ function Pictures() {
       </div>
     );
   }
+  if (images) {
+    content = (
+      <Grid
+        container
+        direction="row"
+        justifyContent="flex-start"
+        alignItems="flex-start"
+      >
+
+        <Grid container spacing={2}>
+          <Grid item xs={8}>
+            <Item>xs=8</Item>
+          </Grid>
+          <Grid item xs={4}>
+            <Item>
+              item = xs=4
+            </Item>
+          </Grid>
+          <Grid item xs={4}>
+            <Item>xs=4</Item>
+          </Grid>
+          <Grid item xs={8}>
+            <Item>xs=8</Item>
+          </Grid>
+        </Grid>
+
+      </Grid>
+    );
+  }
 
   return (
+
     <div>
       <h2>Pictures</h2>
       <p>On this page, you can see your uploaded pictures and you can upload new ones!</p>
@@ -99,6 +190,7 @@ function Pictures() {
       </p>
       {content}
     </div>
+
   );
 }
 
