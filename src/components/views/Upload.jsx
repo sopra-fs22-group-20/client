@@ -45,7 +45,7 @@ function Upload() {
   const history = useHistory();
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Autos');
-  const [location, setLocation] = useState('');
+  const [coordinates, setCoordinates] = useState('');
   const [isNewCategory, setIsNewCategory] = useState(false);
   const [newCategorySuggestion, setNewCategorySuggestion] = useState('');
   const [cookies, _setCookie] = useCookies(['userId']);
@@ -85,8 +85,8 @@ function Upload() {
         .addTo(map);
     function onDragEnd() {
       console.log(marker._lngLat)
-      setLocation(marker._lngLat)
-      console.log(location)
+      setCoordinates(marker._lngLat)
+      console.log(coordinates)
 
     }
 
@@ -104,7 +104,7 @@ function Upload() {
       const requestBody = JSON.stringify({
         title,
         category,
-        location,
+        location: coordinates,
       });
 
       const response = await api.post('/upload', requestBody);
@@ -145,9 +145,17 @@ function Upload() {
           console.log('File available at', downloadURL);
           console.log('title', title);
           console.log('cat', category);
-          console.log('loca', location);
+          console.log('loca', coordinates);
           const name = title;
           const storageLink = downloadURL;
+          const location= JSON.stringify(coordinates);
+          console.log(typeof location);
+
+          console.log('locationString', location);
+
+
+
+
           const requestBody = JSON.stringify({
             name,
             location,
@@ -161,7 +169,8 @@ function Upload() {
 
           });
           console.log('Header:', authAxios());
-          const response = await authAxios.post('/imagesTemp', requestBody);
+          console.log(userId);
+          const response = await authAxios.post('/images', requestBody);
           console.log(response);
         });
         console.log('Uploaded a blob or file!');
@@ -295,9 +304,9 @@ function Upload() {
             <Grid item>
               <TextField
                   label="Location"
-                  value={location}
+                  value={coordinates}
                   disabled="true"
-                  onChange={(event) => setLocation(event.target.value)}
+                  onChange={(event) => setCoordinates(event.target.value)}
               />
             </Grid>
             <Grid item>
@@ -305,8 +314,7 @@ function Upload() {
                   variant="outlined"
                   size="large"
                   onClick={() => {
-                    uploadFile(selectedFile, title, category, location);
-                    window.location='/pictures/';
+                    uploadFile(selectedFile, title, category, coordinates);
                   }}
                   disabled={selectedFile === null || title === '' || category === ''}
               >
