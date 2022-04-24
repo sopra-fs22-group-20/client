@@ -4,6 +4,10 @@ import { Spinner } from 'components/ui/Spinner';
 import PropTypes from 'prop-types';
 import 'styles/views/Game.scss';
 import { styled } from '@mui/material/styles';
+import Accordion from '@mui/material/Accordion';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
 
 import {
   Grid,
@@ -19,10 +23,13 @@ import {
   Menu,
   Dialog,
   DialogTitle,
-  DialogContent, DialogContentText, DialogActions,
+  DialogContent, DialogContentText, DialogActions, ImageList, ImageListItem, Rating,
 } from '@mui/material';
 import { useCookies } from 'react-cookie';
 import User from '../../models/User';
+import Image from '../../models/Image';
+
+// This function player is from individual assignment.
 
 function Player({ user }) {
   return (
@@ -36,6 +43,14 @@ function Player({ user }) {
     </div>
   );
 }
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
 Player.propTypes = {
   user: PropTypes.object.isRequired,
@@ -59,60 +74,31 @@ function Pictures() {
     try {
       // formerly: isRegistrationProcess: for server to decide how to handle passed object (login or registration process)
       const { id: userId } = cookies;
-      const requestBody = JSON.stringify({
-        userId,
-      });
 
-      const response = await api.post(`/images/${imageId}`, requestBody);
+      const response = await api.delete(`/images/${imageId}`, { headers: { userId } });
     } catch (error) {
+      console.log(error.response);
       alert(`Something went wrong during the registration: \n${handleError(error)}`);
     }
   };
-
-  useEffect(() => {
-    // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
-    async function fetchData() {
-      try {
-        const response = await api.get('/users');
-
-        // delays continuous execution of an async operation for 1 second.
-        // This is just a fake async call, so that the spinner can be displayed
-        // feel free to remove it :)
-        // eslint-disable-next-line
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Get the returned users and update the state.
-        setUsers(response.data);
-
-        // This is just some data for you to see what is available.
-        // Feel free to remove it.
-        console.log('request to:', response.request.responseURL);
-        console.log('status code:', response.status);
-        console.log('status text:', response.statusText);
-        console.log('requested data:', response.data);
-
-        // See here to get more data.
-        console.log(response);
-      } catch (error) {
-        console.error(`Something went wrong while fetching the users: \n${handleError(error)}`);
-        console.error('Details:', error);
-        alert('Something went wrong while fetching the users! See the console for details.');
-      }
-    }
-
-    fetchData();
-  }, []);
+  // Get - DELETE - POST - PUT
 
   // fetching pictures
   useEffect(() => {
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
     async function fetchPictures() {
       try {
-        const response = await api.get('/images/all/1');
+        const { id: userId } = cookies;
+        const response = await api.get(`/images/all/${userId}`);
+
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        // Get the returned users and update the state.
         setImages(response.data);
+
+        console.log('request to:', response.request.responseURL);
+        console.log('status code:', response.status);
+        console.log('status text:', response.statusText);
+        console.log('requested data:', response.data);
       } catch (error) {
         console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
         console.error('Details:', error);
@@ -125,14 +111,8 @@ function Pictures() {
 
   let content = <Spinner />;
 
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  }));
-
+  // This is from individual assignment
+  /*
   if (users) {
     content = (
       <div className="game">
@@ -144,6 +124,9 @@ function Pictures() {
       </div>
     );
   }
+
+ */
+
   if (images) {
     content = (
       <Grid
@@ -153,22 +136,13 @@ function Pictures() {
         alignItems="flex-start"
       >
 
-        <Grid container spacing={2}>
-          <Grid item xs={8}>
-            <Item>xs=8</Item>
-          </Grid>
-          <Grid item xs={4}>
-            <Item>
-              item = xs=4
-            </Item>
-          </Grid>
-          <Grid item xs={4}>
-            <Item>xs=4</Item>
-          </Grid>
-          <Grid item xs={8}>
-            <Item>xs=8</Item>
-          </Grid>
-        </Grid>
+        <item>
+          <ul className="image list">
+            {images.map((image) => (
+              <DisplayImage image={image} deleteImage={deleteImage} />
+            ))}
+          </ul>
+        </item>
 
       </Grid>
     );
@@ -185,11 +159,79 @@ function Pictures() {
       <h3>Your pictures</h3>
       <p>Below, you can your uploaded pictures!</p>
 
-      <p className="game paragraph">
-        Get all users from secure endpoint:
-      </p>
       {content}
     </div>
+
+  );
+}
+
+function DisplayImage({ image, deleteImage }) {
+  const [value, setValue] = React.useState(2);
+
+  return (
+
+    <Box sx={{ width: '100%' }}>
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+        <Grid item xs={6}>
+          <Item>
+            <img
+              style={{ width: '100%' }}
+              src={image.storageLink}
+              height={250}
+
+              alt="new"
+            />
+          </Item>
+        </Grid>
+        <Grid item xs={6}>
+          <Item>
+            <div className="image">
+              <div className="image title">
+                <p align="center">
+                  Title:
+                  {' '}
+                  {image.name}
+                </p>
+              </div>
+            </div>
+            <p>Category XYZ</p>
+            <p>
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography><p> Show the Location</p></Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography>
+                    <p>
+                      Location:
+                      {image.location}
+                    </p>
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+            </p>
+            <p>
+              <Box
+                sx={{
+                  '& > legend': { mt: 2 },
+                }}
+              >
+                <Typography component="legend"><p>Number of Ratings: X</p></Typography>
+                <Rating name="read-only" value={value} readOnly size="large" />
+              </Box>
+            </p>
+            <Button variant="contained" onClick={() => deleteImage(image.imageId)} size="large" color="error">Delete</Button>
+            <p />
+          </Item>
+        </Grid>
+
+      </Grid>
+      <br />
+    </Box>
 
   );
 }

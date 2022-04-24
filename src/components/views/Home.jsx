@@ -50,6 +50,7 @@ function Home() {
 
         // Get the returned users and update the state.
         setUsers(response.data);
+        console.log(users);
 
         // This is just some data for you to see what is available.
         // Feel free to remove it.
