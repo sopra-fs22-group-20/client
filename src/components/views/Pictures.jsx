@@ -175,7 +175,7 @@ function DisplayImage({ image, deleteImage }) {
         <Grid item xs={6}>
           <Item>
             <img
-              style={{ width: '100%' }}
+              style={{ objectFit: 'contain', width: '100%' }}
               src={image.storageLink}
               height={250}
 
