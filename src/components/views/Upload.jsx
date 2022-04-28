@@ -6,7 +6,6 @@ import {
 } from 'firebase/storage';
 import mapboxgl from '!mapbox-gl';
 import 'styles/ui/mapContainer.scss';
-import {mapboxAccessToken} from "../../helpers/mapboxConfig";
 import {
   Grid,
   Typography,
@@ -24,6 +23,7 @@ import {
 
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
+import { mapboxAccessToken } from '../../helpers/mapboxConfig';
 import { api, handleError } from '../../helpers/api';
 import FormField from './FormField';
 import BaseContainer from '../ui/BaseContainer';
@@ -52,7 +52,7 @@ function Upload() {
 
   // const for map api
 
-  mapboxgl.accessToken =  mapboxAccessToken;
+  mapboxgl.accessToken = mapboxAccessToken;
 
   const mapContainerRef = useRef(null);
 
@@ -66,7 +66,7 @@ function Upload() {
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [lng, lat],
-      zoom: zoom
+      zoom,
     });
 
     // Add navigation control (the +/- zoom buttons)
@@ -79,15 +79,14 @@ function Upload() {
     });
 
     const marker = new mapboxgl.Marker({
-      draggable: true
+      draggable: true,
     })
-        .setLngLat([11, 51])
-        .addTo(map);
+      .setLngLat([11, 51])
+      .addTo(map);
     function onDragEnd() {
-      console.log(marker._lngLat)
-      setLocation(marker._lngLat)
-      console.log(location)
-
+      console.log(marker._lngLat);
+      setLocation(marker._lngLat);
+      console.log(location);
     }
 
     marker.on('dragend', onDragEnd);
@@ -96,7 +95,6 @@ function Upload() {
   }, []);
   // Create a storage reference from our storage service
   const storage = getStorage();
-
 
   const doUpload = async () => {
     try {
@@ -215,138 +213,138 @@ function Upload() {
   }
 
   return (
-      <Grid
+    <Grid
+      container
+      direction="row"
+      justifyContent="flex-start"
+      alignItems="flex-start"
+    >
+      <Grid item xs={12}>
+        <Grid
           container
           direction="row"
-          justifyContent="flex-start"
+          justifyContent="center"
           alignItems="flex-start"
-      >
-        <Grid item xs={12}>
-          <Grid
-              container
-              direction="row"
-              justifyContent="center"
-              alignItems="flex-start"
-          >
-            <Grid item xs={12}>
-              <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
-                Upload
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <p align="center">
-                On this page, you can upload a new picture to RateMe!
-              </p>
-
-            </Grid>
-          </Grid>
-          <Grid
-              container
-              direction="row"
-              justifyContent="center"
-              alignItems="center"
-              style={{ marginTop: '30px' }}
-              spacing={2}
-          >
-            <Grid item xs={12}>
-              <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
-                Select image
-              </Typography>
-            </Grid>
-            <Grid item>
-              <input
-                  type="file"
-                  onChange={(e) => setFile(e.target.files[0])}
-                  multiple={false}
-                  style={{
-                    margin: 'auto',
-                    display: 'block',
-                  }}
-              />
-            </Grid>
-            <Grid item>
-              <FormControl>
-                <InputLabel id="demo-simple-select-label">Category</InputLabel>
-                <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={category}
-                    label="Category"
-                    onChange={(event) => handleSetCategory(event)}
-                >
-                  {
-                    CATEGORIES.map((x, index) => (
-                        <MenuItem value={x.value} key={`${index}_value`}>
-                          {x.name}
-                        </MenuItem>
-                    ))
-                  }
-                </Select>
-              </FormControl>
-
-            </Grid>
-            <Grid item>
-              <TextField
-                  label="Title"
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                  label="Location"
-                  value={location}
-                  disabled="true"
-                  onChange={(event) => setLocation(event.target.value)}
-              />
-            </Grid>
-            <Grid item>
-              <Button
-                  variant="outlined"
-                  size="large"
-                  onClick={() => {
-                    uploadFile(selectedFile, title, category, location);
-                    window.location='/pictures/';
-                  }}
-                  disabled={selectedFile === null || title === '' || category === ''}
-              >
-                Upload
-              </Button>
-            </Grid>
-          </Grid>
-          <Dialog open={isNewCategory} onClose={() => setIsNewCategory(false)}>
-            <DialogTitle>Suggest new category</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                To suggest new category enter text below and press `&quot;`submit request`&quot;` button.
-              </DialogContentText>
-              <TextField
-                  autoFocus
-                  margin="dense"
-                  id="name"
-                  label="New category"
-                  type="text"
-                  fullWidth
-                  variant="standard"
-                  onChange={(event) => setNewCategorySuggestion(event.target.value)}
-                  value={newCategorySuggestion}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setIsNewCategory(false)}>Cancel</Button>
-              <Button onClick={handleSubmitNewCategory}>Submit request</Button>
-            </DialogActions>
-          </Dialog>
+        >
           <Grid item xs={12}>
             <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
-              Select Location (optional)
+              Upload
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <div ref={mapContainerRef} className="map-container"/>
+            <p align="center">
+              On this page, you can upload a new picture to RateMe!
+            </p>
+
           </Grid>
         </Grid>
+        <Grid
+          container
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+          style={{ marginTop: '30px' }}
+          spacing={2}
+        >
+          <Grid item xs={12}>
+            <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
+              Select image
+            </Typography>
+          </Grid>
+          <Grid item>
+            <input
+              type="file"
+              onChange={(e) => setFile(e.target.files[0])}
+              multiple={false}
+              style={{
+                margin: 'auto',
+                display: 'block',
+              }}
+            />
+          </Grid>
+          <Grid item>
+            <FormControl>
+              <InputLabel id="demo-simple-select-label">Category</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={category}
+                label="Category"
+                onChange={(event) => handleSetCategory(event)}
+              >
+                {
+                    CATEGORIES.map((x, index) => (
+                      <MenuItem value={x.value} key={`${index}_value`}>
+                        {x.name}
+                      </MenuItem>
+                    ))
+                  }
+              </Select>
+            </FormControl>
+
+          </Grid>
+          <Grid item>
+            <TextField
+              label="Title"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              label="Location"
+              value={location}
+              disabled="true"
+              onChange={(event) => setLocation(event.target.value)}
+            />
+          </Grid>
+          <Grid item>
+            <Button
+              variant="outlined"
+              size="large"
+              onClick={() => {
+                uploadFile(selectedFile, title, category, location);
+                window.location = '/pictures/';
+              }}
+              disabled={selectedFile === null || title === '' || category === ''}
+            >
+              Upload
+            </Button>
+          </Grid>
+        </Grid>
+        <Dialog open={isNewCategory} onClose={() => setIsNewCategory(false)}>
+          <DialogTitle>Suggest new category</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              To suggest new category enter text below and press `&quot;`submit request`&quot;` button.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="New category"
+              type="text"
+              fullWidth
+              variant="standard"
+              onChange={(event) => setNewCategorySuggestion(event.target.value)}
+              value={newCategorySuggestion}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setIsNewCategory(false)}>Cancel</Button>
+            <Button onClick={handleSubmitNewCategory}>Submit request</Button>
+          </DialogActions>
+        </Dialog>
+        <Grid item xs={12}>
+          <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
+            Select Location (optional)
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <div ref={mapContainerRef} className="map-container" />
+        </Grid>
       </Grid>
+    </Grid>
   );
 }
 

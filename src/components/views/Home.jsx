@@ -4,97 +4,126 @@ import { Spinner } from 'components/ui/Spinner';
 import BaseContainer from 'components/ui/BaseContainer';
 import PropTypes from 'prop-types';
 import 'styles/views/Game.scss';
-
-function Player({ user }) {
-  return (
-    <div className="player container">
-      <div className="player username">{user.username}</div>
-      <div className="player name">{user.name}</div>
-      <div className="player id">
-        id:
-        {user.userId}
-      </div>
-    </div>
-  );
-}
-
-Player.propTypes = {
-  user: PropTypes.object.isRequired,
-};
+import { useHistory } from 'react-router-dom';
+import {
+  Grid, ImageList, ImageListItem, Rating, Typography,
+} from '@mui/material';
+import { Axios } from 'axios';
+import Box from '@mui/material/Box';
+import StarIcon from '@mui/icons-material/Star';
 
 function Home() {
-  // use react-router-dom's hook to access the history
+  // TODO: imageURL is directly there when rendering
+  const [randImageURL, setRandImageURL] = useState('');
+  const [randImage, setRandImage] = useState(null);
+  const [value, setValue] = React.useState(0); // TODO: fix number
+  const [hover, setHover] = React.useState(-1);
+  const history = useHistory();
 
-  // define a state variable (using the state hook).
-  // if this variable changes, the component will re-render, but the variable will
-  // keep its value throughout render cycles.
-  // a component can have as many state variables as you like.
-  // more information can be found under https://reactjs.org/docs/hooks-state.html
-  const [users, setUsers] = useState(null);
+  const labels = {
+    1: 'Ewwww!',
+    2: 'Ewwwish..',
+    3: 'Hmmm',
+    4: 'Nice',
+    5: 'Hot!',
+  };
 
-  // the effect hook can be used to react to change in your component.
-  // in this case, the effect hook is only run once, the first time the component is mounted
-  // this can be achieved by leaving the second argument an empty array.
-  // for more information on the effect hook, please see https://reactjs.org/docs/hooks-effect.html
   useEffect(() => {
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
-    async function fetchData() {
+    async function fetchRandomPictureURL() {
       try {
-        const response = await api.get('/users');
-
-        // delays continuous execution of an async operation for 1 second.
-        // This is just a fake async call, so that the spinner can be displayed
-        // feel free to remove it :)
+        // const response = await api.get('/randImage'); // TODO: specify call to backend
+        // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
+        const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
         // eslint-disable-next-line
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        // Get the returned users and update the state.
-        setUsers(response.data);
-
-        // This is just some data for you to see what is available.
-        // Feel free to remove it.
-        console.log('request to:', response.request.responseURL);
-        console.log('status code:', response.status);
-        console.log('status text:', response.statusText);
-        console.log('requested data:', response.data);
-
-        // See here to get more data.
-        console.log(response);
+        // Get the returned image URL and update the state.
+        // setRandImageURL(response.data);
+        setRandImageURL(response);
       } catch (error) {
-        console.error(`Something went wrong while fetching the users: \n${handleError(error)}`);
+        console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
         console.error('Details:', error);
         alert('Something went wrong while fetching the users! See the console for details.');
       }
     }
+    /*    const downloadPicture = async () => {
+      const img = document.getElementById('myimg');
+      img.setAttribute('src', url);
+    }; */
 
-    fetchData();
+    fetchRandomPictureURL(); // TODO: or better const url = ....
+    // downloadPicture(randImageURL)
   }, []);
 
-  let content = <Spinner />;
+  const content = <Spinner />; // TODO: exchange with logo/animation
 
-  if (users) {
-    content = (
-      <div className="game">
-        <ul className="game user-list">
-          {users.map((user, index) => (
-            <Player user={user} key={`${user.userId}_with_index_${index}`} />
-          ))}
-        </ul>
-      </div>
-    );
+  if (randImageURL === '') {
+    return null;
   }
 
   return (
-    <div>
-      <BaseContainer className="game container">
-        <h2>Happy Coding!</h2>
 
-        <p className="game paragraph">
-          Get all users from secure endpoint:
-        </p>
-        {content}
-      </BaseContainer>
-    </div>
+    <Grid
+      container
+      direction="row"
+      justifyContent="space-evenly"
+      alignItems="center"
+    >
+
+      <Grid item xs={4} />
+      <Grid item xs={8}>
+        <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
+          placeholder
+        </Typography>
+        <Grid item xs={8}>
+          <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
+            RATE ME!
+          </Typography>
+        </Grid>
+        <ImageList sx={{ width: 550, height: 550 }} cols={1}>
+          <ImageListItem key="some unique key">
+            <img
+              src={randImageURL}
+              alt="random title"
+              loading="lazy"
+              style={{
+                objectFit: 'contain',
+                width: 550,
+                height: 550,
+              }}
+            />
+          </ImageListItem>
+        </ImageList>
+        <Box
+          sx={{
+            width: 200,
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <Rating
+            name="hover-feedback"
+            value={value}
+            /* defaultValue = {value} --> maybe this takes the value
+            from before and shows it with the next picture
+            TODO: adjust size, doesn't work yet */
+            size="large"
+            onChange={(event, newValue) => {
+              setValue(newValue);
+            }}
+            onChangeActive={(event, newHover) => {
+              setHover(newHover);
+            }}
+            emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
+          />
+          {value !== null && (
+            <Box sx={{ ml: 3 }}>{labels[hover !== -1 ? hover : value]}</Box>
+          )}
+        </Box>
+      </Grid>
+    </Grid>
+
   );
 }
 
