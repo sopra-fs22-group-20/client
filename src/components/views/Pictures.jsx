@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { api, handleError } from 'helpers/api';
 import { Spinner } from 'components/ui/Spinner';
 import PropTypes from 'prop-types';
@@ -26,8 +26,10 @@ import {
   DialogContent, DialogContentText, DialogActions, ImageList, ImageListItem, Rating,
 } from '@mui/material';
 import { useCookies } from 'react-cookie';
+import mapboxgl from '!mapbox-gl';
 import User from '../../models/User';
 import Image from '../../models/Image';
+import { mapboxAccessToken } from '../../helpers/mapboxConfig';
 
 // This function player is from individual assignment.
 
@@ -75,13 +77,20 @@ function Pictures() {
       // formerly: isRegistrationProcess: for server to decide how to handle passed object (login or registration process)
       const { id: userId } = cookies;
 
+      // refresh the page after deleting one image
+      setImages((prev) => {
+        const temp = [...prev];
+        const i = prev.findIndex((x) => x.imageId === imageId);
+        temp.splice(i, 1);
+        return temp;
+      });
+
       const response = await api.delete(`/images/${imageId}`, { headers: { userId } });
     } catch (error) {
       console.log(error.response);
       alert(`Something went wrong during the registration: \n${handleError(error)}`);
     }
   };
-  // Get - DELETE - POST - PUT
 
   // fetching pictures
   useEffect(() => {
@@ -168,6 +177,36 @@ function Pictures() {
 function DisplayImage({ image, deleteImage }) {
   const [value, setValue] = React.useState(2);
 
+  mapboxgl.accessToken = mapboxAccessToken;
+  const mapContainerRef = useRef(null);
+  const [zoom, setZoom] = useState(5);
+  const location = JSON.parse(image.location);
+  console.log(location);
+  // Initialize map when component mounts
+  useEffect(() => {
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [location.lng - 3, location.lat - 4],
+      zoom,
+    });
+    /*
+    // Add navigation control (the +/- zoom buttons)
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    map.on('move', () => {
+      setLng(map.getCenter().lng.toFixed(4));
+      setLat(map.getCenter().lat.toFixed(4));
+      setZoom(map.getZoom().toFixed(2));
+    });
+*/
+    const marker = new mapboxgl.Marker({
+      draggable: false,
+    })
+      .setLngLat([location.lng, location.lat])
+      .addTo(map);
+  }, []);
+
   return (
 
     <Box sx={{ width: '100%' }}>
@@ -191,6 +230,7 @@ function DisplayImage({ image, deleteImage }) {
                   Title:
                   {' '}
                   {image.name}
+                  {' '}
                 </p>
               </div>
             </div>
@@ -204,13 +244,9 @@ function DisplayImage({ image, deleteImage }) {
                 >
                   <Typography><p> Show the Location</p></Typography>
                 </AccordionSummary>
-                <AccordionDetails>
-                  <Typography>
-                    <p>
-                      Location:
-                      {image.location}
-                    </p>
-                  </Typography>
+                <AccordionDetails style={{ overflow: 'hidden' }}>
+                  <div ref={mapContainerRef} className="map-container" />
+
                 </AccordionDetails>
               </Accordion>
             </p>
@@ -220,8 +256,13 @@ function DisplayImage({ image, deleteImage }) {
                   '& > legend': { mt: 2 },
                 }}
               >
-                <Typography component="legend"><p>Number of Ratings: X</p></Typography>
-                <Rating name="read-only" value={value} readOnly size="large" />
+                <Typography component="legend">
+                  <p>
+                    Number of Ratings:
+                    {image.ratingCounter}
+                  </p>
+                </Typography>
+                <Rating name="read-only" value={image.rating} readOnly size="large" />
               </Box>
             </p>
             <Button variant="contained" onClick={() => deleteImage(image.imageId)} size="large" color="error">Delete</Button>

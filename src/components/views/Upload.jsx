@@ -4,6 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 import {
   ref, uploadBytes, getDownloadURL, getStorage,
 } from 'firebase/storage';
+import AccordionDetails from '@mui/material/AccordionDetails';
 import mapboxgl from '!mapbox-gl';
 import 'styles/ui/mapContainer.scss';
 import {
@@ -346,7 +347,10 @@ function Upload() {
           </Typography>
         </Grid>
         <Grid item xs={12}>
-          <div ref={mapContainerRef} className="map-container" />
+          <AccordionDetails style={{ overflow: 'hidden' }}>
+            <div ref={mapContainerRef} className="map-container" />
+
+          </AccordionDetails>
         </Grid>
       </Grid>
     </Grid>

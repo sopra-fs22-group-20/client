@@ -48,7 +48,7 @@ export function Navigation() {
                 {
                     [{ path: '/home', name: 'Home' },
                       { path: '/highlights', name: 'Highlights' },
-                      { path: '/settings', name: 'Settings' },
+                      { path: '/ProfilePage', name: 'Profile Page' },
                       { path: '/pictures', name: 'Pictures' },
                       { path: '/upload', name: 'Upload' },
                     ].map((element, index) => (
@@ -66,7 +66,7 @@ export function Navigation() {
         <Grid item xs={1}>
           <Button
             variant="outlined"
-            size="large"
+            size="medium"
             onClick={() => {
               removeCookie('token', { path: '/' });
               removeCookie('id', { path: '/' });

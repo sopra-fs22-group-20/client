@@ -6,6 +6,7 @@ class Image {
     this.location = null;
     this.storageLink = null;
     this.rating = null;
+    this.ratingCounter = null;
     Object.assign(this, data);
   }
 }
