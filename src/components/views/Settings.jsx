@@ -44,18 +44,40 @@ function Settings() {
   const history = useHistory();
 
   const [username, setUsername] = useState(null);
+  const [moreInfo, setmoreInfo] = useState(null);
+  const [user, setUser] = useState(1);
   const [password, setPassword] = useState(null);
   const [instagram, setInstagram] = useState(null);
   const { id } = useParams();
-  const [cookies, _setCookie] = useCookies(['id']);
+  const [cookies, _setCookie] = useCookies(['userId', 'userData']);
+
+  const { userData } = cookies;
 
   // This function is responsible for sending request to server to change the username
+  /*
+  useEffect(() => {
+    // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
+    async function fetchData() {
+      try {
+        const { id: userId } = cookies;
+        const response = await api.get(`/users/${userId}`, { headers: { userId } });
 
-  const changeUsername = async () => {
+        // Get the returned profile
+        setUser(response.data);
+        // console.log("User has been set");
+      } catch (error) {
+        console.error(`Something went wrong while fetching the User: \n${handleError(error)}`);
+        console.error('Details:', error);
+        alert('Something went wrong while fetching the User! See the console for details.');
+      }
+    }
+
+    fetchData();
+  }, []);
+  const getUserData = async () => {
     try {
       const { id: userId } = cookies;
-      const requestBody = JSON.stringify({ id: userId, username });
-      const response = await api.put(`/users/${userId}`, requestBody, { headers: { userId } });
+      const response = await api.get(`/users/${userId}`);
 
       // Get the returned user and update a new object.
       const user = new User(response.data);
@@ -63,8 +85,27 @@ function Settings() {
       // This command reloads the page
       // window.location.reload(false);
       console.log(username);
+      setCookie('userData', { ...userData, username: user.username }, { path: '/' });
     } catch (error) {
       console.log(username);
+      alert(`Something went wrong while changing the username. \n${handleError(error)}`);
+    }
+  }; */
+
+  const changeUsername = async () => {
+    try {
+      const { id: userId } = cookies;
+      const requestBody = JSON.stringify({ id: userId, username });
+      const response = await api.put(`/users/${userId}`, requestBody, { headers: { userId } });
+
+      _setCookie('userData', { ...userData, username }, { path: '/' });
+      setUsername('');
+      // Get the returned user and update a new object.
+      // const user = new User(response.data);
+
+      // This command reloads the page
+      // window.location.reload(false);
+    } catch (error) {
       alert(`Something went wrong while changing the username. \n${handleError(error)}`);
     }
   };
@@ -73,33 +114,38 @@ function Settings() {
 
   const changePassword = async () => {
     try {
-      const requestBody = JSON.stringify({ id: id2, password });
-      const response = await api.put(`/users/${urla2}`, requestBody);
+      const { id: userId } = cookies;
+      const requestBody = JSON.stringify({ id: userId, password });
+      const response = await api.put(`/users/${userId}`, requestBody, { headers: { userId } });
 
+      _setCookie('userData', { ...userData, password }, { path: '/' });
+      setmoreInfo('');
       // Get the returned user and update a new object.
-      const user = new User(response.data);
+      // const user = new User(response.data);
 
       // This command reloads the page
-      window.location.reload(false);
+      // window.location.reload(false);
     } catch (error) {
-      alert(`Something went wrong while changing the password. \n${handleError(error)}`);
+      alert(`Something went wrong while changing the username. \n${handleError(error)}`);
     }
   };
-
   // This function is responsible for sending request to server to change the Instagram account name
 
-  const changeInstagram = async () => {
+  const changeMoreInfo = async () => {
     try {
-      const requestBody = JSON.stringify({ id: id2, instagram });
-      const response = await api.put(`/users/${urla2}`, requestBody);
+      const { id: userId } = cookies;
+      const requestBody = JSON.stringify({ id: userId, moreInfo });
+      const response = await api.put(`/users/${userId}`, requestBody, { headers: { userId } });
 
+      _setCookie('userData', { ...userData, moreInfo }, { path: '/' });
+      setmoreInfo('');
       // Get the returned user and update a new object.
-      const user = new User(response.data);
+      // const user = new User(response.data);
 
       // This command reloads the page
-      window.location.reload(false);
+      // window.location.reload(false);
     } catch (error) {
-      alert(`Something went wrong while changing the instagram account. \n${handleError(error)}`);
+      alert(`Something went wrong while changing the username. \n${handleError(error)}`);
     }
   };
 
@@ -111,15 +157,15 @@ function Settings() {
       <main>
         <div>
           <Container maxWidth="sm">
-            <Typography variant="h2" align="left" color="textPrimary" gutterBottom>
-              Settings
-            </Typography>
+            <Typography variant="h2" align="left" color="textPrimary" gutterBottom />
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
-              On the settings page, you can update your account settings.
+              On this page you can update your account settings.
             </Typography>
             <div>
               <Typography variant="subtitle2" gutterBottom component="div">
-                Your username: Aleks
+                Your username:
+                {' '}
+                {userData.username}
               </Typography>
               <Grid container spacing={6}>
                 <Grid item xs={6}>
@@ -176,6 +222,7 @@ function Settings() {
                       label="Password"
                       type="password"
                       autoComplete="current-password"
+                      onChange={(un) => setPassword(un.target.value)}
                     />
                   </Box>
                 </Grid>
@@ -195,7 +242,9 @@ function Settings() {
             </div>
             <div>
               <Typography variant="subtitle2" gutterBottom component="div">
-                Instagram: @Aleks_04_2022
+                More Information:
+                {' '}
+                {userData.moreInfo}
               </Typography>
               <Grid container spacing={6}>
                 <Grid item xs={6}>
@@ -207,17 +256,17 @@ function Settings() {
                     noValidate
                     autoComplete="off"
                   >
-                    <TextField id="outlined-basic" label="Enter a new Instagram Account" variant="outlined" />
+                    <TextField id="outlined-basic" label="Enter more information" variant="outlined" onChange={(un) => setmoreInfo(un.target.value)} value={moreInfo} />
                   </Box>
                 </Grid>
                 <Grid item xs={6}>
                   <Button
                     variant="contained"
                     onClick={() => {
-                      changeInstagram();
+                      changeMoreInfo();
                     }}
                   >
-                    Change Instagram
+                    Update new Information
                   </Button>
                 </Grid>
 
