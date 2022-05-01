@@ -52,7 +52,7 @@ function ProfilePage() {
 
   const [value, setValue] = React.useState(2);
   const [user, setUser] = useState(1); // Am Anfang ist User Null. Mit SetUser habe ich eine Funktion, die die Data vom Backend dem User zuweist. User ist hier wie ein Container. Wenn ich die Seite wechsle ist es wieder Null. Nur lokal.
-  const [cookies, _setCookie] = useCookies(['userId']);
+  const [cookies, _setCookie] = useCookies(['id']);
   const EditProfile = async (userId) => {
     try {
       // const token = localStorage.getItem('token');

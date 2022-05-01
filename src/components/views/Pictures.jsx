@@ -68,7 +68,7 @@ function Pictures() {
   // more information can be found under https://reactjs.org/docs/hooks-state.html
   const [users, setUsers] = useState(null);
   const [images, setImages] = useState(null);
-  const [cookies, _setCookie] = useCookies(['userId']);
+  const [cookies, _setCookie] = useCookies(['id']);
 
   // delete request
 

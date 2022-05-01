@@ -47,7 +47,7 @@ function Settings() {
   const [password, setPassword] = useState(null);
   const [instagram, setInstagram] = useState(null);
   const { id } = useParams();
-  const [cookies, _setCookie] = useCookies(['userId']);
+  const [cookies, _setCookie] = useCookies(['id']);
 
   // This function is responsible for sending request to server to change the username
 

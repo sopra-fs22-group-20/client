@@ -14,7 +14,7 @@ function Login() {
   const history = useHistory();
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
-  const [_cookies, setCookie] = useCookies(['userId', 'token']);
+  const [_cookies, setCookie] = useCookies(['id', 'token']);
 
   const doLogin = async () => {
     try {

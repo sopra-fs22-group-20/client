@@ -38,7 +38,7 @@ function Register() {
       const user = new User(response.data);
 
       // Store the userId in a cookie
-      setCookie('id', user.id, { path: '/' });
+      setCookie('id', user.userId, { path: '/' });
       setCookie('token', user.token, { path: '/' });
 
       // Login successfully worked --> navigate to the route /home in the HomeRouter

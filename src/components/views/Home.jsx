@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { api, handleError } from 'helpers/api';
 import { Spinner } from 'components/ui/Spinner';
 import BaseContainer from 'components/ui/BaseContainer';
@@ -17,12 +17,10 @@ import { getDomain } from '../../helpers/getDomain';
 function Home() {
   // TODO: imageURL is directly there when rendering
   const [randImageURL, setRandImageURL] = useState('');
-  const [randImage, setRandImage] = useState(null);
-  const [ImageId, setImageId] = useState(null); // TODO: maybe type string;
+  const [imageId, setImageId] = useState(null); // TODO: maybe type string;
   const [rating, setRating] = React.useState(0); // TODO: fix number
-  const [hover, setHover] = React.useState(-1);
-  const [cookies, _setCookie] = useCookies(['userId']);
-  const history = useHistory();
+  const [hover, setHover] = React.useState(0);
+  const [cookies, _setCookie] = useCookies(['id']);
 
   const labels = {
     1: 'Ewwww!',
@@ -36,16 +34,17 @@ function Home() {
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
     async function fetchRandomPictureURL() {
       try {
-        // const response = await api.get('/Images'); // TODO: specify call to backend
+        const response = await api.get('/images'); // TODO: specify call to backend
 
-        const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
+        // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
         // const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
         // eslint-disable-next-line
         // await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Get the returned image URL and update the state.
-        // setRandImageURL(response.data);
-        setRandImageURL(response);
+        const randomImage = response.data;
+        setImageId(randomImage.imageId);
+        setRandImageURL(randomImage.storageLink);
       } catch (error) {
         console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
         console.error('Details:', error);
@@ -59,7 +58,7 @@ function Home() {
 
     fetchRandomPictureURL(); // TODO: or better const url = ....
     // downloadPicture(randImageURL)
-  }, []);
+  }, [rating]);
 
   const content = <Spinner />; // TODO: exchange with logo/animation
 
@@ -67,11 +66,11 @@ function Home() {
     return null;
   }
 
-  const rateImage = () => {
+  const rateImage = (newRatingValue) => {
     const { id: userId } = cookies;
     const requestBody = JSON.stringify({
-      ...ImageId,
-      rating,
+      imageId,
+      rating: newRatingValue,
     });
     const authAxios = axios.create({
       baseURL: getDomain(),
@@ -98,74 +97,132 @@ function Home() {
       alignItems="center"
     >
 
-      <Grid item xs={7} />
-      <Grid
-        item
-        xs={5}
-        alignItems="center"
-        rowSpacing={2}
-        direction="column"
-        justifyContent="flex-start"
-      >
+      {/* left side of screen: columns with categories, game */}
+      <Grid item xs={7}>
         <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
           placeholder
         </Typography>
-        <Grid item xs={8} />
+      </Grid>
 
-        <Grid>
-          <item>
+      {/* right side of screen: columns with picture, rating */}
+      <Grid
+        item
+        xs={5}
+      >
+        <Grid
+          container
+          rowSpacing={2}
+          direction="column"
+          justifyContent="flex-start"
+          alignItems="center"
+          style={{
+            height: 'calc(100vh - 90px)',
+          }}
+        >
+
+          <Grid
+            item
+            style={{
+              height: '10%',
+            }}
+          >
             <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
               RATE ME!
             </Typography>
-          </item>
+          </Grid>
 
-          <item>
-            <ImageList sx={{ width: 550, height: 550 }} cols={1}>
-              <ImageListItem key="some unique key">
+          <Grid
+            item
+            style={{
+              height: '75%',
+            }}
+          >
+            {
+              /*
+              <div>test</div>
+
+               */
+            }
+            <ImageList sx={{ width: 1, height: 1 }} cols={1} align="center">
+              <ImageListItem
+                key="some unique key"
+                style={{
+                  objectFit: 'contain',
+                  height: '100%',
+                  maxHeight: '100%',
+                  maxWidth: '100%',
+                  minHeight: '100%',
+                }}
+              >
                 <img
                   src={randImageURL}
                   alt="random title"
                   loading="lazy"
                   style={{
                     objectFit: 'contain',
-                    width: 550,
-                    height: 550,
+                    height: '100%',
+                    maxHeight: '100%',
+                    minHeight: '100%',
                   }}
                 />
               </ImageListItem>
             </ImageList>
-          </item>
-          <item>
-            <Box
-              sx={{
-                width: 'auto',
-                height: 'auto',
-                display: 'flex',
-                alignItems: 'center',
+
+          </Grid>
+
+          <Grid
+            item
+            style={{
+              height: '15%',
+            }}
+          >
+            <Grid
+              container
+              direction="column"
+              justifyContent="flex-start"
+              alignItems="center"
+              style={{
+                height: '100%',
               }}
             >
-              <Rating
-                name="hover-feedback"
-                value={rating}
+
+              <Grid
+                item
+                style={{
+                  height: '80%',
+
+                }}
+
+              >
+
+                <Rating
+                  name="hover-feedback"
       /* defaultValue = {value} --> maybe this takes the value
       from before and shows it with the next picture
       TODO: adjust size, doesn't work yet */
-                size="large"
-                onChange={(event, newValue) => {
-                  setRating(newValue); rateImage();
-                }}
-                onChangeActive={(event, newHover) => {
-                  setHover(newHover);
-                }}
-                emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-              />
-              <Box sx={{ ml: 3 }}>
-                {labels[hover !== -1 ? hover : rating]}
-                {/* TODO: maybe fix : rating as there might otherwise show the previously assigned rating value with the next picture */}
-              </Box>
-            </Box>
-          </item>
+                  align="center"
+                  value={0}
+                  onChange={(event, newValue) => {
+                    setRating(newValue); rateImage(newValue);
+                  }}
+                  onChangeActive={(event, newHover) => {
+                    setHover(newHover);
+                  }}
+                  emptyIcon={<StarIcon style={{ opacity: 0.55, fontSize: '3vw' }} />}
+                  icon={<StarIcon style={{ opacity: 0.55, fontSize: '3vw' }} />}
+                />
+              </Grid>
+              <Grid item style={{ paddingTop: '0px', height: '20%' }}>
+                <div>
+                  {labels[hover]}
 
+                  {/* TODO: maybe fix : rating as there might otherwise show the previously assigned rating value with the next picture */}
+
+                </div>
+
+              </Grid>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </Grid>
