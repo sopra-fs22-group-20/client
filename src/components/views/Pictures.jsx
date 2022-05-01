@@ -161,12 +161,7 @@ function Pictures() {
 
     <div>
       <h2>Pictures</h2>
-      <p>On this page, you can see your uploaded pictures and you can upload new ones!</p>
-      <Button variant="contained" href="/upload/" color="success">
-        Upload a new picture!
-      </Button>
-      <h3>Your pictures</h3>
-      <p>Below, you can your uploaded pictures!</p>
+      <p>On this page, you can see your uploaded pictures!</p>
 
       {content}
     </div>
@@ -234,7 +229,7 @@ function DisplayImage({ image, deleteImage }) {
                 </p>
               </div>
             </div>
-            <p>Category: Coming Soon</p>
+            <p>Category: Coming soon</p>
 
             <p>
               <Accordion>
