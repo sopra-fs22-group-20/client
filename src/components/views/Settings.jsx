@@ -47,7 +47,9 @@ function Settings() {
   const [password, setPassword] = useState(null);
   const [instagram, setInstagram] = useState(null);
   const { id } = useParams();
-  const [cookies, _setCookie] = useCookies(['userId']);
+  const [cookies, _setCookie] = useCookies(['userId', 'userData']);
+
+  const { userData } = cookies;
 
   // This function is responsible for sending request to server to change the username
 
@@ -119,7 +121,9 @@ function Settings() {
             </Typography>
             <div>
               <Typography variant="subtitle2" gutterBottom component="div">
-                Your username: Aleks
+                Your username:
+                {' '}
+                {userData.username}
               </Typography>
               <Grid container spacing={6}>
                 <Grid item xs={6}>

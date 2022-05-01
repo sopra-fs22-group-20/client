@@ -27,6 +27,7 @@ function Login() {
       // Store the token into the local storage.
       setCookie('id', user.userId, { path: '/' });
       setCookie('token', user.token, { path: '/' });
+      setCookie('userData', user, { path: '/' });
       // Login successfully worked --> navigate to the route /home in the HomeRouter
       history.push('/home');
     } catch (error) {
