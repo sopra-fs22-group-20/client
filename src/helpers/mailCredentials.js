@@ -1,5 +1,5 @@
 const Username = 'rateme.category.suggestion@gmail.com';
-const Password = 'zxfGkaeX2jBJ3*Z:';
+const Password = process.env.REACT_APP_MAILCREDENTIALS_PASSWORD;
 const To = 'rateme_category_suggestion@protonmail.com';
 const From = 'rateme.category.suggestion@gmail.com';
 
