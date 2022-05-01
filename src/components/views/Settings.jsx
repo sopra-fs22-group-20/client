@@ -158,11 +158,11 @@ function Settings() {
         <div>
           <Container maxWidth="sm">
             <Typography variant="h2" align="left" color="textPrimary" gutterBottom />
-            <Typography variant="h5" align="center" color="textSecondary" paragraph>
+            <Typography variant="h4" align="center" color="textSecondary" paragraph>
               On this page you can update your account settings.
             </Typography>
             <div>
-              <Typography variant="subtitle2" gutterBottom component="div">
+              <Typography variant="h5" gutterBottom component="div">
                 Your username:
                 {' '}
                 {userData.username}
@@ -204,7 +204,7 @@ function Settings() {
             {/* Before you put here onChange in the TextField wait to see how it works for ChangeUsername. Wait until server is ready for that. */}
 
             <div>
-              <Typography variant="subtitle2" gutterBottom component="div">
+              <Typography variant="h5" gutterBottom component="div">
                 Your password: **********
               </Typography>
               <Grid container spacing={6}>
@@ -241,7 +241,7 @@ function Settings() {
 
             </div>
             <div>
-              <Typography variant="subtitle2" gutterBottom component="div">
+              <Typography variant="h5" gutterBottom component="div">
                 More Information:
                 {' '}
                 {userData.moreInfo}

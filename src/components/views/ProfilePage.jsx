@@ -110,9 +110,13 @@ function ProfilePage() {
                 <Item>
                   {' '}
                   <br />
-                  Member since:
-                  {' '}
-                  {user.creationDate}
+                  <Typography variant="h5" gutterBottom component="div">
+                    Member since:
+                    {' '}
+                    {user.creationDate}
+
+                  </Typography>
+
                   {' '}
                   {' '}
                   {/* Instead of "Creation Date" write {user.creationDate} */}
@@ -127,17 +131,22 @@ function ProfilePage() {
                       '& > legend': { mt: 2 },
                     }}
                   >
-                    <Typography component="legend">Your average Rating</Typography>
+                    <Typography component="legend" variant="h5">Your average Rating</Typography>
                     <Rating name="read-only" value={3} readOnly />
                   </Box>
                 </Item>
               </Grid>
               <Grid item xs={8}>
                 <Item>
-                  More information:
-                  {' '}
-                  <br />
-                  {userData.moreInfo}
+
+                  <Typography variant="h5" gutterBottom component="div">
+                    More information:
+                    {' '}
+                    <br />
+                    {userData.moreInfo}
+
+                  </Typography>
+
                 </Item>
               </Grid>
             </Grid>
