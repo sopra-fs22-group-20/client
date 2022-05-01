@@ -1,9 +1,37 @@
-import { Button } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { api, handleError } from 'helpers/api';
 import { Spinner } from 'components/ui/Spinner';
 import PropTypes from 'prop-types';
 import 'styles/views/Game.scss';
+import { styled } from '@mui/material/styles';
+import Accordion from '@mui/material/Accordion';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+
+import {
+  Grid,
+  Typography,
+  Button,
+  Box,
+  Paper,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Menu,
+  Dialog,
+  DialogTitle,
+  DialogContent, DialogContentText, DialogActions, ImageList, ImageListItem, Rating,
+} from '@mui/material';
+import { useCookies } from 'react-cookie';
+import mapboxgl from '!mapbox-gl';
+import User from '../../models/User';
+import Image from '../../models/Image';
+import { mapboxAccessToken } from '../../helpers/mapboxConfig';
+
+// This function player is from individual assignment.
 
 function Player({ user }) {
   return (
@@ -18,6 +46,14 @@ function Player({ user }) {
   );
 }
 
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
+
 Player.propTypes = {
   user: PropTypes.object.isRequired,
 };
@@ -31,47 +67,61 @@ function Pictures() {
   // a component can have as many state variables as you like.
   // more information can be found under https://reactjs.org/docs/hooks-state.html
   const [users, setUsers] = useState(null);
+  const [images, setImages] = useState(null);
+  const [cookies, _setCookie] = useCookies(['userId']);
 
-  // the effect hook can be used to react to change in your component.
-  // in this case, the effect hook is only run once, the first time the component is mounted
-  // this can be achieved by leaving the second argument an empty array.
-  // for more information on the effect hook, please see https://reactjs.org/docs/hooks-effect.html
+  // delete request
+
+  const deleteImage = async (imageId) => {
+    try {
+      // formerly: isRegistrationProcess: for server to decide how to handle passed object (login or registration process)
+      const { id: userId } = cookies;
+
+      // refresh the page after deleting one image
+      setImages((prev) => {
+        const temp = [...prev];
+        const i = prev.findIndex((x) => x.imageId === imageId);
+        temp.splice(i, 1);
+        return temp;
+      });
+
+      const response = await api.delete(`/images/${imageId}`, { headers: { userId } });
+    } catch (error) {
+      console.log(error.response);
+      alert(`Something went wrong during the registration: \n${handleError(error)}`);
+    }
+  };
+
+  // fetching pictures
   useEffect(() => {
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
-    async function fetchData() {
+    async function fetchPictures() {
       try {
-        const response = await api.get('/users');
+        const { id: userId } = cookies;
+        const response = await api.get(`/images/all/${userId}`);
 
-        // delays continuous execution of an async operation for 1 second.
-        // This is just a fake async call, so that the spinner can be displayed
-        // feel free to remove it :)
-        // eslint-disable-next-line
-                await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        // Get the returned users and update the state.
-        setUsers(response.data);
+        setImages(response.data);
 
-        // This is just some data for you to see what is available.
-        // Feel free to remove it.
         console.log('request to:', response.request.responseURL);
         console.log('status code:', response.status);
         console.log('status text:', response.statusText);
         console.log('requested data:', response.data);
-
-        // See here to get more data.
-        console.log(response);
       } catch (error) {
-        console.error(`Something went wrong while fetching the users: \n${handleError(error)}`);
+        console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
         console.error('Details:', error);
-        alert('Something went wrong while fetching the users! See the console for details.');
+        alert('Something went wrong while fetching the images! See the console for details.');
       }
     }
 
-    fetchData();
+    fetchPictures();
   }, []);
 
   let content = <Spinner />;
 
+  // This is from individual assignment
+  /*
   if (users) {
     content = (
       <div className="game">
@@ -84,7 +134,31 @@ function Pictures() {
     );
   }
 
+ */
+
+  if (images) {
+    content = (
+      <Grid
+        container
+        direction="row"
+        justifyContent="flex-start"
+        alignItems="flex-start"
+      >
+
+        <item>
+          <ul className="image list">
+            {images.map((image) => (
+              <DisplayImage image={image} deleteImage={deleteImage} />
+            ))}
+          </ul>
+        </item>
+
+      </Grid>
+    );
+  }
+
   return (
+
     <div>
       <h2>Pictures</h2>
       <p>On this page, you can see your uploaded pictures and you can upload new ones!</p>
@@ -94,11 +168,112 @@ function Pictures() {
       <h3>Your pictures</h3>
       <p>Below, you can your uploaded pictures!</p>
 
-      <p className="game paragraph">
-        Get all users from secure endpoint:
-      </p>
       {content}
     </div>
+
+  );
+}
+
+function DisplayImage({ image, deleteImage }) {
+  const [value, setValue] = React.useState(2);
+
+  mapboxgl.accessToken = mapboxAccessToken;
+  const mapContainerRef = useRef(null);
+  const [zoom, setZoom] = useState(5);
+  const location = JSON.parse(image.location);
+  console.log(location);
+  // Initialize map when component mounts
+  useEffect(() => {
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [location.lng - 3, location.lat - 4],
+      zoom,
+    });
+    /*
+    // Add navigation control (the +/- zoom buttons)
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    map.on('move', () => {
+      setLng(map.getCenter().lng.toFixed(4));
+      setLat(map.getCenter().lat.toFixed(4));
+      setZoom(map.getZoom().toFixed(2));
+    });
+*/
+    const marker = new mapboxgl.Marker({
+      draggable: false,
+    })
+      .setLngLat([location.lng, location.lat])
+      .addTo(map);
+  }, []);
+
+  return (
+
+    <Box sx={{ width: '100%' }}>
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+        <Grid item xs={6}>
+          <Item>
+            <img
+              style={{ objectFit: 'contain', width: '100%' }}
+              src={image.storageLink}
+              height={250}
+
+              alt="new"
+            />
+          </Item>
+        </Grid>
+        <Grid item xs={6}>
+          <Item>
+            <div className="image">
+              <div className="image title">
+                <p align="center">
+                  Title:
+                  {' '}
+                  {image.name}
+                  {' '}
+                </p>
+              </div>
+            </div>
+            <p>Category XYZ</p>
+            <p>
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography><p> Show the Location</p></Typography>
+                </AccordionSummary>
+                <AccordionDetails style={{ overflow: 'hidden' }}>
+                  <div ref={mapContainerRef} className="map-container" />
+
+                </AccordionDetails>
+              </Accordion>
+            </p>
+            <p>
+              <Box
+                sx={{
+                  '& > legend': { mt: 2 },
+                }}
+              >
+                <Typography component="legend">
+                  <p>
+                    Number of Ratings:
+                    {image.ratingCounter}
+                  </p>
+                </Typography>
+                <Rating name="read-only" value={image.rating} readOnly size="large" />
+              </Box>
+            </p>
+            <Button variant="contained" onClick={() => deleteImage(image.imageId)} size="large" color="error">Delete</Button>
+            <p />
+          </Item>
+        </Grid>
+
+      </Grid>
+      <br />
+    </Box>
+
   );
 }
 

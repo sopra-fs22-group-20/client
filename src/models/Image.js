@@ -1,9 +1,12 @@
 class Image {
   constructor(data = {}) {
-    this.title = null;
+    this.imageId = null;
+    this.name = null;
     this.category = null;
     this.location = null;
-    this.downloadURL = null;
+    this.storageLink = null;
+    this.rating = null;
+    this.ratingCounter = null;
     Object.assign(this, data);
   }
 }
