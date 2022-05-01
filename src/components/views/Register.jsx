@@ -21,7 +21,7 @@ function Register() {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [_cookies, setCookie] = useCookies(['userId', 'token']);
+  const [_cookies, setCookie] = useCookies(['id', 'token']);
 
   const doRegistration = async () => {
     try {
@@ -37,8 +37,8 @@ function Register() {
       // Get the returned user and update a new object.
       const user = new User(response.data);
 
-      // Store the token into the local storage.
-      setCookie('id', user.userId, { path: '/' });
+      // Store the userId in a cookie
+      setCookie('id', user.id, { path: '/' });
       setCookie('token', user.token, { path: '/' });
 
       // Login successfully worked --> navigate to the route /home in the HomeRouter
