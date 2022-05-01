@@ -52,7 +52,9 @@ function ProfilePage() {
 
   const [value, setValue] = React.useState(2);
   const [user, setUser] = useState(1); // Am Anfang ist User Null. Mit SetUser habe ich eine Funktion, die die Data vom Backend dem User zuweist. User ist hier wie ein Container. Wenn ich die Seite wechsle ist es wieder Null. Nur lokal.
-  const [cookies, _setCookie] = useCookies(['userId']);
+  const [cookies, _setCookie] = useCookies(['userId', 'userData']);
+  const { userData } = cookies;
+
   const EditProfile = async (userId) => {
     try {
       // const token = localStorage.getItem('token');
@@ -95,7 +97,10 @@ function ProfilePage() {
       <div>
         <Container maxWidth="sm">
           <Typography variant="h2" align="center" color="textPrimary" gutterBottom>
-            Welcome Aleks!
+            Welcome
+            {' '}
+            {userData.username}
+            !
 
           </Typography>
 
@@ -103,19 +108,16 @@ function ProfilePage() {
             <Grid container spacing={2} columns={16}>
               <Grid item xs={8}>
                 <Item>
-                  Stats:
                   {' '}
                   <br />
                   Member since:
                   {' '}
                   {user.creationDate}
                   {' '}
-                  <br />
                   {' '}
                   {/* Instead of "Creation Date" write {user.creationDate} */}
-                  4 Pictures posted
+                  {/* write how many pictures were posted */}
                   {' '}
-                  <br />
                   {' '}
                   {/* Instead of "AverageRating" write {AverageRating} when its available */}
 
@@ -132,10 +134,10 @@ function ProfilePage() {
               </Grid>
               <Grid item xs={8}>
                 <Item>
-                  Social Media
+                  More information:
                   {' '}
                   <br />
-                  Instagram Account: @Aleks_04_2022
+                  {userData.moreInfo}
                 </Item>
               </Grid>
             </Grid>

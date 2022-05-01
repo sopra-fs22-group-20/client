@@ -234,7 +234,8 @@ function DisplayImage({ image, deleteImage }) {
                 </p>
               </div>
             </div>
-            <p>Category XYZ</p>
+            <p>Category: Coming Soon</p>
+
             <p>
               <Accordion>
                 <AccordionSummary
