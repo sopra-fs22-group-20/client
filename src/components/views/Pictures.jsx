@@ -179,13 +179,15 @@ function DisplayImage({ image, deleteImage }) {
   console.log(location);
   // Initialize map when component mounts
   useEffect(() => {
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [location.lng - 3, location.lat - 4],
-      zoom,
-    });
-    /*
+    if (location) {
+      const map = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [location.lng - 3, location.lat - 4],
+        zoom,
+      });
+
+      /*
     // Add navigation control (the +/- zoom buttons)
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
@@ -195,11 +197,12 @@ function DisplayImage({ image, deleteImage }) {
       setZoom(map.getZoom().toFixed(2));
     });
 */
-    const marker = new mapboxgl.Marker({
-      draggable: false,
-    })
-      .setLngLat([location.lng, location.lat])
-      .addTo(map);
+      const marker = new mapboxgl.Marker({
+        draggable: false,
+      })
+        .setLngLat([location.lng, location.lat])
+        .addTo(map);
+    }
   }, []);
 
   return (
