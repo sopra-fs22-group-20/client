@@ -40,6 +40,7 @@ const CATEGORIES = [
   { value: 'Autos', name: 'Autos' },
   { value: 'Katzen', name: 'Katzen' },
   { value: 'Hunde', name: 'Hunde' },
+  { value: 'Fish', name: 'Fish' },
   { value: 'New', name: '...suggest new category' },
 ];
 
@@ -153,6 +154,7 @@ function Upload() {
             name,
             location,
             storageLink,
+            category,
           });
           console.log('Request:', requestBody);
 
