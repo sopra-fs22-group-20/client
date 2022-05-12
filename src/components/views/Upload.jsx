@@ -5,7 +5,8 @@ import {
   ref, uploadBytes, getDownloadURL, getStorage,
 } from 'firebase/storage';
 import AccordionDetails from '@mui/material/AccordionDetails';
-import mapboxgl from '!mapbox-gl';
+import 'styles/mapbox-gl.css';
+
 import 'styles/ui/mapContainer.scss';
 import {
   Grid,
@@ -21,9 +22,10 @@ import {
   DialogTitle,
   DialogContent, DialogContentText, DialogActions,
 } from '@mui/material';
-
+import Alert from '@mui/material/Alert';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
+import mapboxgl from '!mapbox-gl';
 import { mapboxAccessToken } from '../../helpers/mapboxConfig';
 import { api, handleError } from '../../helpers/api';
 import FormField from './FormField';
@@ -50,7 +52,7 @@ function Upload() {
   const [isNewCategory, setIsNewCategory] = useState(false);
   const [newCategorySuggestion, setNewCategorySuggestion] = useState('');
   const [cookies, _setCookie] = useCookies(['userId']);
-
+  const [success, setSuccess] = useState(false);
   // const for map api
 
   mapboxgl.accessToken = mapboxAccessToken;
@@ -82,7 +84,7 @@ function Upload() {
     const marker = new mapboxgl.Marker({
       draggable: true,
     })
-      .setLngLat([11, 51])
+      .setLngLat([8.5, 47])
       .addTo(map);
     function onDragEnd() {
       console.log(marker._lngLat);
@@ -107,11 +109,6 @@ function Upload() {
       });
 
       const response = await api.post('/upload', requestBody);
-
-      // Get the returned user and update a new object.
-
-      // Login successfully worked --> navigate to the route /pictures
-      history.push('/pictures');
     } catch (error) {
       alert(`Something went wrong during the creation of your picture: \n${handleError(error)}`);
     }
@@ -168,6 +165,7 @@ function Upload() {
           console.log(userId);
           const response = await authAxios.post('/images', requestBody);
           console.log(response);
+          setSuccess(true);
         });
         console.log('Uploaded a blob or file!');
         // Store the new downloadURL together with credentials in Databse:
@@ -225,6 +223,7 @@ function Upload() {
       direction="row"
       justifyContent="flex-start"
       alignItems="flex-start"
+      style={{ background: '#e8e2e2' }}
     >
       <Grid item xs={12}>
         <Grid
@@ -245,6 +244,16 @@ function Upload() {
 
           </Grid>
         </Grid>
+        {success && (
+        <div>
+          <Alert onClose={() => setSuccess(false)}>
+            {' '}
+            <Typography variant="h5" style={{ fontWeight: 'bold' }} align="center">
+              You have successfully uploaded a picture!
+            </Typography>
+          </Alert>
+        </div>
+        )}
         <Grid
           container
           direction="row"
@@ -253,6 +262,7 @@ function Upload() {
           style={{ marginTop: '30px' }}
           spacing={2}
         >
+
           <Grid item xs={12}>
             <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
               Select image

@@ -178,12 +178,13 @@ function DisplayImage({ image, deleteImage }) {
   const location = JSON.parse(image.location);
   console.log(location);
   // Initialize map when component mounts
+
   useEffect(() => {
     if (location) {
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: 'mapbox://styles/mapbox/streets-v11',
-        center: [location.lng - 3, location.lat - 4],
+        center: [location.lng, location.lat],
         zoom,
       });
 
