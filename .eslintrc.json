@@ -31,6 +31,7 @@
         "jest"
     ],
     "rules": {
+        "react/no-unescaped-entities": 0,
         "max-len": "off",
         "no-console": "off",
         "no-alert": "off",
