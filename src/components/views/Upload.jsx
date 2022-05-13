@@ -37,10 +37,11 @@ import {
 
 // TODO: fetch categories from backend
 const CATEGORIES = [
-  { value: 'Autos', name: 'Autos' },
-  { value: 'Katzen', name: 'Katzen' },
-  { value: 'Hunde', name: 'Hunde' },
+  { value: 'Car', name: 'Car' },
+  { value: 'Cat', name: 'Cat' },
+  { value: 'Dog', name: 'Dog' },
   { value: 'Fish', name: 'Fish' },
+  { value: 'Motorcycle', name: 'Motorcycle' },
   { value: 'New', name: '...suggest new category' },
 ];
 
