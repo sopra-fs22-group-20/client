@@ -8,6 +8,7 @@ import React from 'react';
 import Register from '../../views/Register';
 import Highlights from '../../views/Highlights';
 import Home from '../../views/Home';
+import Game from '../../views/Game';
 import Settings from '../../views/Settings';
 import Pictures from '../../views/Pictures';
 import Application from '../../views/Application';
@@ -32,6 +33,7 @@ function AppRouter() {
           [{ path: '/home', component: <Home /> },
             { path: '/highlights', component: <Highlights /> },
             { path: '/settings', component: <Settings /> },
+            { path: '/game', component: <Game /> },
             { path: '/pictures', component: <Pictures /> },
             { path: '/upload', component: <Upload /> },
             { path: '/ProfilePage', component: <ProfilePage /> },
@@ -57,6 +59,9 @@ function AppRouter() {
         </Route>
         <Route exact path="/">
           <Redirect to="/home" />
+          
+        </Route>
+        <Route exact path="/game">
         </Route>
       </Switch>
     </BrowserRouter>
