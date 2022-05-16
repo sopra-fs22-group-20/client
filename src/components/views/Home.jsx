@@ -34,7 +34,7 @@ function Home() {
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
     async function fetchRandomPictureURL() {
       try {
-        const response = await api.get('/images'); // TODO: specify call to backend
+        const response = await api.get('/images/random'); // TODO: specify call to backend
 
         // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
         // const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';

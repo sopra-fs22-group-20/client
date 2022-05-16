@@ -135,8 +135,6 @@ function Highlights() {
     <Box sx={{ width: '100%' }}>
       <Grid container spacing={2}>
 
-        <Button variant="contained" onClick={() => console.log(products)} size="large" color="error">Delete</Button>
-
         <Grid item xs={1}>
           Categories:
           <br />
