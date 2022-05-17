@@ -15,7 +15,7 @@ export function Navigation() {
         justifyContent="flex-start"
         alignItems="center"
       >
-        <Grid item xs={11}>
+        <Grid item xs={12}>
 
           <div className="container">
             <div className="navbar-header">
@@ -59,22 +59,22 @@ export function Navigation() {
                       </li>
                     ))
                   }
+                <li>
+                  <Button
+                    variant="outlined"
+                    size="medium"
+                    onClick={() => {
+                      removeCookie('token', { path: '/' });
+                      removeCookie('id', { path: '/' });
+                      history.push('/login');
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </li>
               </ul>
             </div>
           </div>
-        </Grid>
-        <Grid item xs={1}>
-          <Button
-            variant="outlined"
-            size="medium"
-            onClick={() => {
-              removeCookie('token', { path: '/' });
-              removeCookie('id', { path: '/' });
-              history.push('/login');
-            }}
-          >
-            Logout
-          </Button>
         </Grid>
       </Grid>
     </nav>

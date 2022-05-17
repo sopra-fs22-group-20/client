@@ -1,17 +1,21 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import { api, handleError } from 'helpers/api';
 import { Spinner } from 'components/ui/Spinner';
 import BaseContainer from 'components/ui/BaseContainer';
 import PropTypes from 'prop-types';
 import 'styles/views/Game.scss';
 import { useHistory } from 'react-router-dom';
+// wobble try:: import styles from 'styles/ui/animatedImage.scss';
 import {
-  Grid, ImageList, ImageListItem, Rating, Typography,
+  Grid, ImageList, ImageListItem, Rating, Typography, Zoom,
 } from '@mui/material';
 import axios, { Axios } from 'axios';
 import Box from '@mui/material/Box';
 import StarIcon from '@mui/icons-material/Star';
 import { useCookies } from 'react-cookie';
+import cosha from 'cosha';
 import { getDomain } from '../../helpers/getDomain';
 
 function Home() {
@@ -21,43 +25,71 @@ function Home() {
   const [rating, setRating] = React.useState(0); // TODO: fix number
   const [hover, setHover] = React.useState(0);
   const [cookies, _setCookie] = useCookies(['id']);
+  const isMounted = useRef(false);
+  // const [wobble, setWobble] = useState(0);
 
   const labels = {
-    1: 'Ewwww!',
-    2: 'Ewwwish..',
-    3: 'Hmmm',
-    4: 'Nice',
-    5: 'Awesome!',
+    1: '🤮',
+    2: '😕',
+    3: '😐',
+    4: '😁',
+    5: '😍',
   };
 
   useEffect(() => {
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
-    async function fetchRandomPictureURL() {
+    async function fetchFirstRandomPictureURL() {
       try {
-        const response = await api.get('/images'); // TODO: specify call to backend
+        // const response = await api.get('/images/random');
 
         // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
-        // const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
+        const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
         // eslint-disable-next-line
         // await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Get the returned image URL and update the state.
-        const randomImage = response.data;
-        setImageId(randomImage.imageId);
-        setRandImageURL(randomImage.storageLink);
+        setRandImageURL(response);
+        // const randomImage = response.data;
+        // setImageId(randomImage.imageId);
+        // setRandImageURL(randomImage.storageLink);
       } catch (error) {
         console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
         console.error('Details:', error);
         alert('Something went wrong while fetching the images! See the console for details.');
       }
     }
-    /*    const downloadPicture = async () => {
-      const img = document.getElementById('myimg');
-      img.setAttribute('src', url);
-    }; */
 
-    fetchRandomPictureURL(); // TODO: or better const url = ....
+    fetchFirstRandomPictureURL();
     // downloadPicture(randImageURL)
+  }, []);
+
+  useEffect(() => {
+    async function fetchRandomPictureURL() {
+      try {
+        // const response = await api.get('/images/random/{category}');
+
+        // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
+        const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
+        // eslint-disable-next-line
+          // await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Get the returned image URL and update the state.
+        setRandImageURL(response);
+        // const randomImage = response.data;
+        // setImageId(randomImage.imageId);
+        // setRandImageURL(randomImage.storageLink);
+      } catch (error) {
+        console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
+        console.error('Details:', error);
+        alert('Something went wrong while fetching the images! See the console for details.');
+      }
+    }
+    if (isMounted) {
+      fetchRandomPictureURL();
+      // downloadPicture(randImageURL)
+    } else {
+      isMounted.current = true;
+    }
   }, [rating]);
 
   const content = <Spinner />; // TODO: exchange with logo/animation
@@ -99,9 +131,11 @@ function Home() {
 
       {/* left side of screen: columns with categories, game */}
       <Grid item xs={7}>
-        <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
-          placeholder
-        </Typography>
+        <Zoom in>
+          <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
+            placeholder
+          </Typography>
+        </Zoom>
       </Grid>
 
       {/* right side of screen: columns with picture, rating */}
@@ -119,7 +153,6 @@ function Home() {
             height: 'calc(100vh - 90px)',
           }}
         >
-
           <Grid
             item
             style={{
@@ -137,12 +170,6 @@ function Home() {
               height: '75%',
             }}
           >
-            {
-              /*
-              <div>test</div>
-
-               */
-            }
             <ImageList sx={{ width: 1, height: 1 }} cols={1} align="center">
               <ImageListItem
                 key="some unique key"
@@ -154,20 +181,24 @@ function Home() {
                   minHeight: '100%',
                 }}
               >
-                <img
-                  src={randImageURL}
-                  alt="random title"
-                  loading="lazy"
-                  style={{
-                    objectFit: 'contain',
-                    height: '100%',
-                    maxHeight: '100%',
-                    minHeight: '100%',
-                  }}
-                />
+                <Zoom in>
+                  <img
+                      // wobble try:: className={styles.image}
+                    src={randImageURL}
+                    alt="random title"
+                    loading="lazy"
+                      // wobble try::wobble={wobble}
+                      // wobble try::onAnimationEnd={() => setWobble(0)}
+                    style={{
+                      objectFit: 'contain',
+                      height: '100%',
+                      maxHeight: '100%',
+                      minHeight: '100%',
+                    }}
+                  />
+                </Zoom>
               </ImageListItem>
             </ImageList>
-
           </Grid>
 
           <Grid
