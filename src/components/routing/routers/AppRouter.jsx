@@ -34,7 +34,7 @@ function AppRouter() {
             { path: '/settings', component: <Settings /> },
             { path: '/pictures', component: <Pictures /> },
             { path: '/upload', component: <Upload /> },
-            { path: '/ProfilePage', component: <ProfilePage /> },
+            { path: '/ProfilePage/:userId', component: <ProfilePage /> },
           ].map((element, index) => (
             <Route path={element.path} key={`${index}_application_element`}>
               <HomeGuard>

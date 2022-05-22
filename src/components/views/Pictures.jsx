@@ -233,7 +233,12 @@ function DisplayImage({ image, deleteImage }) {
                 </p>
               </div>
             </div>
-            <p>Category: Coming soon</p>
+            <p>
+              Category:
+              {' '}
+              {image.category.name}
+              {' '}
+            </p>
 
             <p>
               <Accordion>

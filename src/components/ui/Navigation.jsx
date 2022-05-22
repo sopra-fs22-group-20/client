@@ -6,7 +6,7 @@ import { useCookies } from 'react-cookie';
 export function Navigation() {
   const history = useHistory();
   const [cookies, _setCookie, removeCookie] = useCookies(['userId', 'token']);
-
+  const { id: userId } = cookies;
   return (
     <nav id="menu" className="navbar navbar-default navbar-fixed-top">
       <Grid
@@ -48,7 +48,7 @@ export function Navigation() {
                 {
                     [{ path: '/home', name: 'Home' },
                       { path: '/highlights', name: 'Highlights' },
-                      { path: '/ProfilePage', name: 'Profile Page' },
+                      { path: `/ProfilePage/${userId}`, name: 'Profile Page' },
                       { path: '/pictures', name: 'Pictures' },
                       { path: '/upload', name: 'Upload' },
                     ].map((element, index) => (

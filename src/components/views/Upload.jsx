@@ -219,6 +219,15 @@ function Upload() {
   if (CATEGORIES.length === 0) {
     return null;
   }
+  function imageValidate(e) {
+    const { name } = e.target.files[0];
+    const ext = name.split('.')[1];
+    if (ext === 'jpg' || ext === 'png' || ext === 'jpeg' || ext === 'jfif') {
+      setFile(e.target.files[0]);
+    } else {
+      alert('Input only image files');
+    }
+  }
 
   return (
     <Grid
@@ -274,7 +283,8 @@ function Upload() {
           <Grid item>
             <input
               type="file"
-              onChange={(e) => setFile(e.target.files[0])}
+              accept="image/*"
+              onChange={imageValidate}
               multiple={false}
               style={{
                 margin: 'auto',

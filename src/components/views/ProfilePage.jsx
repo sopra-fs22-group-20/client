@@ -15,6 +15,7 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
+import moment from 'moment';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -49,13 +50,14 @@ const Item = styled(Paper)(({ theme }) => ({
 
 function ProfilePage() {
   const history = useHistory();
-
+  const { userId: profileId } = useParams();
+  const [loading, setLoading] = useState(true);
   const [value, setValue] = React.useState(2);
-  const [user, setUser] = useState(1); // Am Anfang ist User Null. Mit SetUser habe ich eine Funktion, die die Data vom Backend dem User zuweist. User ist hier wie ein Container. Wenn ich die Seite wechsle ist es wieder Null. Nur lokal.
+  const [user, setUser] = useState(null); // Am Anfang ist User Null. Mit SetUser habe ich eine Funktion, die die Data vom Backend dem User zuweist. User ist hier wie ein Container. Wenn ich die Seite wechsle ist es wieder Null. Nur lokal.
   const [cookies, _setCookie] = useCookies(['userId', 'userData']);
-  const { userData } = cookies;
+  const { id: userId } = cookies;
 
-  const EditProfile = async (userId) => {
+  const EditProfile = async () => {
     try {
       // const token = localStorage.getItem('token');
 
@@ -76,11 +78,11 @@ function ProfilePage() {
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
     async function fetchData() {
       try {
-        const { id: userId } = cookies;
-        const response = await api.get(`/users/${userId}`, { headers: { userId } });
+        const response = await api.get(`/users/${profileId}`, { headers: { userId: profileId } });
 
         // Get the returned profile
         setUser(response.data);
+        setLoading((false));
         // console.log("User has been set");
       } catch (error) {
         console.error(`Something went wrong while fetching the User: \n${handleError(error)}`);
@@ -93,74 +95,78 @@ function ProfilePage() {
   }, []);
 
   return (
-    <main>
-      <div>
-        <Container maxWidth="sm">
-          <Typography variant="h2" align="center" color="textPrimary" gutterBottom>
-            Welcome
-            {' '}
-            {userData.username}
-            !
+    loading ? <div>Loading Profile..</div> : (
+      <main>
+        <div>
+          <Container maxWidth="sm">
+            <Typography variant="h2" align="center" color="textPrimary" gutterBottom>
+              Welcome
+              {' '}
+              {user.username}
+              !
 
-          </Typography>
+            </Typography>
 
-          <Box sx={{ flexGrow: 1 }}>
-            <Grid container spacing={2} columns={16}>
-              <Grid item xs={8}>
-                <Item>
-                  {' '}
-                  <br />
-                  <Typography variant="h5" gutterBottom component="div">
-                    Member since:
-                    {' '}
-                    {user.creationDate}
-
-                  </Typography>
-
-                  {' '}
-                  {' '}
-                  {/* Instead of "Creation Date" write {user.creationDate} */}
-                  {/* write how many pictures were posted */}
-                  {' '}
-                  {' '}
-                  {/* Instead of "AverageRating" write {AverageRating} when its available */}
-
-                  {/* Now comes the rating. Replace value with Rating_Average. 4.5 will be rounded to 5 */}
-                  <Box
-                    sx={{
-                      '& > legend': { mt: 2 },
-                    }}
-                  >
-                    <Typography component="legend" variant="h5">Your average Rating</Typography>
-                    <Rating name="read-only" value={3} readOnly />
-                  </Box>
-                </Item>
-              </Grid>
-              <Grid item xs={8}>
-                <Item>
-
-                  <Typography variant="h5" gutterBottom component="div">
-                    More information:
+            <Box sx={{ flexGrow: 1 }}>
+              <Grid container spacing={2} columns={16}>
+                <Grid item xs={8}>
+                  <Item>
                     {' '}
                     <br />
-                    {userData.moreInfo}
+                    <Typography variant="h5" gutterBottom component="div">
+                      Member since:
+                      {' '}
+                      {moment(user.creationDate).format('L')}
 
-                  </Typography>
+                    </Typography>
 
-                </Item>
+                    {' '}
+                    {' '}
+                    {/* Instead of "Creation Date" write {user.creationDate} */}
+                    {/* write how many pictures were posted */}
+                    {' '}
+                    {' '}
+                    {/* Instead of "AverageRating" write {AverageRating} when its available */}
+
+                    {/* Now comes the rating. Replace value with Rating_Average. 4.5 will be rounded to 5 */}
+                    <Box
+                      sx={{
+                        '& > legend': { mt: 2 },
+                      }}
+                    >
+                      <Typography component="legend" variant="h5">Your average Rating</Typography>
+                      <Rating name="read-only" value={3} readOnly />
+                    </Box>
+                  </Item>
+                </Grid>
+                <Grid item xs={8}>
+                  <Item>
+
+                    <Typography variant="h5" gutterBottom component="div">
+                      More information:
+                      {' '}
+                      <br />
+                      {user.moreInfo ? user.moreInfo : 'There is no further information now'}
+
+                    </Typography>
+
+                  </Item>
+                </Grid>
               </Grid>
-            </Grid>
-          </Box>
-          <br />
-          <Button variant="contained" onClick={() => { EditProfile(); }}>
-            {' '}
-            {/* instead of nothing put an argument with UserID */}
-            Edit Profile
-          </Button>
+            </Box>
+            <br />
+            {profileId === userId && (
+            <Button variant="contained" onClick={() => { EditProfile(); }}>
+              {' '}
+              {/* instead of nothing put an argument with UserID */}
+              Edit Profile
+            </Button>
+            )}
 
-        </Container>
-      </div>
-    </main>
+          </Container>
+        </div>
+      </main>
+    )
 
   );
 }

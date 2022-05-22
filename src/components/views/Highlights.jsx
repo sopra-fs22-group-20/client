@@ -18,6 +18,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
+import { useHistory, Link } from 'react-router-dom';
 import { api, handleError } from '../../helpers/api';
 import { Spinner } from '../ui/Spinner';
 
@@ -30,13 +31,12 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Highlights() {
-  const [users, setUsers] = useState(null);
-  const [images, setImages] = useState(null);
-  const [cat, setCat] = useState('Car');
-  const [products, setProducts] = useState([]);
-  const [cookies, _setCookie] = useCookies(['id']);
+  const [category, setCategory] = useState('Car');
+  const [loading, setLoading] = useState(true);
+  const [highlights, setHighlights] = useState({ podest1: null, podest2: null, podest3: null });
+  const { podest1, podest3, podest2 } = highlights;
   // Send the requesat whenever component is loaded
-
+  const history = useHistory();
   /* useEffect(() => {
     axios.get(`http://localhost:8080/images/highlights/${cat}`).then((response) => {
       setProducts(response.data);
@@ -46,17 +46,16 @@ function Highlights() {
   }, [cat]);
 */
 
-  console.log('products', products);
-
   useEffect(() => {
     async function fetchPictures() {
+      setLoading(true);
       try {
-        const response = await api.get(`/images/highlights/${cat}`);
+        const response = await api.get(`/images/highlights/${category}`);
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        setProducts(response.data);
-
+        const { data } = response;
+        setHighlights({ podest1: data[0], podest2: data[1], podest3: data[2] });
+        setLoading(false);
         console.log('request to:', response.request.responseURL);
         console.log('status code:', response.status);
         console.log('status text:', response.statusText);
@@ -68,7 +67,7 @@ function Highlights() {
       }
     }
     fetchPictures();
-  }, [cat]);
+  }, [category]);
 
   // fetching pictures
   /* useEffect(() => {
@@ -100,7 +99,7 @@ function Highlights() {
 
   // Update CAte from state
   const changeCat = (e) => {
-    setCat(e.target.value);
+    setCategory(e.target.value);
     console.log('Selected', e.target.value);
   };
 
@@ -129,19 +128,16 @@ function Highlights() {
   }
    */
 
-  const i = 0;
+  function goToProfile(userId) {
+    history.push(`/profile/${userId}`);
+  }
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Grid container spacing={2}>
-
-        <Grid item xs={1}>
-          Categories:
-          <br />
-          <br />
+    loading ? <div>Loading</div> : (
+      <Box sx={{ width: '100%' }}>
+        <div>
           <label htmlFor="cars">Choose a Category:</label>
-
-          <select onChange={changeCat} name="cars" id="cars">
+          <select onChange={changeCat} value={category} name="cars" id="cars">
             <option selected value="Car">Car</option>
             <option value="Cat">Cat</option>
             <option value="Dog">Dog</option>
@@ -149,41 +145,121 @@ function Highlights() {
             <option value="Motorcycle">Motorcycle</option>
 
           </select>
-        </Grid>
+        </div>
 
-        {products ? products.map((item) => (
-          <>
-            <Grid item xs={3}>
-              <p>
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <br />
+            <br />
+            {podest2 ? (
+              <Link to={podest2 ? `/profilepage/${podest2.owner.userId}` : '/profilepage'}>
+                {' '}
                 Username:
                 {' '}
-                {item.owner.username}
-              </p>
-              <p>
-                Number of Ratings:
-                {' '}
-                {item.ratingCounter}
-              </p>
-
-              <br />
-              <Rating name="read-only" value={item.rating} readOnly size="large" />
+                { podest2.owner.username }
+              </Link>
+            ) : 'Placeholder'}
+            <div className="podestRating">
+              <Typography component="legend">
+                <p>
+                  Number of Ratings:
+                  {' '}
+                  {podest2 ? podest2.ratingCounter : '0'}
+                </p>
+              </Typography>
+              <Rating name="read-only" value={podest2 ? podest2.rating : 0} readOnly size="large" />
+            </div>
+            <Item>
               <img
                 style={{ objectFit: 'contain', width: '100%' }}
-                src={item.storageLink}
-                height={200}
+                src={podest2 ? podest2.storageLink : 'https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg'}
+                height={250}
+                alt="new"
               />
+            </Item>
 
-              <p />
-            </Grid>
+            <img src="/images/SecondPodest.png" className="PodestImage" />
+          </Grid>
+          <Grid item xs={4}>
+            <div className="podest1">
+              {podest1 ? (
+                <Link to={podest1 ? `/profilepage/${podest1.owner.userId}` : '/profilepage'}>
+                  {' '}
+                  Username:
+                  {' '}
+                  { podest1.owner.username }
+                </Link>
+              ) : 'Placeholder'}
 
+              <div className="podestRating">
+                <Typography component="legend">
+                  <p>
+                    Number of Ratings:
+                    {' '}
+                    {podest1 ? podest1.ratingCounter : '0'}
+                  </p>
+                </Typography>
+                <Rating name="read-only" value={podest1 ? podest1.rating : 0} readOnly size="large" />
+              </div>
+
+              <img src="/images/Crown.png" className="podest1_crown" />
+              <div />
+            </div>
+
+            <Item>
+              <img
+                style={{ objectFit: 'contain', width: '100%' }}
+                src={podest1 ? podest1.storageLink : 'https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg'}
+                height={250}
+
+                alt="new"
+              />
+            </Item>
+
+            <img src="/images/FirstPodest.png" className="PodestImage" />
+
+          </Grid>
+          <Grid item xs={4}>
             <br />
+            <br />
+            <br />
+            <br />
+            {podest3 ? (
+              <Link to={podest3 ? `/profilepage/${podest3.owner.userId}` : '/profilepage'}>
+                {' '}
+                Username:
+                {' '}
+                { podest3.owner.username }
+              </Link>
+            ) : 'Placeholder'}
 
-          </>
+            <div className="podestRating">
+              <Typography component="legend">
+                <p>
+                  Number of Ratings:
+                  {' '}
+                  {podest3 ? podest3.ratingCounter : '0'}
+                </p>
+              </Typography>
+              <Rating name="read-only" value={podest3 ? podest3.rating : 0} readOnly size="large" />
+            </div>
 
-        )) : null }
+            <Item>
+              <img
+                style={{ objectFit: 'contain', width: '100%' }}
+                src={podest3 ? podest3.storageLink : 'https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg'}
+                height={250}
 
-      </Grid>
-    </Box>
+                alt="new"
+              />
+            </Item>
+
+            <img src="/images/ThirdPodest.png" className="PodestImage" />
+
+          </Grid>
+        </Grid>
+      </Box>
+    )
   );
 }
 
