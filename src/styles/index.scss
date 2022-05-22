@@ -15,12 +15,24 @@ body {
 .podest1{
 position: relative;
 }
+.podestRating{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0rem;
+}
+
 .podest1_crown{
   position: absolute;
   left: 50%;
   transform: translate(-50%,0);
-  top: -2rem;
+  top: 0rem;
   width: 6rem;
+}
+
+.PodestImage{
+  margin: 2rem auto;
+  width: 80%;
+  display: block;
 }
 
 input,

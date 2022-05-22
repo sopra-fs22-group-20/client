@@ -31,7 +31,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Highlights() {
-  const [cat, setCat] = useState('Car');
+  const [category, setCategory] = useState('Car');
   const [loading, setLoading] = useState(true);
   const [highlights, setHighlights] = useState({ podest1: null, podest2: null, podest3: null });
   const { podest1, podest3, podest2 } = highlights;
@@ -50,7 +50,7 @@ function Highlights() {
     async function fetchPictures() {
       setLoading(true);
       try {
-        const response = await api.get(`/images/highlights/${cat}`);
+        const response = await api.get(`/images/highlights/${category}`);
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
         const { data } = response;
@@ -67,7 +67,7 @@ function Highlights() {
       }
     }
     fetchPictures();
-  }, [cat]);
+  }, [category]);
 
   // fetching pictures
   /* useEffect(() => {
@@ -99,7 +99,7 @@ function Highlights() {
 
   // Update CAte from state
   const changeCat = (e) => {
-    setCat(e.target.value);
+    setCategory(e.target.value);
     console.log('Selected', e.target.value);
   };
 
@@ -137,7 +137,7 @@ function Highlights() {
       <Box sx={{ width: '100%' }}>
         <div>
           <label htmlFor="cars">Choose a Category:</label>
-          <select onChange={changeCat} value={cat} name="cars" id="cars">
+          <select onChange={changeCat} value={category} name="cars" id="cars">
             <option selected value="Car">Car</option>
             <option value="Cat">Cat</option>
             <option value="Dog">Dog</option>
@@ -151,12 +151,24 @@ function Highlights() {
           <Grid item xs={4}>
             <br />
             <br />
-            <Link to={podest2 ? `/profilepage/${podest2.owner.userId}` : '/profilepage'}>
-              {' '}
-              Username:
-              {' '}
-              {podest2 ? podest2.owner.username : 'PlaceHolder'}
-            </Link>
+            {podest2 ? (
+              <Link to={podest2 ? `/profilepage/${podest2.owner.userId}` : '/profilepage'}>
+                {' '}
+                Username:
+                {' '}
+                { podest2.owner.username }
+              </Link>
+            ) : 'Placeholder'}
+            <div className="podestRating">
+              <Typography component="legend">
+                <p>
+                  Number of Ratings:
+                  {' '}
+                  {podest2 ? podest2.ratingCounter : '0'}
+                </p>
+              </Typography>
+              <Rating name="read-only" value={podest2 ? podest2.rating : 0} readOnly size="large" />
+            </div>
             <Item>
               <img
                 style={{ objectFit: 'contain', width: '100%' }}
@@ -165,23 +177,30 @@ function Highlights() {
                 alt="new"
               />
             </Item>
-            <Typography component="legend">
-              <p>
-                Number of Ratings:
-                {' '}
-                {podest2 ? podest2.ratingCounter : '0'}
-              </p>
-            </Typography>
-            <Rating name="read-only" value={podest2 ? podest2.rating : 0} readOnly size="large" />
+
+            <img src="/images/SecondPodest.png" className="PodestImage" />
           </Grid>
           <Grid item xs={4}>
             <div className="podest1">
-              <Link to={podest1 ? `/profilepage/${podest1.owner.userId}` : '/profilepage'}>
-                {' '}
-                Username:
-                {' '}
-                {podest1 ? podest1.owner.username : 'PlaceHolder'}
-              </Link>
+              {podest1 ? (
+                <Link to={podest1 ? `/profilepage/${podest1.owner.userId}` : '/profilepage'}>
+                  {' '}
+                  Username:
+                  {' '}
+                  { podest1.owner.username }
+                </Link>
+              ) : 'Placeholder'}
+
+              <div className="podestRating">
+                <Typography component="legend">
+                  <p>
+                    Number of Ratings:
+                    {' '}
+                    {podest1 ? podest1.ratingCounter : '0'}
+                  </p>
+                </Typography>
+                <Rating name="read-only" value={podest1 ? podest1.rating : 0} readOnly size="large" />
+              </div>
 
               <img src="/images/Crown.png" className="podest1_crown" />
               <div />
@@ -196,26 +215,35 @@ function Highlights() {
                 alt="new"
               />
             </Item>
-            <Typography component="legend">
-              <p>
-                Number of Ratings:
-                {' '}
-                {podest1 ? podest1.ratingCounter : '0'}
-              </p>
-            </Typography>
-            <Rating name="read-only" value={podest1 ? podest1.rating : 0} readOnly size="large" />
+
+            <img src="/images/FirstPodest.png" className="PodestImage" />
+
           </Grid>
           <Grid item xs={4}>
             <br />
             <br />
             <br />
             <br />
-            <Link to={podest3 ? `/profilepage/${podest3.owner.userId}` : '/profilepage'}>
-              {' '}
-              Username:
-              {' '}
-              {podest3 ? podest3.owner.username : 'PlaceHolder'}
-            </Link>
+            {podest3 ? (
+              <Link to={podest3 ? `/profilepage/${podest3.owner.userId}` : '/profilepage'}>
+                {' '}
+                Username:
+                {' '}
+                { podest3.owner.username }
+              </Link>
+            ) : 'Placeholder'}
+
+            <div className="podestRating">
+              <Typography component="legend">
+                <p>
+                  Number of Ratings:
+                  {' '}
+                  {podest3 ? podest3.ratingCounter : '0'}
+                </p>
+              </Typography>
+              <Rating name="read-only" value={podest3 ? podest3.rating : 0} readOnly size="large" />
+            </div>
+
             <Item>
               <img
                 style={{ objectFit: 'contain', width: '100%' }}
@@ -225,35 +253,9 @@ function Highlights() {
                 alt="new"
               />
             </Item>
-            <Typography component="legend">
-              <p>
-                Number of Ratings:
-                {' '}
-                {podest3 ? podest3.ratingCounter : '0'}
-              </p>
-            </Typography>
-            <Rating name="read-only" value={podest3 ? podest3.rating : 0} readOnly size="large" />
-          </Grid>
-          <Grid item xs={4}>
-            <Item>
-              <p>
-                Podest Number 2
-              </p>
-            </Item>
-          </Grid>
-          <Grid item xs={4}>
-            <Item>
-              <p>
-                Podest Number 1
-              </p>
-            </Item>
-          </Grid>
-          <Grid item xs={4}>
-            <Item>
-              <p>
-                Podest Number 3
-              </p>
-            </Item>
+
+            <img src="/images/ThirdPodest.png" className="PodestImage" />
+
           </Grid>
         </Grid>
       </Box>

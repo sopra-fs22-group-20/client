@@ -222,7 +222,7 @@ function Upload() {
   function imageValidate(e) {
     const { name } = e.target.files[0];
     const ext = name.split('.')[1];
-    if (ext === 'jpg' || ext === 'png' || ext === 'jpeg') {
+    if (ext === 'jpg' || ext === 'png' || ext === 'jpeg' || ext === 'jfif') {
       setFile(e.target.files[0]);
     } else {
       alert('Input only image files');

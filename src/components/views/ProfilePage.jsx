@@ -15,6 +15,7 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
+import moment from 'moment';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -115,7 +116,7 @@ function ProfilePage() {
                     <Typography variant="h5" gutterBottom component="div">
                       Member since:
                       {' '}
-                      {user.creationDate}
+                      {moment(user.creationDate).format('L')}
 
                     </Typography>
 
@@ -145,7 +146,7 @@ function ProfilePage() {
                       More information:
                       {' '}
                       <br />
-                      {user.moreInfo}
+                      {user.moreInfo ? user.moreInfo : 'There is no further information now'}
 
                     </Typography>
 
