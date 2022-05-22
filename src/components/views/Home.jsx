@@ -4,18 +4,19 @@ import { Spinner } from 'components/ui/Spinner';
 import BaseContainer from 'components/ui/BaseContainer';
 import PropTypes from 'prop-types';
 import 'styles/views/Game.scss';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import {
   Grid, ImageList, ImageListItem, Rating, Typography,
 } from '@mui/material';
 import axios, { Axios } from 'axios';
+
 import Box from '@mui/material/Box';
 import StarIcon from '@mui/icons-material/Star';
 import { useCookies } from 'react-cookie';
 import { getDomain } from '../../helpers/getDomain';
 
 function Home() {
-  // TODO: imageURL is directly there when rendering
+  /* // TODO: imageURL is directly there when rendering
   const [randImageURL, setRandImageURL] = useState('');
   const [imageId, setImageId] = useState(null); // TODO: maybe type string;
   const [rating, setRating] = React.useState(0); // TODO: fix number
@@ -30,10 +31,10 @@ function Home() {
     5: 'Awesome!',
   };
 
-  useEffect(() => {
-    // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
+  useEffect(() => { */
+  /*   // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
     async function fetchRandomPictureURL() {
-      try {
+      /!* try {
         const response = await api.get('/images/random'); // TODO: specify call to backend
 
         // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
@@ -49,12 +50,12 @@ function Home() {
         console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
         console.error('Details:', error);
         alert('Something went wrong while fetching the images! See the console for details.');
-      }
+      } *!/
     }
-    /*    const downloadPicture = async () => {
+    /!*    const downloadPicture = async () => {
       const img = document.getElementById('myimg');
       img.setAttribute('src', url);
-    }; */
+    }; *!/
 
     fetchRandomPictureURL(); // TODO: or better const url = ....
     // downloadPicture(randImageURL)
@@ -77,37 +78,47 @@ function Home() {
       headers: { userId, 'Content-Type': 'application/json' },
     });
 
-    authAxios.put('/rate', requestBody);
+    authAxios.put('/rate', requestBody); */
 
-    /*
+  /*
   rating
   header: userId
   requestBody: ImageId, rating (int)
   */
-  };
+  // };
 
   // does the function call work or could it be that the rating (value via setValue) is not yet updatet?
 
   return (
-
-    <Grid
+    <>
+      <Link to="/game" className="btn btn-lg btn-primary">Play Game</Link>
+      {/* <Grid
       container
       direction="row"
       justifyContent="space-evenly"
       alignItems="center"
     >
+      <Link to="/game" className="btn btn-lg btn-primary">Play Game</Link>
+      {/!* left side of screen: columns with categories, game *!/}
+      <Grid item mt={40} xs={8}>
+        <Grid
+          container
+          direction="row"
+          justifyContent="space-evenly"
+          alignItems="center"
+        >
+          <Grid item xs={10}>
 
-      {/* left side of screen: columns with categories, game */}
-      <Grid item xs={7}>
-        <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
-          placeholder
-        </Typography>
+            <br />
+            <br />
+          </Grid>
+        </Grid>
       </Grid>
 
-      {/* right side of screen: columns with picture, rating */}
+      {/!* right side of screen: columns with picture, rating *!/}
       <Grid
         item
-        xs={5}
+        xs={4}
       >
         <Grid
           container
@@ -138,10 +149,10 @@ function Home() {
             }}
           >
             {
-              /*
+              /!*
               <div>test</div>
 
-               */
+              *!/
             }
             <ImageList sx={{ width: 1, height: 1 }} cols={1} align="center">
               <ImageListItem
@@ -155,7 +166,7 @@ function Home() {
                 }}
               >
                 <img
-                  src={randImageURL}
+                  src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGNhcnN8ZW58MHx8MHx8&w=1000&q=80"
                   alt="random title"
                   loading="lazy"
                   style={{
@@ -197,26 +208,26 @@ function Home() {
 
                 <Rating
                   name="hover-feedback"
-      /* defaultValue = {value} --> maybe this takes the value
-      from before and shows it with the next picture
-      TODO: adjust size, doesn't work yet */
-                  align="center"
-                  value={0}
-                  onChange={(event, newValue) => {
-                    setRating(newValue); rateImage(newValue);
-                  }}
-                  onChangeActive={(event, newHover) => {
-                    setHover(newHover);
-                  }}
-                  emptyIcon={<StarIcon style={{ opacity: 0.55, fontSize: '3vw' }} />}
-                  icon={<StarIcon style={{ opacity: 0.55, fontSize: '3vw' }} />}
+                  /!* defaultValue = {value} --> maybe this takes the value
+                from before and shows it with the next picture
+                TODO: adjust size, doesn't work yet *!/
+                align="center"
+                value={0}
+                onChange={(event, newValue) => {
+                setRating(newValue); rateImage(newValue);
+              }}
+                onChangeActive={(event, newHover) => {
+                setHover(newHover);
+              }}
+                emptyIcon={<StarIcon style={{ opacity: 0.55, fontSize: '3vw' }} />}
+                icon={<StarIcon style={{ opacity: 0.55, fontSize: '3vw' }} />}
                 />
               </Grid>
               <Grid item style={{ paddingTop: '0px', height: '20%' }}>
                 <div>
                   {labels[hover]}
 
-                  {/* TODO: maybe fix : rating as there might otherwise show the previously assigned rating value with the next picture */}
+                  {/!* TODO: maybe fix : rating as there might otherwise show the previously assigned rating value with the next picture *!/}
 
                 </div>
 
@@ -226,7 +237,8 @@ function Home() {
         </Grid>
       </Grid>
     </Grid>
-
+      */}
+    </>
   );
 }
 
