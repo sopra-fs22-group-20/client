@@ -18,6 +18,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
+import { useHistory, Link } from 'react-router-dom';
 import { api, handleError } from '../../helpers/api';
 import { Spinner } from '../ui/Spinner';
 
@@ -30,13 +31,12 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Highlights() {
-  const [users, setUsers] = useState(null);
-  const [images, setImages] = useState(null);
   const [cat, setCat] = useState('Car');
-  const [products, setProducts] = useState([]);
-  const [cookies, _setCookie] = useCookies(['id']);
+  const [loading, setLoading] = useState(true);
+  const [highlights, setHighlights] = useState({ podest1: null, podest2: null, podest3: null });
+  const { podest1, podest3, podest2 } = highlights;
   // Send the requesat whenever component is loaded
-
+  const history = useHistory();
   /* useEffect(() => {
     axios.get(`http://localhost:8080/images/highlights/${cat}`).then((response) => {
       setProducts(response.data);
@@ -46,17 +46,16 @@ function Highlights() {
   }, [cat]);
 */
 
-  console.log('products', products);
-
   useEffect(() => {
     async function fetchPictures() {
+      setLoading(true);
       try {
         const response = await api.get(`/images/highlights/${cat}`);
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        setProducts(response.data);
-
+        const { data } = response;
+        setHighlights({ podest1: data[0], podest2: data[1], podest3: data[2] });
+        setLoading(false);
         console.log('request to:', response.request.responseURL);
         console.log('status code:', response.status);
         console.log('status text:', response.statusText);
@@ -129,19 +128,16 @@ function Highlights() {
   }
    */
 
-  const i = 0;
+  function goToProfile(userId) {
+    history.push(`/profile/${userId}`);
+  }
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Grid container spacing={2}>
-
-        <Grid item xs={1}>
-          Categories:
-          <br />
-          <br />
+    loading ? <div>Loading</div> : (
+      <Box sx={{ width: '100%' }}>
+        <div>
           <label htmlFor="cars">Choose a Category:</label>
-
-          <select onChange={changeCat} name="cars" id="cars">
+          <select onChange={changeCat} value={cat} name="cars" id="cars">
             <option selected value="Car">Car</option>
             <option value="Cat">Cat</option>
             <option value="Dog">Dog</option>
@@ -149,41 +145,119 @@ function Highlights() {
             <option value="Motorcycle">Motorcycle</option>
 
           </select>
-        </Grid>
+        </div>
 
-        {products ? products.map((item) => (
-          <>
-            <Grid item xs={3}>
-              <p>
-                Username:
-                {' '}
-                {item.owner.username}
-              </p>
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <br />
+            <br />
+            <Link to={podest2 ? `/profilepage/${podest2.owner.userId}` : '/profilepage'}>
+              {' '}
+              Username:
+              {' '}
+              {podest2 ? podest2.owner.username : 'PlaceHolder'}
+            </Link>
+            <Item>
+              <img
+                style={{ objectFit: 'contain', width: '100%' }}
+                src={podest2 ? podest2.storageLink : 'https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg'}
+                height={250}
+                alt="new"
+              />
+            </Item>
+            <Typography component="legend">
               <p>
                 Number of Ratings:
                 {' '}
-                {item.ratingCounter}
+                {podest2 ? podest2.ratingCounter : '0'}
               </p>
+            </Typography>
+            <Rating name="read-only" value={podest2 ? podest2.rating : 0} readOnly size="large" />
+          </Grid>
+          <Grid item xs={4}>
+            <div className="podest1">
+              <Link to={podest1 ? `/profilepage/${podest1.owner.userId}` : '/profilepage'}>
+                {' '}
+                Username:
+                {' '}
+                {podest1 ? podest1.owner.username : 'PlaceHolder'}
+              </Link>
 
-              <br />
-              <Rating name="read-only" value={item.rating} readOnly size="large" />
+              <img src="/images/Crown.png" className="podest1_crown" />
+              <div />
+            </div>
+
+            <Item>
               <img
                 style={{ objectFit: 'contain', width: '100%' }}
-                src={item.storageLink}
-                height={200}
+                src={podest1 ? podest1.storageLink : 'https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg'}
+                height={250}
+
+                alt="new"
               />
-
-              <p />
-            </Grid>
-
+            </Item>
+            <Typography component="legend">
+              <p>
+                Number of Ratings:
+                {' '}
+                {podest1 ? podest1.ratingCounter : '0'}
+              </p>
+            </Typography>
+            <Rating name="read-only" value={podest1 ? podest1.rating : 0} readOnly size="large" />
+          </Grid>
+          <Grid item xs={4}>
             <br />
+            <br />
+            <br />
+            <br />
+            <Link to={podest3 ? `/profilepage/${podest3.owner.userId}` : '/profilepage'}>
+              {' '}
+              Username:
+              {' '}
+              {podest3 ? podest3.owner.username : 'PlaceHolder'}
+            </Link>
+            <Item>
+              <img
+                style={{ objectFit: 'contain', width: '100%' }}
+                src={podest3 ? podest3.storageLink : 'https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg'}
+                height={250}
 
-          </>
-
-        )) : null }
-
-      </Grid>
-    </Box>
+                alt="new"
+              />
+            </Item>
+            <Typography component="legend">
+              <p>
+                Number of Ratings:
+                {' '}
+                {podest3 ? podest3.ratingCounter : '0'}
+              </p>
+            </Typography>
+            <Rating name="read-only" value={podest3 ? podest3.rating : 0} readOnly size="large" />
+          </Grid>
+          <Grid item xs={4}>
+            <Item>
+              <p>
+                Podest Number 2
+              </p>
+            </Item>
+          </Grid>
+          <Grid item xs={4}>
+            <Item>
+              <p>
+                Podest Number 1
+              </p>
+            </Item>
+          </Grid>
+          <Grid item xs={4}>
+            <Item>
+              <p>
+                Podest Number 3
+              </p>
+            </Item>
+          </Grid>
+        </Grid>
+      </Box>
+    )
   );
 }
 
