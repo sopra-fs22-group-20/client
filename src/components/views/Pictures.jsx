@@ -216,7 +216,6 @@ function DisplayImage({ image, deleteImage }) {
               style={{ objectFit: 'contain', width: '100%' }}
               src={image.storageLink}
               height={250}
-
               alt="new"
             />
           </Item>

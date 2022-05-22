@@ -2,6 +2,8 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Button, Grid } from '@mui/material';
 import { useCookies } from 'react-cookie';
+// import Logo_long.png from '../public/icons/Logo_long.png';
+import LightSpeed from 'react-reveal/LightSpeed';
 
 export function Navigation() {
   const history = useHistory();
@@ -36,7 +38,9 @@ export function Navigation() {
                 {' '}
               </button>
               <Link className="navbar-brand page-scroll" to="/home">
-                Rate Me!
+                <LightSpeed left>
+                  Rate ME!
+                </LightSpeed>
               </Link>
             </div>
 

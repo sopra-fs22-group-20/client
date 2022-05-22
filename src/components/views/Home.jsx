@@ -17,6 +17,7 @@ import StarIcon from '@mui/icons-material/Star';
 import { useCookies } from 'react-cookie';
 import cosha from 'cosha';
 import { getDomain } from '../../helpers/getDomain';
+import CustomSelect from '../ui/CustomSelect';
 
 function Home() {
   // TODO: imageURL is directly there when rendering
@@ -26,6 +27,8 @@ function Home() {
   const [hover, setHover] = React.useState(0);
   const [cookies, _setCookie] = useCookies(['id']);
   const isMounted = useRef(false);
+  const [categories, setCategories] = useState(['']);
+  const [category, setCategory] = useState();
   // const [wobble, setWobble] = useState(0);
 
   const labels = {
@@ -52,6 +55,10 @@ function Home() {
         // const randomImage = response.data;
         // setImageId(randomImage.imageId);
         // setRandImageURL(randomImage.storageLink);
+
+        // Get the categories for the Selection dropdown menu
+        const categories = await api.get('/categories');
+        setCategories(categories);
       } catch (error) {
         console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
         console.error('Details:', error);
@@ -131,11 +138,24 @@ function Home() {
 
       {/* left side of screen: columns with categories, game */}
       <Grid item xs={7}>
-        <Zoom in>
-          <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
-            placeholder
-          </Typography>
-        </Zoom>
+        <Grid
+          container
+          rowSpacing={2}
+          direction="column"
+          justifyContent="flex-start"
+          alignItems="center"
+        >
+          <Zoom in>
+            <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
+              placeholder
+            </Typography>
+          </Zoom>
+          <CustomSelect
+          // value={}
+            label="Category"
+          />
+        </Grid>
+
       </Grid>
 
       {/* right side of screen: columns with picture, rating */}
