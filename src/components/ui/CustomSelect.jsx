@@ -4,26 +4,20 @@ import {
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const CATEGORIES = [
-  { value: 'Autos', name: 'Autos' },
-  { value: 'Katzen', name: 'Katzen' },
-  { value: 'Hunde', name: 'Hunde' },
-  { value: 'New', name: '...suggest new category' },
-];
-
 function CustomSelect({ categories, label, value }) {
   return (
-    <FormControl>
+    <FormControl sx={{ m: 1, minWidth: 80 }}>
       <InputLabel id="demo-simple-select-label">Category</InputLabel>
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
         value={value}
         label={label}
+        categories={categories}
       >
         {
-          CATEGORIES.map((x, index) => (
-            <MenuItem value={x.value} key={`${index}_value`}>
+          categories.map((x, index) => (
+            <MenuItem value={x.name} key={`${index}_value`}>
               {x.name}
             </MenuItem>
           ))
@@ -36,7 +30,7 @@ function CustomSelect({ categories, label, value }) {
 CustomSelect.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
+  categories: PropTypes.array.isRequired,
 };
 
 export default CustomSelect;

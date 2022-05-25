@@ -2,12 +2,12 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Button, Grid } from '@mui/material';
 import { useCookies } from 'react-cookie';
-// import Logo_long.png from '../public/icons/Logo_long.png';
-import LightSpeed from 'react-reveal/LightSpeed';
+import Lightspeed from 'react-reveal/LightSpeed';
 
 export function Navigation() {
   const history = useHistory();
-  const [cookies, _setCookie, removeCookie] = useCookies(['userId', 'token']);
+  const [cookies, _setCookie,
+    removeCookie] = useCookies(['userId', 'token']);
   const { id: userId } = cookies;
   return (
     <nav id="menu" className="navbar navbar-default navbar-fixed-top">
@@ -38,9 +38,17 @@ export function Navigation() {
                 {' '}
               </button>
               <Link className="navbar-brand page-scroll" to="/home">
-                <LightSpeed left>
-                  Rate ME!
-                </LightSpeed>
+                <Lightspeed left>
+                  <img
+                    src="/images/Logo_long.png"
+                    alt="some title"
+                    style={{
+                      height: '250%',
+                      width: 'auto',
+                      imageRendering: 'crisp-edges',
+                    }}
+                  />
+                </Lightspeed>
               </Link>
             </div>
 

@@ -184,7 +184,6 @@ function Upload() {
   };
 
   const handleSubmitNewCategory = () => {
-    // TODO: make api call to backend to submit new category suggestion
     // use Id to indetify the user
     const { id: userId } = cookies;
     const empty = '';
@@ -345,7 +344,7 @@ function Upload() {
           <DialogTitle>Suggest new category</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              To suggest new category enter text below and press `&quot;`submit request`&quot;` button.
+              To suggest new category enter text below and confirm with &quot;SUBMIT REQUEST&quot; button.
             </DialogContentText>
             <TextField
               autoFocus
