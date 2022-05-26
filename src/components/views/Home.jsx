@@ -22,6 +22,7 @@ import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import FlagIcon from '@mui/icons-material/Flag';
 import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 import { getDomain } from '../../helpers/getDomain';
 import CustomSelect from '../ui/CustomSelect';
 import animation from '../../lotties/smash-an-egg.json';
@@ -58,26 +59,26 @@ function Home() {
     4: '😁',
     5: '😍',
   };
-  const starAnimationOptions = {
-    animationData: staranimation,
-    autoplay: true,
-  };
-  const starAnimationStyle = {
-    height: 'auto',
-    width: 'auto',
-  };
+  /*
+const starAnimationOptions = {
+  animationData: staranimation,
+  autoplay: true,
+};
+const starAnimationStyle = {
+  height: 'auto',
+  width: 'auto',
+};
 
-  const eggAnimationOptions = {
-    animationData: animation,
-    loop: true,
-    autoplay: true,
-  };
-  const eggAnimationStyle = {
-    height: 'auto',
-    width: 'auto',
-  };
-  const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
+const eggAnimationOptions = {
+  animationData: animation,
+  loop: true,
+  autoplay: true,
+};
+const eggAnimationStyle = {
 
+};
+const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
+*/
   useEffect(() => {
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
     async function fetchFirstRandomPictureURL() {
@@ -275,9 +276,11 @@ function Home() {
                   minHeight: '70%',
                 }}
               >
-                {View}
+                <Lottie animationData={animation} loop autoplay />
               </Grid>
-              {/* TODO: add start game button */}
+              <Button component={Link} to="/about" variant="contained" color="primary">
+                PLay Game
+              </Button>
             </Grid>
           </Grid>
         </Grid>
