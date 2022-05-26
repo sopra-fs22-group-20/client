@@ -88,7 +88,19 @@ function Pictures() {
       const response = await api.delete(`/images/${imageId}`, { headers: { userId } });
     } catch (error) {
       console.log(error.response);
-      alert(`Something went wrong during the registration: \n${handleError(error)}`);
+      alert(`Something went wrong during the Deletion: \n${handleError(error)}`);
+    }
+  };
+
+  const boostImage = async (imageId) => {
+    try {
+      // formerly: isRegistrationProcess: for server to decide how to handle passed object (login or registration process)
+      const { id: userId } = cookies;
+      const requestBody = JSON.stringify({ id: userId });
+      const response = await api.put('/images/boost', requestBody, { headers: { userId } });
+    } catch (error) {
+      console.log(error.response);
+      alert(`Something went wrong during the boosting of your image: \n${handleError(error)}`);
     }
   };
 
@@ -169,7 +181,7 @@ function Pictures() {
   );
 }
 
-function DisplayImage({ image, deleteImage }) {
+function DisplayImage({ image, deleteImage, boostImage }) {
   const [value, setValue] = React.useState(2);
 
   mapboxgl.accessToken = mapboxAccessToken;
@@ -271,6 +283,7 @@ function DisplayImage({ image, deleteImage }) {
               </Box>
             </p>
             <Button variant="contained" onClick={() => deleteImage(image.imageId)} size="large" color="error">Delete</Button>
+            <Button variant="contained" onClick={() => boostImage(image.imageId)} size="large" color="success">Boost</Button>
             <p />
           </Item>
         </Grid>

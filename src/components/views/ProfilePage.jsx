@@ -99,13 +99,22 @@ function ProfilePage() {
       <main>
         <div>
           <Container maxWidth="sm">
+
+            {profileId === userId && (
             <Typography variant="h2" align="center" color="textPrimary" gutterBottom>
               Welcome
               {' '}
               {user.username}
-              !
-
             </Typography>
+            )}
+
+            {profileId !== userId && (
+            <Typography variant="h2" align="center" color="textPrimary" gutterBottom>
+              This is the User Profile of
+              {' '}
+              {user.username}
+            </Typography>
+            )}
 
             <Box sx={{ flexGrow: 1 }}>
               <Grid container spacing={2} columns={16}>
