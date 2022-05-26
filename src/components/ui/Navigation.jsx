@@ -2,10 +2,12 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Button, Grid } from '@mui/material';
 import { useCookies } from 'react-cookie';
+import Lightspeed from 'react-reveal/LightSpeed';
 
 export function Navigation() {
   const history = useHistory();
-  const [cookies, _setCookie, removeCookie] = useCookies(['userId', 'token']);
+  const [cookies, _setCookie,
+    removeCookie] = useCookies(['userId', 'token']);
   const { id: userId } = cookies;
   return (
     <nav id="menu" className="navbar navbar-default navbar-fixed-top">
@@ -15,7 +17,7 @@ export function Navigation() {
         justifyContent="flex-start"
         alignItems="center"
       >
-        <Grid item xs={11}>
+        <Grid item xs={12}>
 
           <div className="container">
             <div className="navbar-header">
@@ -36,7 +38,17 @@ export function Navigation() {
                 {' '}
               </button>
               <Link className="navbar-brand page-scroll" to="/home">
-                Rate Me!
+                <Lightspeed left>
+                  <img
+                    src="/images/Logo_long.png"
+                    alt="some title"
+                    style={{
+                      height: '250%',
+                      width: 'auto',
+                      imageRendering: 'crisp-edges',
+                    }}
+                  />
+                </Lightspeed>
               </Link>
             </div>
 
@@ -59,22 +71,22 @@ export function Navigation() {
                       </li>
                     ))
                   }
+                <li>
+                  <Button
+                    variant="outlined"
+                    size="medium"
+                    onClick={() => {
+                      removeCookie('token', { path: '/' });
+                      removeCookie('id', { path: '/' });
+                      history.push('/login');
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </li>
               </ul>
             </div>
           </div>
-        </Grid>
-        <Grid item xs={1}>
-          <Button
-            variant="outlined"
-            size="medium"
-            onClick={() => {
-              removeCookie('token', { path: '/' });
-              removeCookie('id', { path: '/' });
-              history.push('/login');
-            }}
-          >
-            Logout
-          </Button>
         </Grid>
       </Grid>
     </nav>
