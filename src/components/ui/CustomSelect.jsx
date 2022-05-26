@@ -1,5 +1,5 @@
 import {
-  FormControl, Grid, InputLabel, MenuItem, Select,
+  FormControl, InputLabel, MenuItem, Select,
 } from '@mui/material';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -14,6 +14,7 @@ function CustomSelect({ categories, label, value }) {
         value={value}
         label={label}
         categories={categories}
+        onChange={(e) => e.onChange(e.target.value)}
       >
         {
           categories.map((x, index) => (
@@ -31,6 +32,7 @@ CustomSelect.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   categories: PropTypes.array.isRequired,
+  onChange: PropTypes.func.isRequired,
 };
 
 export default CustomSelect;

@@ -81,7 +81,33 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
 */
   useEffect(() => {
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
-    async function fetchFirstRandomPictureURL() {
+    async function fetchCategories() {
+      // Get the categories for the Selection dropdown menu
+      const categoryArray = await api.get('/categories');
+      setCategories(categoryArray.data);
+    }
+    async function fetchWithCategoryRandomPictureURL() {
+      try {
+        // const response = await api.get('/images/random/{category}');
+
+        // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
+        const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
+        // eslint-disable-next-line
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Get the returned image URL and update the state.
+        setRandImageURL(response);
+        // const randomImage = response.data;
+        // setImageId(randomImage.imageId);
+        // setRandImageURL(randomImage.storageLink);
+      } catch (error) {
+        console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
+        console.error('Details:', error);
+        alert('Something went wrong while fetching the images! See the console for details.');
+      }
+    }
+
+    async function fetchNoCategoryRandomPictureURL() {
       try {
         // const response = await api.get('/images/random');
 
@@ -96,9 +122,6 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
         // setImageId(randomImage.imageId);
         // setRandImageURL(randomImage.storageLink);
 
-        // Get the categories for the Selection dropdown menu
-        const categoryArray = await api.get('/categories');
-        setCategories(categoryArray.data);
         // TODO: make on single useEffect and work with if stament for the right API call
       } catch (error) {
         console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
@@ -106,38 +129,14 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
         alert('Something went wrong while fetching the images! See the console for details.');
       }
     }
-    if (!isMounted || selectedCategory === 'Random') {
-      fetchFirstRandomPictureURL();
-    }
-    // downloadPicture(randImageURL)
-  }, [selectedCategory]);
-
-  useEffect(() => {
-    async function fetchRandomPictureURL() {
-      try {
-        // const response = await api.get('/images/random/{category}');
-
-        // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
-        const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
-        // eslint-disable-next-line
-          // await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Get the returned image URL and update the state.
-        setRandImageURL(response);
-        // const randomImage = response.data;
-        // setImageId(randomImage.imageId);
-        // setRandImageURL(randomImage.storageLink);
-      } catch (error) {
-        console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
-        console.error('Details:', error);
-        alert('Something went wrong while fetching the images! See the console for details.');
-      }
-    }
-    if (isMounted && selectedCategory !== 'Random') {
-      fetchRandomPictureURL();
-      // downloadPicture(randImageURL)
-    } else {
+    fetchCategories();
+    if (!isMounted.current) {
+      fetchNoCategoryRandomPictureURL();
       isMounted.current = true;
+    } else if (isMounted && selectedCategory === 'Random') {
+      fetchNoCategoryRandomPictureURL();
+    } else {
+      fetchWithCategoryRandomPictureURL();
     }
   }, [rating, selectedCategory]);
 
@@ -276,10 +275,10 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
                   minHeight: '70%',
                 }}
               >
-                <Lottie animationData={animation} loop autoplay />
+                {/*  TODO: <Lottie animationData={animation} loop autoplay /> */}
               </Grid>
-              <Button component={Link} to="/about" variant="contained" color="primary">
-                PLay Game
+              <Button component={Link} to="/game" variant="contained" color="primary">
+                Play Game
               </Button>
             </Grid>
           </Grid>
@@ -385,17 +384,18 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
               cols={1}
               align="center"
             >
-              <ImageListItem
-                key="some unique key"
-                style={{
-                  objectFit: 'contain',
-                  height: '100%',
-                  maxHeight: '100%',
-                  maxWidth: '100%',
-                  minHeight: '100%',
-                }}
-              >
-                <Zoom in>
+              <Zoom in>
+                <ImageListItem
+                  key="some unique key"
+                  style={{
+                    objectFit: 'contain',
+                    height: '100%',
+                    maxHeight: '100%',
+                    maxWidth: '100%',
+                    minHeight: '100%',
+                  }}
+                >
+
                   <img
                     src={randImageURL}
                     alt="random title"
@@ -407,9 +407,10 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
                       minHeight: '100%',
                     }}
                   />
-                </Zoom>
-                <Lottie animationData={staranimation} style={{ position: 'absolute', zIndex: 5 }} />
-              </ImageListItem>
+
+                  {/* TODO: <Lottie animationData={staranimation} style={{ position: 'absolute', zIndex: 5 }} /> */}
+                </ImageListItem>
+              </Zoom>
             </ImageList>
           </Grid>
 
