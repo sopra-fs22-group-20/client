@@ -40,7 +40,7 @@ function Home() {
   const [cookies, _setCookie] = useCookies(['id']);
   const isMounted = useRef(false);
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Random');
   const [isReport, setIsReport] = useState(false);
   const [reportReason, setReportReason] = useState('');
   /*
@@ -88,7 +88,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
     }
     async function fetchWithCategoryRandomPictureURL() {
       try {
-        // const response = await api.get('/images/random/{category}');
+        // const response = await api.get('/images/random/{selectedCategory}');
 
         // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
         const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
@@ -101,15 +101,16 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
         // setImageId(randomImage.imageId);
         // setRandImageURL(randomImage.storageLink);
       } catch (error) {
+        // TODO: Check if error is catched/shown when all images are seen
+        alert(`Something went wrong while fetching the images: \n${handleError(error)}`);
         console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
         console.error('Details:', error);
-        alert('Something went wrong while fetching the images! See the console for details.');
       }
     }
 
     async function fetchNoCategoryRandomPictureURL() {
       try {
-        // const response = await api.get('/images/random');
+        // const response = await api.get('/images/random/c');
 
         const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
         // const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
@@ -121,12 +122,10 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
         // const randomImage = response.data;
         // setImageId(randomImage.imageId);
         // setRandImageURL(randomImage.storageLink);
-
-        // TODO: make on single useEffect and work with if stament for the right API call
       } catch (error) {
+        alert(`Something went wrong while fetching the images: \n${handleError(error)}`);
         console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
         console.error('Details:', error);
-        alert('Something went wrong while fetching the images! See the console for details.');
       }
     }
     fetchCategories();
@@ -156,7 +155,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
     });
 
     authAxios.put('/rate', requestBody);
-
+    // TODO: catch error
     /*
   rating
   header: userId
