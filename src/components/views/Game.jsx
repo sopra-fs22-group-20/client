@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
+import { useHistory } from 'react-router-dom';
 import { getDomain } from '../../helpers/getDomain';
 
 export default function Game() {
@@ -45,6 +46,7 @@ export default function Game() {
   const [user2Joined, setUser2Joined] = useState(false);
   const [showJoin, setShowJoin] = useState(true);
   const [cookies, _setCookie] = useCookies(['id']);
+  const history = useHistory();
 
   function setUser2Image(res) {
     if (res.data.user2Score < 25) setImage2(res.data.step1Image);
@@ -270,6 +272,7 @@ export default function Game() {
         step4Image: '',
       });
       setExitGame(false);
+      history.push('/home');
     }).catch((err) => {
       setError(err.response.data);
     });
