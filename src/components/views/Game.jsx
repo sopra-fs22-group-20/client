@@ -4,7 +4,11 @@ import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import { Spinner } from 'components/ui/Spinner';
-import { Button, Grid, Typography } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import {
+  Button,
+  Grid, Typography,
+} from '@mui/material';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import { getDomain } from '../../helpers/getDomain';
@@ -37,8 +41,8 @@ export default function Game() {
   const [image2, setImage2] = useState('');
   const [exitGame, setExitGame] = useState(false);
   const [clickable, setClickable] = useState(true);
-  const [_user1Joined, setUser1Joined] = useState(false);
-  const [_user2Joined, setUser2Joined] = useState(false);
+  const [user1Joined, setUser1Joined] = useState(false);
+  const [user2Joined, setUser2Joined] = useState(false);
   const [showJoin, setShowJoin] = useState(true);
   const [cookies, _setCookie] = useCookies(['id']);
 
@@ -46,29 +50,29 @@ export default function Game() {
     if (res.data.user2Score < 25) setImage2(res.data.step1Image);
     if (res.data.user2Score > 25 && res.data.user1Score < 50) setImage2(res.data.step2Image);
     if (res.data.user2Score > 50 && res.data.user1Score < 75) setImage2(res.data.step3Image);
-    if (res.data.user2Score === 100) setImage2(res.data.step4Image);
+    if (res.data.user2Score == 100) setImage2(res.data.step4Image);
   }
 
   function setUser1Image(res) {
     if (res.data.user1Score < 25) setImage1(res.data.step1Image);
     if (res.data.user1Score > 25 && res.data.user1Score < 50) setImage1(res.data.step2Image);
     if (res.data.user1Score > 50 && res.data.user1Score < 75) setImage1(res.data.step3Image);
-    if (res.data.user1Score === 100) setImage1(res.data.step4Image);
+    if (res.data.user1Score == 100) setImage1(res.data.step4Image);
   }
 
   function declareWinner(res) {
-    if (res.data.user1Score === 100) {
+    if (res.data.user1Score == 100) {
       setWinner(`🏅 Winner is "${userData.user1Name}"`);
       setClickable(false);
       setExitGame(true);
-    } else if (res.data.user2Score === 100) {
+    } else if (res.data.user2Score == 100) {
       setWinner(`🏅 Winner is "${userData.user2Name}"`);
       setClickable(false);
       setExitGame(true);
     } else {
       setClickable(true);
       setExitGame(false);
-      setWinner('🏅 Winner will be shown here');
+      setWinner('🏅 Winner will be here');
     }
   }
 
@@ -89,7 +93,6 @@ export default function Game() {
       else if (userData.user2Id == null) setError('Game lobby is ready, please click on following button to join the game');
     });
   }
-
   async function fetchActiveGame() {
     const baseUrl = getDomain();
     await axios.get(`${baseUrl}/game/findActiveGame`).then((res) => {
@@ -108,12 +111,17 @@ export default function Game() {
   async function checkPartiesAvailabilityAndFetchData() {
     await axios.get(`${getDomain()}/game/checkEmptyLobby`).then((res) => {
       if (res.status === 226) {
-        console.log(res.status);
+        console.log('1');
         fetchGameByUserId(cookies.id);
       } else {
-        fetchGameByUserId(cookies.id);
+        // you can update the time of automation by changing the last param
+        const interval = setInterval(async () => await userData.user2Id == null && fetchGameByUserId(cookies.id), 1000);
+        return () => {
+          clearInterval(interval);
+        };
       }
     }).catch((err) => {
+      console.log('3');
       fetchGameByUserId(cookies.id);
       fetchActiveGame();
     });
@@ -141,9 +149,9 @@ export default function Game() {
   }
 
   async function joinGame() {
-    if (userData.user1Id === cookies.id) {
+    if (userData.user1Id == cookies.id) {
 
-    } else if (userData.user2Id === cookies.id) {
+    } else if (userData.user2Id == cookies.id) {
 
     } else {
       const baseUrl = getDomain();
@@ -167,9 +175,8 @@ export default function Game() {
     await axios.get(`${getDomain()}/saveWinner/${cookies.id}/${userData.gameCode}`);
   }
 
-  // for user 1
   async function handleIncrement1() {
-    if (clickScore1 === 100) {
+    if (clickScore1 == 100) {
       setWinner(`🏅 Winner is ${userData.user1Name}`);
       setExitGame(false);
       saveWinner(userData.id, userData.gameCode);
@@ -197,9 +204,8 @@ export default function Game() {
     }
   }
 
-  // for second user in the lobby
   async function handleIncrement2() {
-    if (clickScore2 === 100) {
+    if (clickScore2 == 100) {
       setWinner(`🏅 Winner is ${userData.user2Name}`);
       setClickable(false);
       setExitGame(false);
@@ -233,8 +239,8 @@ export default function Game() {
       setUserData(res.data);
       setUser1Image(res);
       setUser2Image(res);
-      if (cookies.id === userData.user1Id) setWinner(`🏅 Winner is "${userData.user1Name}"`);
-      if (cookies.id === userData.user2Id) setWinner(`🏅 Winner is "${userData.user2Name}"`);
+      if (cookies.id == userData.user1Id) setWinner(`🏅 Winner is "${userData.user1Name}"`);
+      if (cookies.id == userData.user2Id) setWinner(`🏅 Winner is "${userData.user2Name}"`);
     }).catch((err) => {
       setError(err.response.message);
       console.log(err.response.data);
@@ -269,6 +275,10 @@ export default function Game() {
     });
   }
 
+  async function refreshComponent() {
+    await fetchGameByUserId(cookies.id);
+  }
+
   return (
     <Grid
       container
@@ -290,13 +300,16 @@ export default function Game() {
                     }
 
         {
-                        userData.active === true && (userData.user2Id == null || userData.user1Id == null) && showJoin === true && userData.user1Id !== cookies.id
+                        userData.active === true && (userData.user2Id == null || userData.user1Id == null) && showJoin === true && userData.user1Id != cookies.id
                         && (
                         <Button onClick={() => joinGame()} style={{ fontSize: '14px', marginLeft: '10px' }} size="large" variant="contained">
                           Join Game
                         </Button>
                         )
                     }
+        {/* add refresh button and call the fresh data without any refresh page */}
+        <RefreshIcon onClick={() => refreshComponent()} style={{ cursor: 'pointer' }} fontSize="large" />
+
         {
                         exitGame === true
                         && (
@@ -314,7 +327,7 @@ export default function Game() {
                         <CardHeader
                           avatar={(
                             <Typography variant="h5" aria-label="recipe">
-                              {cookies.id === userData.user1Id ? <span>You</span> : <span>Your opponent</span>}
+                              {cookies.id == userData.user1Id ? <span>You</span> : <span>Your opponent</span>}
                             </Typography>
                                   )}
                           action={(
@@ -323,7 +336,7 @@ export default function Game() {
                                 Score:
                                 {clickScore1}
                               </h4>
-                              {userData.user1Id === cookies.id ? <button onClick={() => giveUp()} className="btn btn-danger btn-sm">Give Up</button> : <br />}
+                              {userData.user1Id == cookies.id ? <button onClick={() => giveUp()} className="btn btn-danger btn-sm">Give Up</button> : <br />}
                             </div>
                                   )}
                         />
@@ -331,14 +344,13 @@ export default function Game() {
                           <Typography variant="p" color="text.secondary">
                             {userData.user2Name !== null && (
                             <span>
-                              Your opponent is
-                              {' '}
+                              Your partner is
                               {userData.user2Name}
                             </span>
                             ) }
                           </Typography>
                         </CardContent>
-                        {userData.user1Id === cookies.id && clickable === true ? (
+                        {userData.user1Id == cookies.id && clickable == true ? (
                           <CardMedia
                             component="img"
                             style={{ cursor: 'pointer' }}
@@ -364,18 +376,18 @@ export default function Game() {
 
       {
                     (
-                      userData.user2Joined === true && userData.active === true) ? (
+                      userData.user2Joined == true && userData.active == true) ? (
                         <Grid item md={6} xs={12} lg={4}>
                           <Card sx={{ maxWidth: 345 }}>
                             <CardHeader
-                              avatar={<Typography variant="h5" aria-label="recipe">{cookies.id === userData.user2Id ? <span>You</span> : <span>Your opponent</span>}</Typography>}
+                              avatar={<Typography variant="h5" aria-label="recipe">{cookies.id == userData.user2Id ? <span>You</span> : <span>Your opponent</span>}</Typography>}
                               action={(
                                 <div>
                                   <h4 className="mt-3">
                                     Score:
                                     {clickScore2}
                                   </h4>
-                                  {userData.user2Id === cookies.id ? <button onClick={() => giveUp()} className="btn btn-danger btn-sm">Give Up</button> : <br />}
+                                  {userData.user2Id == cookies.id ? <button onClick={() => giveUp()} className="btn btn-danger btn-sm">Give Up</button> : <br />}
                                 </div>
                               )}
                             />
@@ -383,14 +395,13 @@ export default function Game() {
                               <Typography variant="p" color="text.secondary">
                                 {userData.user1Name !== null && (
                                 <span>
-                                  Your opponent is
-                                  {' '}
+                                  Your partner is
                                   {userData.user1Name}
                                 </span>
                                 )}
                               </Typography>
                             </CardContent>
-                            {userData.user2Id === cookies.id && clickable === true ? (
+                            {userData.user2Id == cookies.id && clickable == true ? (
                               <CardMedia
                                 component="img"
                                 style={{ cursor: 'pointer' }}

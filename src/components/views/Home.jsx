@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useEffect, useRef, useState,
+  useCallback, useEffect, useRef, useState, useMemo,
 } from 'react';
 import { api, handleError } from 'helpers/api';
 import { Spinner } from 'components/ui/Spinner';
@@ -23,10 +23,11 @@ import { styled } from '@mui/material/styles';
 import FlagIcon from '@mui/icons-material/Flag';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
+import { TransitionGroup } from 'react-transition-group';
 import { getDomain } from '../../helpers/getDomain';
 import CustomSelect from '../ui/CustomSelect';
 import animation from '../../lotties/smash-an-egg.json';
-import staranimation from '../../lotties/5-stars.json';
+import staranimation from '../../lotties/explosion.json';
 import {
   MailFrom, MailPassword, MailTo, MailUsername,
 } from '../../helpers/mailCredentials';
@@ -43,6 +44,7 @@ function Home() {
   const [selectedCategory, setSelectedCategory] = useState('Random');
   const [isReport, setIsReport] = useState(false);
   const [reportReason, setReportReason] = useState('');
+  const [isLoadingNewPicture, setIsLoadingNewPicture] = useState(false);
   /*
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -86,9 +88,73 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
       const categoryArray = await api.get('/categories');
       setCategories(categoryArray.data);
     }
+
+    async function fetchFirstRandomPictureURL() {
+      try {
+        const { id: userId } = cookies;
+        const authAxios = axios.create({
+          baseURL: getDomain(),
+          headers: { userId, 'Content-Type': 'application/json' },
+        });
+        // response = await authAxios.get('/images/random/c');
+
+        const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
+        // const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
+        // eslint-disable-next-line
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Get the returned image URL and update the state.
+        setRandImageURL(response);
+        // const randomImage = response.data;
+        // setImageId(randomImage.imageId);
+        // setRandImageURL(randomImage.storageLink);
+      } catch (error) {
+        alert(`Something went wrong while fetching the images: \n${handleError(error)}`);
+        console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
+        console.error('Details:', error);
+      }
+    }
+    fetchCategories();
+    fetchFirstRandomPictureURL();
+    // TODO: probably not necessary as start state of category is random: only 2 states to differentiate
+    isMounted.current = true;
+  }, []);
+
+  useEffect(() => {
+    // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
+    async function fetchNoCategoryRandomPictureURL() {
+      try {
+        const { id: userId } = cookies;
+        const authAxios = axios.create({
+          baseURL: getDomain(),
+          headers: { userId, 'Content-Type': 'application/json' },
+        });
+        // response = await authAxios.get('/images/random/c');
+
+        const response = 'https://www.w3schools.com/images/w3schools_green.jpg';
+        // const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
+        // eslint-disable-next-line
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Get the returned image URL and update the state.
+        setRandImageURL(response);
+        // const randomImage = response.data;
+        // setImageId(randomImage.imageId);
+        // setRandImageURL(randomImage.storageLink);
+      } catch (error) {
+        alert(`Something went wrong while fetching the images: \n${handleError(error)}`);
+        console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
+        console.error('Details:', error);
+      }
+    }
     async function fetchWithCategoryRandomPictureURL() {
       try {
-        // const response = await api.get('/images/random/{selectedCategory}');
+        const { id: userId } = cookies;
+        const authAxios = axios.create({
+          baseURL: getDomain(),
+          headers: { userId, 'Content-Type': 'application/json' },
+        });
+        // const response = await authAxios.get('/images/random/{selectedCategory}');
 
         // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
         const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
@@ -108,40 +174,14 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
       }
     }
 
-    async function fetchNoCategoryRandomPictureURL() {
-      try {
-        // const response = await api.get('/images/random/c');
-
-        const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
-        // const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
-        // eslint-disable-next-line
-        // await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Get the returned image URL and update the state.
-        setRandImageURL(response);
-        // const randomImage = response.data;
-        // setImageId(randomImage.imageId);
-        // setRandImageURL(randomImage.storageLink);
-      } catch (error) {
-        alert(`Something went wrong while fetching the images: \n${handleError(error)}`);
-        console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
-        console.error('Details:', error);
+    if (isMounted) {
+      if (selectedCategory === 'Random') {
+        fetchNoCategoryRandomPictureURL();
+      } else {
+        fetchWithCategoryRandomPictureURL();
       }
     }
-    fetchCategories();
-    if (!isMounted.current) {
-      fetchNoCategoryRandomPictureURL();
-      isMounted.current = true;
-    } else if (isMounted && selectedCategory === 'Random') {
-      fetchNoCategoryRandomPictureURL();
-    } else {
-      fetchWithCategoryRandomPictureURL();
-    }
   }, [rating, selectedCategory]);
-
-  if (randImageURL === '') {
-    return null;
-  }
 
   const rateImage = (newRatingValue) => {
     const { id: userId } = cookies;
@@ -219,6 +259,72 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
 
     setIsReport(false);
   };
+
+  const handleOnChangeRating = (event, newValue) => {
+    setIsLoadingNewPicture(true);
+    setRating(newValue);
+    rateImage(newValue);
+  };
+
+  const rateMeTitle = useMemo(
+    () => (
+      <Grid
+        item
+        style={{
+          height: '10%',
+        }}
+      >
+        <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
+          RATE ME!
+        </Typography>
+      </Grid>
+    ),
+    [],
+  );
+
+  const picture = useMemo(() => (
+    <ImageList
+      sx={{
+        width: 1, height: 1,
+      }}
+      cols={1}
+      align="center"
+    >
+
+      <Zoom in style={{ transitionDelay: '500ms' }}>
+        <ImageListItem
+          key="some unique key"
+          style={{
+            objectFit: 'contain',
+            height: '100%',
+            maxHeight: '100%',
+            maxWidth: '100%',
+            minHeight: '100%',
+          }}
+        >
+
+          <img
+            src={randImageURL}
+            alt="random title"
+            loading="lazy"
+            style={{
+              objectFit: 'contain',
+              height: '100%',
+              maxHeight: '100%',
+              minHeight: '100%',
+            }}
+          />
+
+          <Lottie animationData={staranimation} style={{ position: 'absolute', zIndex: 1 }} />
+        </ImageListItem>
+      </Zoom>
+    </ImageList>
+  ), [randImageURL]);
+
+  if (randImageURL === '') {
+    return null;
+  }
+
   return (
 
     <Grid
@@ -250,7 +356,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
               variant="h6"
               style={{ fontWeight: 'bold' }}
               align="center"
-              paragraph="true"
+              paragraph
             >
               Crush the Egg and earn a bonus! Compete against other users and earn
               trophies that you can link to your selected pictures. Pictures with
@@ -274,7 +380,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
                   minHeight: '70%',
                 }}
               >
-                {/*  TODO: <Lottie animationData={animation} loop autoplay /> */}
+                <Lottie animationData={animation} loop autoplay />
               </Grid>
               <Button component={Link} to="/game" variant="contained" color="primary">
                 Play Game
@@ -301,7 +407,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
         >
           <Grid item xs={12}>
             <CustomSelect
-              maxWidth
+              autoWidth
               categories={categories}
               label="Category"
               value={selectedCategory}
@@ -359,16 +465,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
             height: 'calc(100vh - 90px)',
           }}
         >
-          <Grid
-            item
-            style={{
-              height: '10%',
-            }}
-          >
-            <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
-              RATE ME!
-            </Typography>
-          </Grid>
+          {rateMeTitle}
 
           <Grid
             item
@@ -376,41 +473,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
               height: '75%',
             }}
           >
-            <ImageList
-              sx={{
-                width: 1, height: 1,
-              }}
-              cols={1}
-              align="center"
-            >
-              <Zoom in>
-                <ImageListItem
-                  key="some unique key"
-                  style={{
-                    objectFit: 'contain',
-                    height: '100%',
-                    maxHeight: '100%',
-                    maxWidth: '100%',
-                    minHeight: '100%',
-                  }}
-                >
-
-                  <img
-                    src={randImageURL}
-                    alt="random title"
-                    loading="lazy"
-                    style={{
-                      objectFit: 'contain',
-                      height: '100%',
-                      maxHeight: '100%',
-                      minHeight: '100%',
-                    }}
-                  />
-
-                  {/* TODO: <Lottie animationData={staranimation} style={{ position: 'absolute', zIndex: 5 }} /> */}
-                </ImageListItem>
-              </Zoom>
-            </ImageList>
+            {picture}
           </Grid>
 
           <Grid
@@ -444,9 +507,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
       TODO: adjust size, doesn't work yet */
                   align="center"
                   value={0}
-                  onChange={(event, newValue) => {
-                    setRating(newValue); rateImage(newValue);
-                  }}
+                  onChange={handleOnChangeRating}
                   onChangeActive={(event, newHover) => {
                     setHover(newHover);
                   }}

@@ -4,7 +4,9 @@ import {
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function CustomSelect({ categories, label, value }) {
+function CustomSelect({
+  autoWidth, categories, label, value, onChange,
+}) {
   return (
     <FormControl sx={{ m: 1, minWidth: 80 }}>
       <InputLabel id="demo-simple-select-label">Category</InputLabel>
@@ -14,7 +16,12 @@ function CustomSelect({ categories, label, value }) {
         value={value}
         label={label}
         categories={categories}
-        onChange={(e) => e.onChange(e.target.value)}
+        onChange={(e) => {
+          console.log('test');
+
+          onChange(e.target.value);
+        }}
+        autoWidth={autoWidth}
       >
         {
           categories.map((x, index) => (
@@ -33,6 +40,7 @@ CustomSelect.propTypes = {
   value: PropTypes.string.isRequired,
   categories: PropTypes.array.isRequired,
   onChange: PropTypes.func.isRequired,
+  autoWidth: PropTypes.any.isRequired,
 };
 
 export default CustomSelect;
