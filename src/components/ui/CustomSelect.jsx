@@ -7,6 +7,10 @@ import PropTypes from 'prop-types';
 function CustomSelect({
   autoWidth, categories, label, value, onChange,
 }) {
+  if (categories.length === 0) {
+    return null;
+  }
+
   return (
     <FormControl sx={{ m: 1, minWidth: 80 }}>
       <InputLabel id="demo-simple-select-label">Category</InputLabel>
@@ -15,10 +19,7 @@ function CustomSelect({
         id="demo-simple-select"
         value={value}
         label={label}
-        categories={categories}
         onChange={(e) => {
-          console.log('test');
-
           onChange(e.target.value);
         }}
         autoWidth={autoWidth}
