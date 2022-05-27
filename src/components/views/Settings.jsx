@@ -115,7 +115,7 @@ function Settings() {
   const changePassword = async () => {
     try {
       const { id: userId } = cookies;
-      const requestBody = JSON.stringify({ id: userId, password });
+      const requestBody = JSON.stringify({ id: userId, password, moreInfo });
       const response = await api.put(`/users/${userId}`, requestBody, { headers: { userId } });
 
       _setCookie('userData', { ...userData, password }, { path: '/' });
@@ -130,11 +130,11 @@ function Settings() {
     }
   };
   // This function is responsible for sending request to server to change the Instagram account name
-
+  console.log(userData);
   const changeMoreInfo = async () => {
     try {
       const { id: userId } = cookies;
-      const requestBody = JSON.stringify({ id: userId, moreInfo });
+      const requestBody = JSON.stringify({ id: userId, password, moreInfo });
       const response = await api.put(`/users/${userId}`, requestBody, { headers: { userId } });
 
       _setCookie('userData', { ...userData, moreInfo }, { path: '/' });
@@ -167,37 +167,6 @@ function Settings() {
                 {' '}
                 {userData.username}
               </Typography>
-              <Grid container spacing={6}>
-                <Grid item xs={6}>
-                  <Box
-                    component="form"
-                    sx={{
-                      '& > :not(style)': { m: 1, width: '25ch' },
-                    }}
-                    noValidate
-                    autoComplete="off"
-                  >
-                    <TextField
-                      id="outlined-basic"
-                      label="Enter a new username"
-                      variant="outlined"
-                      onChange={(un) => setUsername(un.target.value)}
-                    />
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      changeUsername();
-                    }}
-                  >
-                    Change Username
-                  </Button>
-                </Grid>
-
-              </Grid>
 
             </div>
 
