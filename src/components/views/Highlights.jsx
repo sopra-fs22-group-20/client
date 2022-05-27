@@ -35,6 +35,7 @@ function Highlights() {
   const [loading, setLoading] = useState(true);
   const [highlights, setHighlights] = useState({ podest1: null, podest2: null, podest3: null });
   const { podest1, podest3, podest2 } = highlights;
+  const [catArray, setCatArray] = useState([]);
   // Send the requesat whenever component is loaded
   const history = useHistory();
   /* useEffect(() => {
@@ -68,6 +69,18 @@ function Highlights() {
     }
     fetchPictures();
   }, [category]);
+
+  useEffect(() => {
+    async function fetchCat() {
+      try {
+        const categoryArray = await api.get('/categories');
+        setCatArray(categoryArray.data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchCat();
+  }, []);
 
   // fetching pictures
   /* useEffect(() => {
@@ -138,11 +151,7 @@ function Highlights() {
         <div>
           <label htmlFor="cars">Choose a Category:</label>
           <select onChange={changeCat} value={category} name="cars" id="cars">
-            <option selected value="Car">Car</option>
-            <option value="Cat">Cat</option>
-            <option value="Dog">Dog</option>
-            <option value="Fish">Fish</option>
-            <option value="Motorcycle">Motorcycle</option>
+            {catArray.map((item) => <option selected value={item.name}>{item.name}</option>)}
 
           </select>
         </div>
