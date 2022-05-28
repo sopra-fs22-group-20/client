@@ -33,7 +33,6 @@ import {
 } from '../../helpers/mailCredentials';
 
 function Home() {
-  // TODO: imageURL is directly there when rendering
   const [randImageURL, setRandImageURL] = useState('');
   const [imageId, setImageId] = useState(null); // TODO: maybe type string;
   const [rating, setRating] = React.useState(0); // TODO: fix number
@@ -46,15 +45,9 @@ function Home() {
   const [reportReason, setReportReason] = useState('');
   const [isLoadingNewPicture, setIsLoadingNewPicture] = useState(false);
   const [count, setCount] = useState(0);
-  /*
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  }));
-*/
+
+  const explosion = staranimation;
+
   const labels = {
     1: '🤮',
     2: '😕',
@@ -62,26 +55,6 @@ function Home() {
     4: '😁',
     5: '😍',
   };
-  /*
-const starAnimationOptions = {
-  animationData: staranimation,
-  autoplay: true,
-};
-const starAnimationStyle = {
-  height: 'auto',
-  width: 'auto',
-};
-
-const eggAnimationOptions = {
-  animationData: animation,
-  loop: true,
-  autoplay: true,
-};
-const eggAnimationStyle = {
-
-};
-const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
-*/
 
   useEffect(() => {
     async function fetchCategories() {
@@ -115,10 +88,10 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
           baseURL: getDomain(),
           headers: { userId, 'Content-Type': 'application/json' },
         });
-        // const response = await authAxios.get('/images/random/{selectedCategory}');
+        const response = await authAxios.get('/images/random/{selectedCategory}');
 
         // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
-        const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
+        // const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
         // eslint-disable-next-line
         // await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -151,30 +124,29 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
       setIsLoadingNewPicture(true);
       setTimeout(() => {
         setIsLoadingNewPicture(false);
-      }, 900);
+      }, 950);
     }
   }, [rating]);
 
   const rateImage = (newRatingValue) => {
-    const { id: userId } = cookies;
-    const requestBody = JSON.stringify({
-      imageId,
-      rating: newRatingValue,
-    });
-    const authAxios = axios.create({
-      baseURL: getDomain(),
-      headers: { userId, 'Content-Type': 'application/json' },
-    });
+    try {
+      const { id: userId } = cookies;
+      const requestBody = JSON.stringify({
+        imageId,
+        rating: newRatingValue,
+      });
+      const authAxios = axios.create({
+        baseURL: getDomain(),
+        headers: { userId, 'Content-Type': 'application/json' },
+      });
 
-    authAxios.put('/rate', requestBody);
-    // TODO: catch error
-    /*
-  rating
-  header: userId
-  requestBody: ImageId, rating (int)
-  */
+      authAxios.put('/rate', requestBody);
+    } catch (error) {
+      alert(`Something went wrong while rating the images: \n${handleError(error)}`);
+      console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
+      console.error('Details:', error);
+    }
   };
-
   // does the function call work or could it be that the rating (value via setValue) is not yet updated?
   const handleReportImage = () => {
     // use Id to indetify the reporting user
@@ -254,20 +226,8 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
     [],
   );
 
-  if (randImageURL === '') {
-    return null;
-  }
-
-  return (
-
-    <Grid
-      container
-      direction="row"
-      justifyContent="space-evenly"
-      alignItems="center"
-    >
-
-      {/* left side of screen: columns with game */}
+  const gameAnimation = useMemo(
+    () => (
       <Grid item xs={6}>
         <Grid
           container
@@ -323,12 +283,26 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
         </Grid>
       </Grid>
 
-      {/* TODO: divider -> divides the game part (left side of screen) from the rating part
-       (middle to right side of screen)
-      <Grid item>
-        <Divider orientation="vertical" variant="middle" flexItem />
-      </Grid>
-*/}
+    ),
+    [],
+  );
+
+  if (randImageURL === '') {
+    return null;
+  }
+
+  return (
+
+    <Grid
+      container
+      direction="row"
+      justifyContent="space-evenly"
+      alignItems="center"
+    >
+
+      {/* left side of screen: columns with game */}
+      {gameAnimation}
+
       {/* middle of screen: columns with categories */}
       <Grid item xs={1}>
         <Grid
@@ -341,6 +315,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
             paddingBottom: '20px',
           }}
         >
+          {/* incl. divider style */}
           <Grid item xs={12} style={{ borderLeftStyle: 'solid', borderLeftWidth: 'thin' }}>
             <Grid
               container
@@ -422,7 +397,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
             }}
           >
             {
-              (isLoadingNewPicture) ? (<Lottie animationData={staranimation} style={{ height: '100%' }} />)
+              (isLoadingNewPicture) ? (<Lottie animationData={explosion} style={{ height: '100%' }} />)
                 : (
                   <TransitionGroup style={{ height: '100%' }}>
                     <ImageList
@@ -496,9 +471,6 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
 
                 <Rating
                   name="hover-feedback"
-      /* defaultValue = {value} --> maybe this takes the value
-      from before and shows it with the next picture
-      TODO: adjust size, doesn't work yet */
                   align="center"
                   value={0}
                   onChange={handleOnChangeRating}
@@ -512,9 +484,6 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
               <Grid item style={{ paddingTop: '0px', height: '20%' }}>
                 <div>
                   {labels[hover]}
-
-                  {/* TODO: maybe fix : rating as there might otherwise show the previously assigned rating value with the next picture */}
-
                 </div>
 
               </Grid>
