@@ -94,6 +94,7 @@ function Pictures() {
     }
   };
   console.log(userData);
+
   const boostImage = async (imageId) => {
     try {
       // formerly: isRegistrationProcess: for server to decide how to handle passed object (login or registration process)

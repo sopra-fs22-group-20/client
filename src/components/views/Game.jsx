@@ -132,10 +132,7 @@ export default function Game() {
         fetchGameByUserId(cookies.id);
       } else {
         // you can update the time of automation by changing the last param
-        const interval = setInterval(async () => await userData.user2Id == null && fetchGameByUserId(cookies.id), 1000);
-        return () => {
-          clearInterval(interval);
-        };
+        fetchGameByUserId(cookies.id);
       }
     }).catch((err) => {
       console.log('3');
@@ -145,7 +142,10 @@ export default function Game() {
   }
 
   useEffect(() => {
+  //  if (res.status === 226) {
     checkPartiesAvailabilityAndFetchData();
+    //   res.status == -1;
+    // }
   }, []);
 
   // Functions
