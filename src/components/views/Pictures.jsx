@@ -71,6 +71,7 @@ function Pictures() {
   const [cookies, _setCookie] = useCookies(['id', 'userData']);
   const [errorImageId, setErrorImageId] = useState({ imageId: null, type: 'error', message: '' });
   const { userData } = cookies;
+  const [user, setUser] = useState(null);
 
   // delete request
 
@@ -135,6 +136,30 @@ function Pictures() {
     fetchPictures();
   }, []);
 
+  useEffect(() => {
+    // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
+    async function fetchData() {
+      try {
+        const { id: userId } = cookies;
+        const response = await api.get(`/users/${userId}`, { headers: { userId } });
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Get the returned profile
+        console.log(response.data);
+        setUser(response.data);
+        console.log(user);
+        // console.log("User has been set");
+      } catch (error) {
+        console.error(`Something went wrong while fetching the User: \n${handleError(error)}`);
+        console.error('Details:', error);
+        alert('Something went wrong while fetching the User! See the console for details.');
+      }
+    }
+
+    fetchData();
+  }, []);
+
   let content = <Spinner />;
 
   // This is from individual assignment
@@ -178,11 +203,22 @@ function Pictures() {
 
     <div>
       <h2>Pictures</h2>
+      <Button
+        variant="contained"
+        onClick={() => {
+          console.log(user);
+        }}
+      >
+        Update your Instagram
+      </Button>
       <p>
         On this page, you can see your uploaded pictures! - You have
         {userData.trophies}
         {' '}
         Trophies
+
+        Or right amount
+
       </p>
 
       {content}

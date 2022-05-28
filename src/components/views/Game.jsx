@@ -91,6 +91,7 @@ export default function Game() {
       setExitGame(false);
       setWinner('🏅 Winner will be here');
     }
+    res.data.user1Score += 1;
   }
 
   async function fetchGameByUserId() {
