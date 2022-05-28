@@ -1,3 +1,3 @@
-const mapboxAccessToken = process.env.REACT_APP_MAPBOXACCESSTOKEN;
+const mapboxAccessToken = 'pk.eyJ1IjoibWVsb2RsZWJyb24iLCJhIjoiY2wyN3BtemxxMDF1MDNvcXJ1MzBsb3lpbiJ9.AotPmJCvYieI67IM5BT5cA';
 
 exports.mapboxAccessToken = mapboxAccessToken;

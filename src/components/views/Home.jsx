@@ -103,7 +103,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
         // await new Promise((resolve) => setTimeout(resolve, 1000));
         const response = await authAxios.get('/images/random/c');
         // Get the returned image URL and update the state.
-        setRandImageURL(response);
+        setRandImageURL(response.data.storageLink);
         const randomImage = response.data;
         setImageId(randomImage.imageId);
         // setRandImageURL(randomImage.storageLink);
@@ -128,7 +128,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
         // await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Get the returned image URL and update the state.
-        setRandImageURL(response);
+        setRandImageURL(response.data.storageLink);
         const randomImage = response.data;
         setImageId(randomImage.imageId);
         setRandImageURL(randomImage.storageLink);

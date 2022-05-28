@@ -67,7 +67,7 @@ function Login() {
     const userId = 1;
     const category = 'Fish';
     const storageLink = 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F17.jpg?alt=media&token=f74d255d-1e50-4a37-ba91-5b09236f6244';
-    const location = JSON.stringify('{"lng":11.180664062497925,"lat":43.7285172514685}');
+    const location = JSON.stringify('');
     const requestBody = JSON.stringify({
       name,
       location,
@@ -80,7 +80,6 @@ function Login() {
     });
     const response = authAxios.post('/images', requestBody);
     console.log(response);
-    handleSubmit();
   };
 
   return (
@@ -146,11 +145,10 @@ function Login() {
                 Sign In
               </Button>
               <Button
-                type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                onSubmit={demoSetup}
+                onClick={demoSetup}
               >
                 Demo Setup
               </Button>
