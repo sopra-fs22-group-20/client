@@ -23,7 +23,7 @@ import {
   Menu,
   Dialog,
   DialogTitle,
-  DialogContent, DialogContentText, DialogActions, ImageList, ImageListItem, Rating,
+  DialogContent, DialogContentText, DialogActions, ImageList, ImageListItem, Rating, Alert,
 } from '@mui/material';
 import { useCookies } from 'react-cookie';
 import mapboxgl from '!mapbox-gl';
@@ -69,6 +69,7 @@ function Pictures() {
   const [users, setUsers] = useState(null);
   const [images, setImages] = useState(null);
   const [cookies, _setCookie] = useCookies(['id']);
+  const [errorImageId, setErrorImageId] = useState({ imageId: null, type: 'error', message: '' });
 
   // delete request
 
@@ -96,11 +97,11 @@ function Pictures() {
     try {
       // formerly: isRegistrationProcess: for server to decide how to handle passed object (login or registration process)
       const { id: userId } = cookies;
-      const requestBody = JSON.stringify({ id: userId });
+      const requestBody = JSON.stringify({ userId, imageId });
       const response = await api.put('/images/boost', requestBody, { headers: { userId } });
+      setErrorImageId({ imageId, type: 'success', message: 'The boost was successfully activated. The duration of the boost is 24 hours.' });
     } catch (error) {
-      console.log(error.response);
-      alert(`Something went wrong during the boosting of your image: \n${handleError(error)}`);
+      setErrorImageId({ imageId, type: 'warning', message: 'You do not have enough trophies to activate the boost' });
     }
   };
 
@@ -160,7 +161,7 @@ function Pictures() {
         <item>
           <ul className="image list">
             {images.map((image) => (
-              <DisplayImage image={image} deleteImage={deleteImage} />
+              <DisplayImage image={image} errorImageId={errorImageId} setErrorImageId={setErrorImageId} deleteImage={deleteImage} boostImage={boostImage} />
             ))}
           </ul>
         </item>
@@ -181,7 +182,9 @@ function Pictures() {
   );
 }
 
-function DisplayImage({ image, deleteImage, boostImage }) {
+function DisplayImage({
+  image, deleteImage, boostImage, errorImageId, setErrorImageId,
+}) {
   const [value, setValue] = React.useState(2);
 
   mapboxgl.accessToken = mapboxAccessToken;
@@ -234,8 +237,10 @@ function DisplayImage({ image, deleteImage, boostImage }) {
         </Grid>
         <Grid item xs={6}>
           <Item>
+            {errorImageId.imageId === image.imageId && <Alert severity={errorImageId.type} onClose={() => setErrorImageId((f) => ({ ...f, imageId: null }))}>{errorImageId.message}</Alert>}
             <div className="image">
               <div className="image title">
+
                 <p align="center">
                   Title:
                   {' '}
@@ -281,8 +286,10 @@ function DisplayImage({ image, deleteImage, boostImage }) {
                 <Rating name="read-only" value={image.rating} readOnly size="large" />
               </Box>
             </p>
-            <Button variant="contained" onClick={() => deleteImage(image.imageId)} size="large" color="error">Delete</Button>
-            <Button variant="contained" onClick={() => boostImage(image.imageId)} size="large" color="success">Boost</Button>
+            <div style={{ display: 'flex' }}>
+              <Button variant="contained" style={{ margin: '0 0.5rem' }} fullWidth onClick={() => deleteImage(image.imageId)} size="large" color="error">Delete</Button>
+              <Button variant="contained" style={{ margin: '0 0.5rem' }} fullWidth onClick={() => boostImage(image.imageId)} size="large" color="success">Boost</Button>
+            </div>
             <p />
           </Item>
         </Grid>
