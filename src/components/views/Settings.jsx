@@ -45,9 +45,9 @@ function Settings() {
 
   const [username, setUsername] = useState(null);
   const [moreInfo, setmoreInfo] = useState(null);
+  const [instagram, setInstagram] = useState(null);
   const [user, setUser] = useState(1);
   const [password, setPassword] = useState(null);
-  const [instagram, setInstagram] = useState(null);
   const { id } = useParams();
   const [cookies, _setCookie] = useCookies(['userId', 'userData']);
 
@@ -92,7 +92,7 @@ function Settings() {
     }
   }; */
 
-  const changeUsername = async () => {
+  const changeUsername = async (field, value) => {
     try {
       const { id: userId } = cookies;
       const requestBody = JSON.stringify({ id: userId, username });
@@ -115,8 +115,8 @@ function Settings() {
   const changePassword = async () => {
     try {
       const { id: userId } = cookies;
-      const requestBody = JSON.stringify({ id: userId, password, moreInfo });
-      const response = await api.put(`/users/${userId}`, requestBody, { headers: { userId } });
+      const requestBody = JSON.stringify({ password });
+      const response = await api.put(`/users/credentials/${userId}`, requestBody, { headers: { userId } });
 
       _setCookie('userData', { ...userData, password }, { path: '/' });
       setmoreInfo('');
@@ -134,10 +134,28 @@ function Settings() {
   const changeMoreInfo = async () => {
     try {
       const { id: userId } = cookies;
-      const requestBody = JSON.stringify({ id: userId, password, moreInfo });
-      const response = await api.put(`/users/${userId}`, requestBody, { headers: { userId } });
+      const requestBody = JSON.stringify({ id: userId, instagram: userData.instagram, moreInfo });
+      const response = await api.put(`/users/info/${userId}`, requestBody, { headers: { userId } });
 
       _setCookie('userData', { ...userData, moreInfo }, { path: '/' });
+      setmoreInfo('');
+      // Get the returned user and update a new object.
+      // const user = new User(response.data);
+
+      // This command reloads the page
+      // window.location.reload(false);
+    } catch (error) {
+      alert(`Something went wrong while changing the username. \n${handleError(error)}`);
+    }
+  };
+
+  const changeInstagram = async () => {
+    try {
+      const { id: userId } = cookies;
+      const requestBody = JSON.stringify({ id: userId, instagram, moreInfo: userData.moreInfo });
+      const response = await api.put(`/users/info/${userId}`, requestBody, { headers: { userId } });
+
+      _setCookie('userData', { ...userData, instagram }, { path: '/' });
       setmoreInfo('');
       // Get the returned user and update a new object.
       // const user = new User(response.data);
@@ -228,6 +246,7 @@ function Settings() {
                     <TextField id="outlined-basic" label="Enter more information" variant="outlined" onChange={(un) => setmoreInfo(un.target.value)} value={moreInfo} />
                   </Box>
                 </Grid>
+
                 <Grid item xs={6}>
                   <Button
                     variant="contained"
@@ -237,6 +256,44 @@ function Settings() {
                   >
                     Update new Information
                   </Button>
+                </Grid>
+
+              </Grid>
+
+            </div>
+
+            <div>
+
+              <Typography variant="h5" gutterBottom component="div">
+                Instagram:
+                {' '}
+                {userData.instagram}
+              </Typography>
+              <Grid item xs={6}>
+
+                <Grid container spacing={6}>
+                  <Grid item xs={6}>
+                    <Box
+                      component="form"
+                      sx={{
+                        '& > :not(style)': { m: 1, width: '25ch' },
+                      }}
+                      noValidate
+                      autoComplete="off"
+                    >
+                      <TextField id="outlined-basic" label="Enter more information" variant="outlined" onChange={(un) => setInstagram(un.target.value)} value={instagram} />
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Button
+                      variant="contained"
+                      onClick={() => {
+                        changeInstagram();
+                      }}
+                    >
+                      Update your Instagram
+                    </Button>
+                  </Grid>
                 </Grid>
 
               </Grid>

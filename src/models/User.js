@@ -12,6 +12,7 @@ class User {
     this.status = null;
     this.creationDate = null;
     this.moreInfo = null;
+    this.instagram = null;
     Object.assign(this, data);
   }
 }

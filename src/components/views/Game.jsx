@@ -13,6 +13,7 @@ import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import { useHistory } from 'react-router-dom';
 import { getDomain } from '../../helpers/getDomain';
+import { api, handleError } from '../../helpers/api';
 
 export default function Game() {
   const [userData, setUserData] = useState({
@@ -45,9 +46,9 @@ export default function Game() {
   const [user1Joined, setUser1Joined] = useState(false);
   const [user2Joined, setUser2Joined] = useState(false);
   const [showJoin, setShowJoin] = useState(true);
-  const [cookies, _setCookie] = useCookies(['id']);
+  const [cookies, _setCookie] = useCookies(['id', 'userData']);
   const history = useHistory();
-
+  const { userData: mainUser } = cookies;
   function setUser2Image(res) {
     if (res.data.user2Score < 25) setImage2(res.data.step1Image);
     if (res.data.user2Score > 25 && res.data.user1Score < 50) setImage2(res.data.step2Image);
@@ -61,14 +62,28 @@ export default function Game() {
     if (res.data.user1Score > 50 && res.data.user1Score < 75) setImage1(res.data.step3Image);
     if (res.data.user1Score == 100) setImage1(res.data.step4Image);
   }
-
+  async function giveWinnerTrophies(userID) {
+    try {
+      const requestBody = JSON.stringify({ userId: userID, trophies: 10 });
+      const response = await api.put('/users/trophies', requestBody);
+      if (mainUser.userId === userID) {
+        _setCookie('userData', { ...mainUser, trophies: mainUser.trophies + 10 }, { path: '/' });
+      }
+    } catch (error) {
+      alert(`Something went wrong while changing the username. \n${handleError(error)}`);
+    }
+  }
   function declareWinner(res) {
     if (res.data.user1Score == 100) {
+      giveWinnerTrophies(res.data.user1Id);
       setWinner(`🏅 Winner is "${userData.user1Name}"`);
+      // giveWinnerTrophies(user1ID);
       setClickable(false);
       setExitGame(true);
     } else if (res.data.user2Score == 100) {
+      giveWinnerTrophies(res.data.user2Id);
       setWinner(`🏅 Winner is "${userData.user2Name}"`);
+      // giveWinnerTrophies(user2ID);
       setClickable(false);
       setExitGame(true);
     } else {

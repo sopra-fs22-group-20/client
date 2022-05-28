@@ -81,6 +81,7 @@ function ProfilePage() {
         const response = await api.get(`/users/${profileId}`, { headers: { userId: profileId } });
 
         // Get the returned profile
+        console.log(response.data);
         setUser(response.data);
         setLoading((false));
         // console.log("User has been set");
@@ -156,6 +157,19 @@ function ProfilePage() {
                       {' '}
                       <br />
                       {user.moreInfo ? user.moreInfo : 'There is no further information now'}
+
+                    </Typography>
+
+                  </Item>
+                </Grid>
+                <Grid item xs={8}>
+                  <Item>
+
+                    <Typography variant="h5" gutterBottom component="div">
+                      Instagram:
+                      {' '}
+                      <br />
+                      {user.instagram ? user.instagram : 'There is no instagram account linked yet'}
 
                     </Typography>
 

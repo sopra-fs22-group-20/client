@@ -68,8 +68,9 @@ function Pictures() {
   // more information can be found under https://reactjs.org/docs/hooks-state.html
   const [users, setUsers] = useState(null);
   const [images, setImages] = useState(null);
-  const [cookies, _setCookie] = useCookies(['id']);
+  const [cookies, _setCookie] = useCookies(['id', 'userData']);
   const [errorImageId, setErrorImageId] = useState({ imageId: null, type: 'error', message: '' });
+  const { userData } = cookies;
 
   // delete request
 
@@ -92,16 +93,18 @@ function Pictures() {
       alert(`Something went wrong during the Deletion: \n${handleError(error)}`);
     }
   };
-
+  console.log(userData);
   const boostImage = async (imageId) => {
     try {
       // formerly: isRegistrationProcess: for server to decide how to handle passed object (login or registration process)
       const { id: userId } = cookies;
       const requestBody = JSON.stringify({ userId, imageId });
       const response = await api.put('/images/boost', requestBody, { headers: { userId } });
+      _setCookie('userData', { ...userData, trophies: userData.trophies - 10 }, { path: '/' });
+
       setErrorImageId({ imageId, type: 'success', message: 'The boost was successfully activated. The duration of the boost is 24 hours.' });
     } catch (error) {
-      setErrorImageId({ imageId, type: 'warning', message: 'You do not have enough trophies to activate the boost' });
+      setErrorImageId({ imageId, type: 'warning', message: error.response.data.message });
     }
   };
 
@@ -174,7 +177,12 @@ function Pictures() {
 
     <div>
       <h2>Pictures</h2>
-      <p>On this page, you can see your uploaded pictures!</p>
+      <p>
+        On this page, you can see your uploaded pictures! - You have
+        {userData.trophies}
+        {' '}
+        Trophies
+      </p>
 
       {content}
     </div>
