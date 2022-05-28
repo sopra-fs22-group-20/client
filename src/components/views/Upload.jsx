@@ -1,26 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 // import for ref in firebase, getDownloadURL return url to access the image
 import {
-  ref, uploadBytes, getDownloadURL, getStorage,
+  getDownloadURL, getStorage, ref, uploadBytes,
 } from 'firebase/storage';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import 'styles/mapbox-gl.css';
 
 import 'styles/ui/mapContainer.scss';
 import {
-  Grid,
-  Typography,
   Button,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Menu,
   Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
   DialogTitle,
-  DialogContent, DialogContentText, DialogActions,
+  Grid,
+  TextField,
+  Typography,
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import axios from 'axios';
@@ -28,33 +25,25 @@ import { useCookies } from 'react-cookie';
 import mapboxgl from '!mapbox-gl';
 import { mapboxAccessToken } from '../../helpers/mapboxConfig';
 import { api, handleError } from '../../helpers/api';
-import FormField from './FormField';
-import BaseContainer from '../ui/BaseContainer';
 import { getDomain } from '../../helpers/getDomain';
 import {
-  MailUsername, MailPassword, MailTo, MailFrom,
+  MailFrom, MailPassword, MailTo, MailUsername,
 } from '../../helpers/mailCredentials';
+import CustomSelect from '../ui/CustomSelect';
 
 // TODO: fetch categories from backend
-const CATEGORIES = [
-  { value: 'Car', name: 'Car' },
-  { value: 'Cat', name: 'Cat' },
-  { value: 'Dog', name: 'Dog' },
-  { value: 'Fish', name: 'Fish' },
-  { value: 'Motorcycle', name: 'Motorcycle' },
-  { value: 'New', name: '...suggest new category' },
-];
 
 function Upload() {
   const [selectedFile, setFile] = useState(null);
   const history = useHistory();
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('Autos');
+  const [category, setCategory] = useState('Car');
   const [coordinates, setCoordinates] = useState('');
   const [isNewCategory, setIsNewCategory] = useState(false);
   const [newCategorySuggestion, setNewCategorySuggestion] = useState('');
   const [cookies, _setCookie] = useCookies(['userId']);
   const [success, setSuccess] = useState(false);
+  const [categories, setCategories] = useState([]);
   // const for map api
 
   mapboxgl.accessToken = mapboxAccessToken;
@@ -67,6 +56,11 @@ function Upload() {
 
   // Initialize map when component mounts
   useEffect(() => {
+    async function fetchCategories() {
+      // Get the categories for the Selection dropdown menu
+      const categoryArray = await api.get('/categories');
+      setCategories(categoryArray.data);
+    }
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v11',
@@ -95,7 +89,7 @@ function Upload() {
     }
 
     marker.on('dragend', onDragEnd);
-
+    fetchCategories();
     // Clean up on unmount
   }, []);
   // Create a storage reference from our storage service
@@ -208,16 +202,12 @@ function Upload() {
   };
 
   const handleSetCategory = (event) => {
-    const newValue = event.target.value;
-    if (newValue === 'New') {
+    if (event === 'New') {
       setIsNewCategory(true);
     }
-    setCategory(event.target.value);
+    setCategory(event);
   };
 
-  if (CATEGORIES.length === 0) {
-    return null;
-  }
   function imageValidate(e) {
     const { name } = e.target.files[0];
     const ext = name.split('.')[1];
@@ -227,6 +217,15 @@ function Upload() {
       alert('Input only image files');
     }
   }
+
+  const getCategories = (categoriesArray) => {
+    let categoriesFiltered = categoriesArray.filter((x) => x.name !== 'Random').map((x) => ({
+      ...x,
+      value: x.name,
+    }));
+    categoriesFiltered = [{ value: '', name: '' }, ...categoriesFiltered, { value: 'New', name: '...suggest new category' }];
+    return categoriesFiltered;
+  };
 
   return (
     <Grid
@@ -292,25 +291,18 @@ function Upload() {
             />
           </Grid>
           <Grid item>
-            <FormControl>
-              <InputLabel id="demo-simple-select-label">Category</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={category}
-                label="Category"
-                onChange={(event) => handleSetCategory(event)}
-              >
-                {
-                    CATEGORIES.map((x, index) => (
-                      <MenuItem value={x.value} key={`${index}_value`}>
-                        {x.name}
-                      </MenuItem>
-                    ))
-                  }
-              </Select>
-            </FormControl>
-
+            {
+              (categories.length !== 0) ? (
+                <CustomSelect
+                  autoWidth
+                  categories={getCategories(categories)}
+                  label="Category"
+                  value={category}
+                  onChange={(event) => handleSetCategory(event)}
+                  getMenuItemValue={(x) => x.value}
+                />
+              ) : null
+}
           </Grid>
           <Grid item>
             <TextField
@@ -323,7 +315,7 @@ function Upload() {
             <TextField
               label="Location"
               value={coordinates}
-              disabled="true"
+              disabled
               onChange={(event) => setCoordinates(event.target.value)}
             />
           </Grid>
