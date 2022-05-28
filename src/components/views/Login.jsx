@@ -63,6 +63,43 @@ function Login() {
   };
 
   const demoSetup = () => {
+    const car = ['kevin', 'flo'];
+
+    car.forEach((x, i) => {
+      const name = i.toString();
+      const userId = 1;
+      const category = 'Car';
+      const storageLink = x;
+      const location = JSON.stringify('');
+
+      const requestBody = JSON.stringify({
+        name,
+        location,
+        storageLink,
+        category,
+      });
+      const authAxios = axios.create({
+        baseURL: getDomain(),
+        headers: { userId, 'Content-Type': 'application/json' },
+      });
+      const response = authAxios.post('/images', requestBody);
+      console.log(response);
+
+      if (i % 2 === 0) {
+        const imageId = i + 1;
+        console.log(i + 1);
+        const classification = 'A';
+        const requestBody1 = JSON.stringify({
+          imageId,
+          classification,
+        });
+        const response1 = authAxios.put('/classification', requestBody1);
+        console.log(response1);
+      }
+    });
+  };
+
+  /**
     const name = 'title';
     const userId = 1;
     const category = 'Fish';
@@ -81,7 +118,7 @@ function Login() {
     const response = authAxios.post('/images', requestBody);
     console.log(response);
   };
-
+*/
   return (
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: '100vh' }}>
