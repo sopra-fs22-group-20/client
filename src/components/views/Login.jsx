@@ -62,10 +62,27 @@ function Login() {
     doLogin(data.get('username'), data.get('password'));
   };
 
-  const demoSetup = () => {
-    const car = ['kevin', 'flo'];
+  const doClass = async (i) => {
+    const userId = 1;
+    const authAxios = axios.create({
+      baseURL: getDomain(),
+      headers: { userId, 'Content-Type': 'application/json' },
+    });
+    const imageId = i + 1;
+    console.log(i + 1);
+    const classification = 'A';
+    const requestBody1 = JSON.stringify({
+      imageId,
+      classification,
+    });
+    const response1 = await authAxios.put('/classification', requestBody1);
+    console.log(response1);
+  };
 
-    car.forEach((x, i) => {
+  const demoSetup = async () => {
+    const car = ['https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F1.jpg?alt=media&token=a894f74d-d6e6-456a-89a5-c16186c041d9', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F10.jpg?alt=media&token=8d18f6e7-c5e0-4951-a29d-288d16388bb0', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F11.jpg?alt=media&token=a4e2e957-bcf9-4bd8-b9dc-3472e111be47', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F12.jpg?alt=media&token=97f2a308-15c1-463a-ad65-463e301e53f0', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F13.jpg?alt=media&token=c7d60fbb-08ba-429b-9f01-a07a950cb7ac', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F14.jpg?alt=media&token=4a03e14c-a5f6-4226-acad-bff93bbd18ad', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F15.jpg?alt=media&token=6a65e7e3-f520-4c97-adff-cf2989fbdf16', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F15.jpg?alt=media&token=6a65e7e3-f520-4c97-adff-cf2989fbdf16', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F16.jpg?alt=media&token=8b11dabd-bff3-476d-8edd-826c70c637f8', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F17.jpg?alt=media&token=f74d255d-1e50-4a37-ba91-5b09236f6244', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F18.jpg?alt=media&token=cb0afafa-ad84-49d6-816e-eb5ff4fc2b12', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F19.jpg?alt=media&token=29aaa507-e6b1-40a6-9138-7e609c290207', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F2.jpg?alt=media&token=6a266a9e-4d52-4d2d-ad77-d61be1725e82', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F20.jpg?alt=media&token=89274253-1c98-4b3b-a64a-70ecc2d2d387', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F3.jpg?alt=media&token=7c1220d1-0c60-4405-894f-49a1fb26bbfe', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F4.jpg?alt=media&token=387974d0-5564-445f-bfd4-3ae954fccc2c', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F5.jpg?alt=media&token=4f24f384-c184-453c-9ff9-62bb2b3fd0c7', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F6.jpg?alt=media&token=e966d35c-10ec-495b-a5a8-89ef0855c6a8', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F7.jpg?alt=media&token=d0ff5ec6-7c88-494d-b39e-86a1750a6e9c', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F8.jpg?alt=media&token=0b6098b1-7600-4137-be4f-e31da4673929', 'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F9.jpg?alt=media&token=bf2e1823-bad7-4845-bc67-35f778e5f0bd'];
+
+    car.forEach(async (x, i) => {
       const name = i.toString();
       const userId = 1;
       const category = 'Car';
@@ -82,19 +99,11 @@ function Login() {
         baseURL: getDomain(),
         headers: { userId, 'Content-Type': 'application/json' },
       });
-      const response = authAxios.post('/images', requestBody);
+      const response = await authAxios.post('/images', requestBody);
       console.log(response);
 
-      if (i % 2 === 0) {
-        const imageId = i + 1;
-        console.log(i + 1);
-        const classification = 'A';
-        const requestBody1 = JSON.stringify({
-          imageId,
-          classification,
-        });
-        const response1 = authAxios.put('/classification', requestBody1);
-        console.log(response1);
+      if (i % 2 === 1) {
+        doClass(i);
       }
     });
   };
