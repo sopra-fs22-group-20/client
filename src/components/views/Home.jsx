@@ -153,6 +153,7 @@ function Home() {
 
       authAxios.put('/rate', requestBody);
     } catch (error) {
+      // TODO: check if this causes trouble
       alert(`Something went wrong while rating the images: \n${handleError(error)}`);
       console.error(`Something went wrong while rating the images: \n${handleError(error)}`);
       console.error('Details:', error);
