@@ -151,7 +151,7 @@ function Highlights() {
         <div>
           <label htmlFor="cars">Choose a Category:</label>
           <select onChange={changeCat} value={category} name="cars" id="cars">
-            {catArray.map((item) => <option selected value={item.name}>{item.name}</option>)}
+            {catArray.filter((item) => item.name !== 'Random').map((item) => <option selected value={item.name}>{item.name}</option>)}
 
           </select>
         </div>
