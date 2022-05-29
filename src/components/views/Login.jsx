@@ -13,7 +13,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useHistory } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api, handleError } from '../../helpers/api';
 import User from '../../models/User';
 import { getDomain } from '../../helpers/getDomain';
@@ -27,9 +27,9 @@ function Copyright(props) {
     </Typography>
   );
 }
+let counter = 1;
 
 function Login() {
-  const [counter, setCounter] = useState(1);
   const history = useHistory();
   const [_cookies, setCookie] = useCookies(['id', 'token']);
   const theme = createTheme();
@@ -77,7 +77,7 @@ function Login() {
       imageId,
       classification,
     });
-    setCounter(counter + 2);
+    counter += 2;
     const response1 = await authAxios.put('/classification', requestBody1);
     console.log(response1);
   };
