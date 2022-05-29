@@ -1,5 +1,12 @@
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=comfortaa&color=016EEA&size=24&width=500&lines=RateMe!;SoPra+Group+20)](https://git.io/typing-svg)
 
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=sopra-fs22-group-20_client)](https://sonarcloud.io/summary/new_code?id=sopra-fs22-group-20_client)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sopra-fs22-group-20_client&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=sopra-fs22-group-20_client)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=sopra-fs22-group-20_client&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=sopra-fs22-group-20_client)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=sopra-fs22-group-20_client&metric=coverage)](https://sonarcloud.io/summary/new_code?id=sopra-fs22-group-20_client)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=sopra-fs22-group-20_client&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=sopra-fs22-group-20_client)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=sopra-fs22-group-20_client&metric=bugs)](https://sonarcloud.io/summary/new_code?id=sopra-fs22-group-20_client)
+
 RateMe! is an online platform, where users can share and rate each others picture in fast and fun way.
 ## Introduction
 This project was done for the course [“Software Engineering Lab” (SoPra)](https://hasel.dev/teachings/fs22-sopra/) at the [University of Zurich](https://www.uzh.ch/en.html). It should teach how to actually develop software in a team by creating our own bigger software project.
