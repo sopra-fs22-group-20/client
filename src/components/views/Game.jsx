@@ -35,7 +35,10 @@ export default function Game() {
     step3Image: '',
     step4Image: '',
   });
-  const [winner, setWinner] = useState('Waiting for Winner');
+
+  const [isSearching, setIsSearching] = useState(false);
+  const [isFirstLandOnPage, setIsFirstLandOnPage] = useState(true);
+  const [winner, setWinner] = useState('');
   const [error, setError] = useState('');
   const [clickScore1, setClickScore1] = useState(userData.user1Score);
   const [clickScore2, setClickScore2] = useState(userData.user2Score);
@@ -43,16 +46,16 @@ export default function Game() {
   const [image2, setImage2] = useState('');
   const [exitGame, setExitGame] = useState(false);
   const [clickable, setClickable] = useState(true);
-  const [user1Joined, setUser1Joined] = useState(false);
-  const [user2Joined, setUser2Joined] = useState(false);
+  const [_user1Joined, setUser1Joined] = useState(false);
+  const [_user2Joined, setUser2Joined] = useState(false);
   const [showJoin, setShowJoin] = useState(true);
   const [cookies, _setCookie] = useCookies(['id', 'userData']);
   const history = useHistory();
   const { userData: mainUser } = cookies;
   function setUser2Image(res) {
     if (res.data.user2Score < 25) setImage2(res.data.step1Image);
-    if (res.data.user2Score > 25 && res.data.user1Score < 50) setImage2(res.data.step2Image);
-    if (res.data.user2Score > 50 && res.data.user1Score < 75) setImage2(res.data.step3Image);
+    if (res.data.user2Score > 25 && res.data.user2Score < 50) setImage2(res.data.step2Image);
+    if (res.data.user2Score > 50 && res.data.user2Score < 75) setImage2(res.data.step3Image);
     if (res.data.user2Score == 100) setImage2(res.data.step4Image);
   }
 
@@ -70,7 +73,7 @@ export default function Game() {
         _setCookie('userData', { ...mainUser, trophies: mainUser.trophies + 10 }, { path: '/' });
       }
     } catch (error) {
-      alert(`Something went wrong while changing the username. \n${handleError(error)}`);
+      alert(`Something went wrong: \n${handleError(error)}`);
     }
   }
   function declareWinner(res) {
@@ -90,7 +93,7 @@ export default function Game() {
     } else {
       setClickable(true);
       setExitGame(false);
-      setWinner('🏅 Winner will be here');
+      setWinner('🏅 No winner yet, hurry!');
     }
   }
 
@@ -131,9 +134,13 @@ export default function Game() {
       if (res.status === 226) {
         console.log('1');
         fetchGameByUserId(cookies.id);
-      } else {
-        // you can update the time of automation by changing the last param
+      } else if (isFirstLandOnPage) {
+        setIsFirstLandOnPage(false);
         fetchGameByUserId(cookies.id);
+      } else {
+        fetchGameByUserId(cookies.id);
+        alert('No other player has joined the lobby yet, '
+          + 'please refresh by clicking the refresh button in a couple of seconds');
       }
     }).catch((err) => {
       console.log('3');
@@ -151,6 +158,7 @@ export default function Game() {
 
   // Functions
   async function createGame() {
+    setIsSearching(true);
     const baseUrl = getDomain();
     return await axios.post(`${baseUrl}/game/create`, {
       user1Id: cookies.id,
@@ -164,6 +172,19 @@ export default function Game() {
       setError(err.response.message);
       // console.log(err.response.data)
     });
+  }
+
+  async function cancelGame() {
+    const baseUrl = getDomain();
+    await axios.delete(`${baseUrl}/game/quit/${userData.gameCode}/${cookies.id}`).then((res) => {
+      console.log(res.data);
+      setUserData(res.data);
+      setUser1Image(res);
+    }).catch((err) => {
+      setError(err.response.message);
+      console.log(err.response.data);
+    });
+    exitGameNow();
   }
 
   async function joinGame() {
@@ -306,8 +327,15 @@ export default function Game() {
       alignItems="center"
     >
       <Grid item xs={4}>
-        <h3 style={{ color: 'black', fontFamily: 'bold' }}>{error}</h3>
-        <h2 style={{ color: 'black', fontFamily: 'bold' }}>{winner}</h2>
+        <Typography
+          variant="h5"
+          style={{ fontWeight: 'bold' }}
+          paragraph
+        >
+          {error}
+        </Typography>
+
+        <h2 style={{ color: '#0027ff', fontFamily: 'bold' }}>{winner}</h2>
 
         {
                         userData.active === false
@@ -327,7 +355,30 @@ export default function Game() {
                         )
                     }
         {/* add refresh button and call the fresh data without any refresh page */}
-        <RefreshIcon onClick={() => refreshComponent()} style={{ cursor: 'pointer' }} fontSize="large" />
+        {
+          isSearching && (
+          <Button
+            color="inherit"
+            size="large"
+            startIcon={<RefreshIcon />}
+            onClick={() => refreshComponent()}
+          >
+            Refresh lobby
+          </Button>
+          )
+        }
+
+        <button
+          style={{ marginLeft: '15px' }}
+          className="btn btn-danger btn-sm"
+          onClick={() => {
+            (isSearching)
+              ? cancelGame()
+              : history.push('/home');
+          }}
+        >
+          Cancel
+        </button>
 
         {
                         exitGame === true
@@ -363,7 +414,8 @@ export default function Game() {
                           <Typography variant="p" color="text.secondary">
                             {userData.user2Name !== null && (
                             <span>
-                              Your partner is
+                              Your opponent is
+                              {' '}
                               {userData.user2Name}
                             </span>
                             ) }
@@ -414,7 +466,8 @@ export default function Game() {
                               <Typography variant="p" color="text.secondary">
                                 {userData.user1Name !== null && (
                                 <span>
-                                  Your partner is
+                                  Your opponent is
+                                  {' '}
                                   {userData.user1Name}
                                 </span>
                                 )}

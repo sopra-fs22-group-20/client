@@ -62,26 +62,6 @@ function Home() {
     4: '😁',
     5: '😍',
   };
-  /*
-const starAnimationOptions = {
-  animationData: staranimation,
-  autoplay: true,
-};
-const starAnimationStyle = {
-  height: 'auto',
-  width: 'auto',
-};
-
-const eggAnimationOptions = {
-  animationData: animation,
-  loop: true,
-  autoplay: true,
-};
-const eggAnimationStyle = {
-
-};
-const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
-*/
 
   useEffect(() => {
     async function fetchCategories() {
@@ -268,20 +248,8 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
   );
 */
 
-  if (randImageURL === '') {
-    return null;
-  }
-
-  return (
-
-    <Grid
-      container
-      direction="row"
-      justifyContent="space-evenly"
-      alignItems="center"
-    >
-
-      {/* left side of screen: columns with game */}
+  const gameAnimation = useMemo(
+    () => (
       <Grid item xs={6}>
         <Grid
           container
@@ -337,12 +305,26 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
         </Grid>
       </Grid>
 
-      {/*
-       (middle to right side of screen)
-      <Grid item>
-        <Divider orientation="vertical" variant="middle" flexItem />
-      </Grid>
-*/}
+    ),
+    [],
+  );
+
+  if (randImageURL === '') {
+    return null;
+  }
+
+  return (
+
+    <Grid
+      container
+      direction="row"
+      justifyContent="space-evenly"
+      alignItems="center"
+    >
+
+      {/* left side of screen: columns with game */}
+      {gameAnimation}
+
       {/* middle of screen: columns with categories */}
       <Grid item xs={1}>
         <Grid
@@ -355,6 +337,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
             paddingBottom: '20px',
           }}
         >
+          {/* incl. divider style */}
           <Grid item xs={12} style={{ borderLeftStyle: 'solid', borderLeftWidth: 'thin' }}>
             <Grid
               container
