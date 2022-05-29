@@ -31,8 +31,6 @@ import {
 } from '../../helpers/mailCredentials';
 import CustomSelect from '../ui/CustomSelect';
 
-// TODO: fetch categories from backend
-
 function Upload() {
   const [selectedFile, setFile] = useState(null);
   const history = useHistory();

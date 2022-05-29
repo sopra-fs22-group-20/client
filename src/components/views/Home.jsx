@@ -33,10 +33,9 @@ import {
 } from '../../helpers/mailCredentials';
 
 function Home() {
-  // TODO: imageURL is directly there when rendering
   const [randImageURL, setRandImageURL] = useState('');
-  const [imageId, setImageId] = useState(null); // TODO: maybe type string;
-  const [rating, setRating] = React.useState(0); // TODO: fix number
+  const [imageId, setImageId] = useState(null);
+  const [rating, setRating] = React.useState(0);
   const [hover, setHover] = React.useState(0);
   const [cookies, _setCookie] = useCookies(['id']);
   const isMounted = useRef(false);
@@ -134,7 +133,6 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
         setImageId(randomImage.imageId);
         setRandImageURL(randomImage.storageLink);
       } catch (error) {
-        // TODO: Check if error is catched/shown when all images are seen
         alert(`Something went wrong while fetching the images: \n${handleError(error)}`);
         console.error(`Something went wrong while fetching the images: \n${handleError(error)}`);
         console.error('Details:', error);
@@ -162,18 +160,24 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
   }, [rating]);
 
   const rateImage = (newRatingValue) => {
-    const { id: userId } = cookies;
-    const requestBody = JSON.stringify({
-      imageId,
-      rating: newRatingValue,
-    });
-    const authAxios = axios.create({
-      baseURL: getDomain(),
-      headers: { userId, 'Content-Type': 'application/json' },
-    });
+    try {
+      const { id: userId } = cookies;
+      const requestBody = JSON.stringify({
+        imageId,
+        rating: newRatingValue,
+      });
+      const authAxios = axios.create({
+        baseURL: getDomain(),
+        headers: { userId, 'Content-Type': 'application/json' },
+      });
 
-    authAxios.put('/rate', requestBody);
-    // TODO: catch error
+      authAxios.put('/rate', requestBody);
+    } catch (error) {
+      alert(`Something went wrong while rating the images: \n${handleError(error)}`);
+      console.error(`Something went wrong while rating the images: \n${handleError(error)}`);
+      console.error('Details:', error);
+    }
+
     /*
   rating
   header: userId
@@ -333,7 +337,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
         </Grid>
       </Grid>
 
-      {/* TODO: divider -> divides the game part (left side of screen) from the rating part
+      {/*
        (middle to right side of screen)
       <Grid item>
         <Divider orientation="vertical" variant="middle" flexItem />
@@ -518,7 +522,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
                   name="hover-feedback"
       /* defaultValue = {value} --> maybe this takes the value
       from before and shows it with the next picture
-      TODO: adjust size, doesn't work yet */
+     */
                   align="center"
                   value={0}
                   onChange={handleOnChangeRating}
@@ -532,8 +536,6 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
               <Grid item style={{ paddingTop: '0px', height: '20%' }}>
                 <div>
                   {labels[hover]}
-
-                  {/* TODO: maybe fix : rating as there might otherwise show the previously assigned rating value with the next picture */}
 
                 </div>
 
