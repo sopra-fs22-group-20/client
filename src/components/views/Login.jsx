@@ -14,6 +14,9 @@ import { useHistory } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import Snackbar from '@mui/material/Snackbar';
+import CloseIcon from '@mui/icons-material/Close';
+import { Alert, IconButton } from '@mui/material';
 import { api, handleError } from '../../helpers/api';
 import User from '../../models/User';
 import { getDomain } from '../../helpers/getDomain';
@@ -34,7 +37,37 @@ function Login() {
   const [_cookies, setCookie] = useCookies(['id', 'token']);
   const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
+  const [alertMessage, setAlertMessage] = useState({ message: '', type: '' });
   const theme = createTheme();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const action = (
+    <>
+      <Button color="secondary" size="small" onClick={handleClose}>
+        Close
+      </Button>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </>
+  );
 
   const doLogin = async (username, password) => {
     try {
@@ -85,6 +118,7 @@ function Login() {
   };
 
   const demoSetup = async () => {
+    handleClick();
     const car = [
       'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F11.jpg?alt=media&token=a4e2e957-bcf9-4bd8-b9dc-3472e111be47',
       'https://firebasestorage.googleapis.com/v0/b/ratem-482b2.appspot.com/o/images%2F12.jpg?alt=media&token=97f2a308-15c1-463a-ad65-463e301e53f0',
@@ -224,6 +258,7 @@ function Login() {
         doClass();
       }
     });
+    setAlertMessage({ message: 'You have successfully submitted the demo data.', type: 'success' });
   };
 
   /**
@@ -332,6 +367,17 @@ function Login() {
           </Box>
         </Grid>
       </Grid>
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        open={open}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        action={action}
+      >
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Demo setup successful!
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }

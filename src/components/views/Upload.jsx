@@ -160,7 +160,7 @@ function Upload() {
           console.log(userId);
           const response = await authAxios.post('/images', requestBody);
 
-          setAlertMessage({ message: 'Your pictures was successfully uploaded', type: 'success' });
+          setAlertMessage({ message: 'Your picture was successfully uploaded', type: 'success' });
         });
         console.log('Uploaded a blob or file!');
         // Store the new downloadURL together with credentials in Databse:
