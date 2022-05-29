@@ -267,7 +267,7 @@ function Highlights() {
               />
             </Item>
 
-            {podest2.location && <DisplayImage image={podest2} />}
+            {podest2 ? podest2.location && <DisplayImage image={podest2} /> : ''}
 
             <img src="/images/SecondPodest.png" className="PodestImage" />
           </Grid>
@@ -307,7 +307,7 @@ function Highlights() {
               />
             </Item>
 
-            {podest1.location && <DisplayImage image={podest1} />}
+            {podest1 ? podest1.location && <DisplayImage image={podest1} /> : ''}
 
             <img src="/images/FirstPodest.png" className="PodestImage" />
 
@@ -347,7 +347,7 @@ function Highlights() {
               />
             </Item>
 
-            {podest3.location && <DisplayImage image={podest3} />}
+            {podest3 ? podest3.location && <DisplayImage image={podest3} /> : ''}
 
             <img src="/images/ThirdPodest.png" className="PodestImage" />
 
