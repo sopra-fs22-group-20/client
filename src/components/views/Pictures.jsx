@@ -8,6 +8,7 @@ import Accordion from '@mui/material/Accordion';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 import {
   Grid,
@@ -23,7 +24,7 @@ import {
   Menu,
   Dialog,
   DialogTitle,
-  DialogContent, DialogContentText, DialogActions, ImageList, ImageListItem, Rating, Alert,
+  DialogContent, DialogContentText, DialogActions, ImageList, ImageListItem, Rating, Alert, Badge, IconButton, Tooltip,
 } from '@mui/material';
 import { useCookies } from 'react-cookie';
 import mapboxgl from '!mapbox-gl';
@@ -204,12 +205,26 @@ function Pictures() {
 
       <p>
         On this page, you can see your uploaded pictures! - You have
+      </p>
+      <p style={{ fontWeight: 'bold' }}>
         {' '}
         {user && user.trophies}
         {' '}
         Trophies
+        {' '}
+        <Tooltip
+          style={{ fontSize: 16 }}
+          title=<Typography fontSize={14}>
+            You can use trophies to boost your images. One boost per image costs you 10 trophies. The boost will increase the likelihood that your images will be shown to other users for 24h.
+            You can earn trophies by playing the game in the Home Screen. For each round that you win, you will receive 10 Trophies.
+          </Typography>
+        >
+          <IconButton>
+            <EmojiEventsIcon color="primary" fontSize="large" />
+          </IconButton>
+        </Tooltip>
       </p>
-
+      <p />
       {content}
     </div>
 
