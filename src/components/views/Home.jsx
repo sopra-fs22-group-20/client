@@ -47,7 +47,6 @@ function Home() {
   const [isLoadingNewPicture, setIsLoadingNewPicture] = useState(false);
   const [count, setCount] = useState(0);
   const [alertMessage, setAlertMessage] = useState({ message: '', type: '' });
-
   /*
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -94,15 +93,20 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
     async function fetchNoCategoryRandomPictureURL() {
       try {
-        const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
+        const { id: userId } = cookies;
+        const authAxios = axios.create({
+          baseURL: getDomain(),
+          headers: { userId, 'Content-Type': 'application/json' },
+        });
+        // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
         // const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
         // eslint-disable-next-line
         // await new Promise((resolve) => setTimeout(resolve, 1000));
-
+        const response = await authAxios.get('/images/random/c');
         // Get the returned image URL and update the state.
-        setRandImageURL(response);
-        // const randomImage = response.data;
-        // setImageId(randomImage.imageId);
+        setRandImageURL(response.data.storageLink);
+        const randomImage = response.data;
+        setImageId(randomImage.imageId);
         // setRandImageURL(randomImage.storageLink);
       } catch (error) {
         alert(`Something went wrong while fetching the images: \n${handleError(error)}`);
@@ -117,18 +121,18 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
           baseURL: getDomain(),
           headers: { userId, 'Content-Type': 'application/json' },
         });
-        // const response = await authAxios.get('/images/random/{selectedCategory}');
+        const response = await authAxios.get('/images/random/{selectedCategory}');
 
         // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
-        const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
+        // const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
         // eslint-disable-next-line
         // await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Get the returned image URL and update the state.
-        setRandImageURL(response);
-        // const randomImage = response.data;
-        // setImageId(randomImage.imageId);
-        // setRandImageURL(randomImage.storageLink);
+        setRandImageURL(response.data.storageLink);
+        const randomImage = response.data;
+        setImageId(randomImage.imageId);
+        setRandImageURL(randomImage.storageLink);
       } catch (error) {
         // TODO: Check if error is catched/shown when all images are seen
         alert(`Something went wrong while fetching the images: \n${handleError(error)}`);
@@ -179,13 +183,8 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
 
   // does the function call work or could it be that the rating (value via setValue) is not yet updated?
   const handleReportImage = () => {
-    console.log('hello');
-
     // use Id to indetify the reporting user
-    // TODO: fix function, does not work
     const { id: userId } = cookies;
-    console.log(userId);
-    console.log(imageId);
     const empty = '';
     const mailMessageBody = empty.concat(
       'User with id: ',
@@ -246,6 +245,24 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
     setRating(newValue);
     rateImage(newValue);
   };
+
+  /*
+  const rateMeTitle = useMemo(
+    () => (
+      <Grid
+        item
+        style={{
+          height: '10%',
+        }}
+      >
+        <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
+          RATE ME!
+        </Typography>
+      </Grid>
+    ),
+    [],
+  );
+*/
 
   if (randImageURL === '') {
     return null;
@@ -413,9 +430,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
             <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
               RATE ME!
             </Typography>
-
             {alertMessage.message && <Alert severity={alertMessage.type} onClose={() => setAlertMessage({ message: '', type: '' })}>{alertMessage.message}</Alert>}
-
           </Grid>
 
           <Grid
