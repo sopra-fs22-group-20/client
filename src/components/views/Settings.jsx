@@ -26,6 +26,7 @@ import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import ButtonGroup from '@mui/material/ButtonGroup';
+import Alert from '@mui/material/Alert';
 
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
@@ -50,6 +51,7 @@ function Settings() {
   const [password, setPassword] = useState(null);
   const { id } = useParams();
   const [cookies, _setCookie] = useCookies(['userId', 'userData']);
+  const [alertMessage, setAlertMessage] = useState({ message: '', type: '' });
 
   const { userData } = cookies;
 
@@ -119,12 +121,8 @@ function Settings() {
       const response = await api.put(`/users/credentials/${userId}`, requestBody, { headers: { userId } });
 
       _setCookie('userData', { ...userData, password }, { path: '/' });
-      setmoreInfo('');
-      // Get the returned user and update a new object.
-      // const user = new User(response.data);
-
-      // This command reloads the page
-      // window.location.reload(false);
+      setPassword('');
+      setAlertMessage({ message: 'You successfully updated your password', type: 'success' });
     } catch (error) {
       alert(`Something went wrong while changing the username. \n${handleError(error)}`);
     }
@@ -139,11 +137,7 @@ function Settings() {
 
       _setCookie('userData', { ...userData, moreInfo }, { path: '/' });
       setmoreInfo('');
-      // Get the returned user and update a new object.
-      // const user = new User(response.data);
-
-      // This command reloads the page
-      // window.location.reload(false);
+      setAlertMessage({ message: 'You successfully updated your MoreInfo field', type: 'success' });
     } catch (error) {
       alert(`Something went wrong while changing the username. \n${handleError(error)}`);
     }
@@ -156,12 +150,8 @@ function Settings() {
       const response = await api.put(`/users/info/${userId}`, requestBody, { headers: { userId } });
 
       _setCookie('userData', { ...userData, instagram }, { path: '/' });
-      setmoreInfo('');
-      // Get the returned user and update a new object.
-      // const user = new User(response.data);
-
-      // This command reloads the page
-      // window.location.reload(false);
+      setInstagram('');
+      setAlertMessage({ message: 'You successfully updated your Instagram', type: 'success' });
     } catch (error) {
       alert(`Something went wrong while changing the username. \n${handleError(error)}`);
     }
@@ -179,6 +169,18 @@ function Settings() {
             <Typography variant="h4" align="center" color="textSecondary" paragraph>
               On this page you can update your account settings.
             </Typography>
+
+            {alertMessage.message && (
+            <div>
+              <Alert severity={alertMessage.type} onClose={() => setAlertMessage({ message: '', type: '' })}>
+                {' '}
+                <Typography variant="h6" style={{ fontWeight: 'bold' }} align="center">
+                  {alertMessage.message}
+                </Typography>
+              </Alert>
+            </div>
+            )}
+
             <div>
               <Typography variant="h5" gutterBottom component="div">
                 Your username:
@@ -210,6 +212,7 @@ function Settings() {
                       type="password"
                       autoComplete="current-password"
                       onChange={(un) => setPassword(un.target.value)}
+                      value={password}
                     />
                   </Box>
                 </Grid>
@@ -282,9 +285,9 @@ function Settings() {
                     <TextField
                       id="outlined-password-input"
                       label="Enter your Instagram"
-                      type="password"
                       autoComplete="current-password"
                       onChange={(un) => setInstagram(un.target.value)}
+                      value={instagram}
                     />
                   </Box>
                 </Grid>
