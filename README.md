@@ -118,11 +118,11 @@ Another improvement would be, that the posters of new images could share their i
 The user profiles will be getting more settings, so the user could invidualise his profile by adding more credentials and a profile image. New user should get a generated profile image.
 ## Authors
 
-* **Marcel Eymany (group leader)** - *Frontend, Mockups* - [Github](https://github.com/kone54)
-* **Omar Abo Hamida** - *Frontend, Setup of project in Github* - [Github](https://github.com/oaboha)
-* **Jamo Sharif** - *Backend, Testing* - [Github](https://github.com/JSha91)
-* **Jonathan Contreras Urzua** - *Backend, Database, Testing* - [Github](https://github.com/JonathanContrerasM)
-* **Louis Huber** - *Frontend, Testing, Mockups* - [Github](https://github.com/L-Huber)|[Linkedin](https://www.linkedin.com/in/louis-huber/)
+* **Marcel Eymany (group leader)** - *Frontend, Mockups, Project Management* - [Github](https://github.com/kone54)
+* **Omar Abo Hamida** - *Frontend, Setup of project in Github, Project Management* - [Github](https://github.com/oaboha)
+* **Jamo Sharif** - *Backend, Testing, Project Management* - [Github](https://github.com/JSha91)
+* **Jonathan Contreras Urzua** - *Backend, Database, Testing, Project Management* - [Github](https://github.com/JonathanContrerasM)
+* **Louis Huber** - *Frontend, Testing, Mockups, Project Management* - [Github](https://github.com/L-Huber)|[Linkedin](https://www.linkedin.com/in/louis-huber/)
 
 
 See also the list of [contributors for the server](https://github.com/sopra-fs22-group-20/server/graphs/contributors) and [contributors for the client](https://github.com/sopra-fs22-group-20/server/graphs/contributors) who participated in this project.
