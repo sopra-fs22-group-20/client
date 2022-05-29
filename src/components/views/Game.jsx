@@ -74,6 +74,7 @@ export default function Game() {
     }
   }
   function declareWinner(res) {
+    console.log(res);
     if (res.data.user1Score == 100) {
       giveWinnerTrophies(res.data.user1Id);
       setWinner(`🏅 Winner is "${userData.user1Name}"`);
@@ -91,7 +92,6 @@ export default function Game() {
       setExitGame(false);
       setWinner('🏅 Winner will be here');
     }
-    res.data.user1Score += 1;
   }
 
   async function fetchGameByUserId() {
@@ -306,8 +306,8 @@ export default function Game() {
       alignItems="center"
     >
       <Grid item xs={4}>
-        <h3 style={{ color: '#f51515', fontFamily: 'bold' }}>{error}</h3>
-        <h2 style={{ color: '#0027ff', fontFamily: 'bold' }}>{winner}</h2>
+        <h3 style={{ color: 'black', fontFamily: 'bold' }}>{error}</h3>
+        <h2 style={{ color: 'black', fontFamily: 'bold' }}>{winner}</h2>
 
         {
                         userData.active === false

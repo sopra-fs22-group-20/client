@@ -11,7 +11,7 @@ import {
   DialogActions,
   DialogContent, DialogContentText,
   DialogTitle, Divider,
-  Grid, ImageList, ImageListItem, Rating, TextField, Typography, Zoom,
+  Grid, ImageList, ImageListItem, Rating, TextField, Typography, Zoom, Alert,
 } from '@mui/material';
 import axios, { Axios } from 'axios';
 import Box from '@mui/material/Box';
@@ -46,6 +46,8 @@ function Home() {
   const [reportReason, setReportReason] = useState('');
   const [isLoadingNewPicture, setIsLoadingNewPicture] = useState(false);
   const [count, setCount] = useState(0);
+  const [alertMessage, setAlertMessage] = useState({ message: '', type: '' });
+
   /*
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -177,15 +179,19 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
 
   // does the function call work or could it be that the rating (value via setValue) is not yet updated?
   const handleReportImage = () => {
+    console.log('hello');
+
     // use Id to indetify the reporting user
     // TODO: fix function, does not work
     const { id: userId } = cookies;
+    console.log(userId);
+    console.log(imageId);
     const empty = '';
     const mailMessageBody = empty.concat(
       'User with id: ',
       userId.toString(),
       ' reported an inappropriate image with imageId: ',
-      imageId.toString(),
+      // imageId.toString(),
     );
 
     const Email = {
@@ -218,7 +224,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
       },
     };
     Email.send({
-      Host: 'smtp.gmail.com',
+      Host: 'smtp.elasticemail.com',
       Username: MailUsername,
       Password: MailPassword,
       To: MailTo,
@@ -226,8 +232,11 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
       Subject: mailMessageBody,
       Body: reportReason,
     }).then(
-      (message) => alert(message),
-    );
+      (message) => {
+        console.log('TRIGGER');
+        setAlertMessage({ message: 'You have successfully reported the image. We will have a closer look on it. Thank you for reporting.', type: 'info' });
+      },
+    ).catch((err) => console.log(err));
 
     setIsReport(false);
   };
@@ -237,22 +246,6 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
     setRating(newValue);
     rateImage(newValue);
   };
-
-  const rateMeTitle = useMemo(
-    () => (
-      <Grid
-        item
-        style={{
-          height: '10%',
-        }}
-      >
-        <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
-          RATE ME!
-        </Typography>
-      </Grid>
-    ),
-    [],
-  );
 
   if (randImageURL === '') {
     return null;
@@ -411,7 +404,19 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
             height: 'calc(100vh - 90px)',
           }}
         >
-          {rateMeTitle}
+          <Grid
+            item
+            style={{
+              height: '10%',
+            }}
+          >
+            <Typography variant="h2" style={{ fontWeight: 'bold' }} align="center">
+              RATE ME!
+            </Typography>
+
+            {alertMessage.message && <Alert severity={alertMessage.type} onClose={() => setAlertMessage({ message: '', type: '' })}>{alertMessage.message}</Alert>}
+
+          </Grid>
 
           <Grid
             item

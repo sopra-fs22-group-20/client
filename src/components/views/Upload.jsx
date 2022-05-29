@@ -42,7 +42,7 @@ function Upload() {
   const [isNewCategory, setIsNewCategory] = useState(false);
   const [newCategorySuggestion, setNewCategorySuggestion] = useState('');
   const [cookies, _setCookie] = useCookies(['userId']);
-  const [success, setSuccess] = useState(false);
+  const [alertMessage, setAlertMessage] = useState({ message: '', type: '' });
   const [categories, setCategories] = useState([]);
   // const for map api
 
@@ -161,8 +161,8 @@ function Upload() {
           console.log('Header:', authAxios());
           console.log(userId);
           const response = await authAxios.post('/images', requestBody);
-          console.log(response);
-          setSuccess(true);
+
+          setAlertMessage({ message: 'Your pictures was successfully uploaded', type: 'success' });
         });
         console.log('Uploaded a blob or file!');
         // Store the new downloadURL together with credentials in Databse:
@@ -195,8 +195,8 @@ function Upload() {
       Subject: mailMessageBody,
       Body: newCategorySuggestion,
     }).then(
-      (message) => alert(message),
-    );
+      (message) => setAlertMessage({ message: 'You have successfully submitted a new Category. We will review it. Thank you.', type: 'info' }),
+    ).catch(() => setAlertMessage({ message: 'We could not forward your category. There is a problem with the server.', type: 'error' }));
 
     setIsNewCategory(false);
   };
@@ -254,12 +254,12 @@ function Upload() {
 
           </Grid>
         </Grid>
-        {success && (
+        {alertMessage.message && (
         <div>
-          <Alert onClose={() => setSuccess(false)}>
+          <Alert severity={alertMessage.type} onClose={() => setAlertMessage({ message: '', type: '' })}>
             {' '}
             <Typography variant="h5" style={{ fontWeight: 'bold' }} align="center">
-              You have successfully uploaded a picture!
+              {alertMessage.message}
             </Typography>
           </Alert>
         </div>
