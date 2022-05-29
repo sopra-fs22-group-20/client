@@ -45,11 +45,11 @@ export default function Game() {
   const [image1, setImage1] = useState('');
   const [image2, setImage2] = useState('');
   const [exitGame, setExitGame] = useState(false);
-  const [clickable, setClickable] = useState(true);
+  const [clickable, setClickable] = useState(false);
   const [_user1Joined, setUser1Joined] = useState(false);
   const [_user2Joined, setUser2Joined] = useState(false);
   const [showJoin, setShowJoin] = useState(true);
-  const [cookies, _setCookie] = useCookies(['id', 'userData']);
+  const [cookies, setCookie] = useCookies(['id', 'userData']);
   const history = useHistory();
   const { userData: mainUser } = cookies;
   function setUser2Image(res) {
@@ -70,7 +70,7 @@ export default function Game() {
       const requestBody = JSON.stringify({ userId: userID, trophies: 10 });
       const response = await api.put('/users/trophies', requestBody);
       if (mainUser.userId === userID) {
-        _setCookie('userData', { ...mainUser, trophies: mainUser.trophies + 10 }, { path: '/' });
+        setCookie('userData', { ...mainUser, trophies: mainUser.trophies + 10 }, { path: '/' });
       }
     } catch (error) {
       alert(`Something went wrong: \n${handleError(error)}`);
@@ -134,13 +134,17 @@ export default function Game() {
       if (res.status === 226) {
         console.log('1');
         fetchGameByUserId(cookies.id);
+        /* TODO:Cancel
       } else if (isFirstLandOnPage) {
         setIsFirstLandOnPage(false);
         fetchGameByUserId(cookies.id);
+         */
       } else {
         fetchGameByUserId(cookies.id);
+        /* TODO:Cancel
         alert('No other player has joined the lobby yet, '
           + 'please refresh by clicking the refresh button in a couple of seconds');
+         */
       }
     }).catch((err) => {
       console.log('3');
@@ -158,7 +162,7 @@ export default function Game() {
 
   // Functions
   async function createGame() {
-    setIsSearching(true);
+    // setIsSearching(true); TODO: Cancel
     const baseUrl = getDomain();
     return await axios.post(`${baseUrl}/game/create`, {
       user1Id: cookies.id,
@@ -174,6 +178,7 @@ export default function Game() {
     });
   }
 
+  /* TODO CANCEL
   async function cancelGame() {
     const baseUrl = getDomain();
     await axios.delete(`${baseUrl}/game/quit/${userData.gameCode}/${cookies.id}`).then((res) => {
@@ -186,8 +191,10 @@ export default function Game() {
     });
     exitGameNow();
   }
+   */
 
   async function joinGame() {
+    setClickable(true);
     if (userData.user1Id == cookies.id) {
 
     } else if (userData.user2Id == cookies.id) {
@@ -355,6 +362,7 @@ export default function Game() {
                         )
                     }
         {/* add refresh button and call the fresh data without any refresh page */}
+        {/* TODO: Cancel
         {
           isSearching && (
           <Button
@@ -379,6 +387,7 @@ export default function Game() {
         >
           Cancel
         </button>
+        */}
 
         {
                         exitGame === true
