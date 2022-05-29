@@ -121,7 +121,7 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
           baseURL: getDomain(),
           headers: { userId, 'Content-Type': 'application/json' },
         });
-        const response = await authAxios.get('/images/random/{selectedCategory}');
+        const response = await authAxios.get(`/images/random/${selectedCategory}`);
 
         // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
         // const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
