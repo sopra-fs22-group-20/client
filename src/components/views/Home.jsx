@@ -92,19 +92,14 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
     async function fetchNoCategoryRandomPictureURL() {
       try {
-        const { id: userId } = cookies;
-        const authAxios = axios.create({
-          baseURL: getDomain(),
-          headers: { userId, 'Content-Type': 'application/json' },
-        });
         // const response = 'https://images.dog.ceo//breeds//malinois//n02105162_10076.jpg';
         // const response = 'https://ik.imagekit.io/ikmedia/women-dress-2.jpg';
         // eslint-disable-next-line
         // await new Promise((resolve) => setTimeout(resolve, 1000));
-        const response = await authAxios.get('/images/random/c');
+        const response = await authAxios.get('/images/random/C');
         // Get the returned image URL and update the state.
         setRandImageURL(response);
-        const randomImage = response.data;
+        // const randomImage = response.data;
         setImageId(randomImage.imageId);
         // setRandImageURL(randomImage.storageLink);
       } catch (error) {
@@ -129,9 +124,9 @@ const { View } = useLottie(eggAnimationOptions, eggAnimationStyle);
 
         // Get the returned image URL and update the state.
         setRandImageURL(response);
-        const randomImage = response.data;
+        // const randomImage = response.data;
         setImageId(randomImage.imageId);
-        setRandImageURL(randomImage.storageLink);
+        // setRandImageURL(randomImage.storageLink);
       } catch (error) {
         // TODO: Check if error is catched/shown when all images are seen
         alert(`Something went wrong while fetching the images: \n${handleError(error)}`);
