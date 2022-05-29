@@ -137,7 +137,7 @@ function Settings() {
 
       _setCookie('userData', { ...userData, moreInfo }, { path: '/' });
       setmoreInfo('');
-      setAlertMessage({ message: 'You successfully updated your MoreInfo field', type: 'success' });
+      setAlertMessage({ message: 'You successfully updated your more info field', type: 'success' });
     } catch (error) {
       alert(`Something went wrong while changing the username. \n${handleError(error)}`);
     }
