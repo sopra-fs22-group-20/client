@@ -284,8 +284,8 @@ export default function Game() {
       setUserData(res.data);
       setUser1Image(res);
       setUser2Image(res);
-      if (cookies.id == userData.user1Id) setWinner(`🏅 Winner is "${userData.user1Name}"`);
-      if (cookies.id == userData.user2Id) setWinner(`🏅 Winner is "${userData.user2Name}"`);
+      if (cookies.id == userData.user1Id) setWinner(`🏅 Winner is "${userData.user2Name}"`);
+      if (cookies.id == userData.user2Id) setWinner(`🏅 Winner is "${userData.user1Name}"`);
     }).catch((err) => {
       setError(err.response.message);
       console.log(err.response.data);
@@ -365,18 +365,16 @@ export default function Game() {
           )
         }
         {/* add refresh button and call the fresh data without any refresh page */}
-        {
-          (userData.user2Joined || userData.active) && (
-            <Button
-              color="inherit"
-              size="large"
-              startIcon={<RefreshIcon />}
-              onClick={() => { refreshComponent(); }}
-            >
-              Refresh opponent search
-            </Button>
-          )
-        }
+
+        <Button
+          color="inherit"
+          size="large"
+          startIcon={<RefreshIcon />}
+          onClick={() => { refreshComponent(); }}
+        >
+          Refresh opponent search
+        </Button>
+
         {
           (!userData.user2Joined) && (
             <button
