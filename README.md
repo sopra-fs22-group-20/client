@@ -94,7 +94,7 @@ To upload a picture, the user has to click on "Upload" in the menu bar. Then, ch
 </br>
 To see how your picture performs, you have to go to "Pictures":
 </br>
-<img src="https://raw.githubusercontent.com/sopra-fs22-group-20/server/main/readme%20Addons/Pictures.png" alt="screenshot" width="500"/>
+<img src="https://github.com/sopra-fs22-group-20/server/blob/main/readme%20Addons/Upload2.png" alt="screenshot" width="500"/>
 </br>
 Here you can see the ratings of your picture.
 ### Playing the game
