@@ -81,6 +81,7 @@ function ProfilePage() {
         const response = await api.get(`/users/${profileId}`, { headers: { userId: profileId } });
 
         // Get the returned profile
+        console.log(response.data);
         setUser(response.data);
         setLoading((false));
         // console.log("User has been set");
@@ -99,13 +100,22 @@ function ProfilePage() {
       <main>
         <div>
           <Container maxWidth="sm">
+
+            {profileId === userId && (
             <Typography variant="h2" align="center" color="textPrimary" gutterBottom>
               Welcome
               {' '}
               {user.username}
-              !
-
             </Typography>
+            )}
+
+            {profileId !== userId && (
+            <Typography variant="h2" align="center" color="textPrimary" gutterBottom>
+              This is the User Profile of
+              {' '}
+              {user.username}
+            </Typography>
+            )}
 
             <Box sx={{ flexGrow: 1 }}>
               <Grid container spacing={2} columns={16}>
@@ -129,14 +139,7 @@ function ProfilePage() {
                     {/* Instead of "AverageRating" write {AverageRating} when its available */}
 
                     {/* Now comes the rating. Replace value with Rating_Average. 4.5 will be rounded to 5 */}
-                    <Box
-                      sx={{
-                        '& > legend': { mt: 2 },
-                      }}
-                    >
-                      <Typography component="legend" variant="h5">Your average Rating</Typography>
-                      <Rating name="read-only" value={3} readOnly />
-                    </Box>
+
                   </Item>
                 </Grid>
                 <Grid item xs={8}>
@@ -147,6 +150,19 @@ function ProfilePage() {
                       {' '}
                       <br />
                       {user.moreInfo ? user.moreInfo : 'There is no further information now'}
+
+                    </Typography>
+
+                  </Item>
+                </Grid>
+                <Grid item xs={8}>
+                  <Item>
+
+                    <Typography variant="h5" gutterBottom component="div">
+                      Instagram:
+                      {' '}
+                      <br />
+                      {user.instagram ? user.instagram : 'There is no instagram account linked yet'}
 
                     </Typography>
 

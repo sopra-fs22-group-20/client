@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useHistory } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
+import { useState } from 'react';
 import { api, handleError } from '../../helpers/api';
 import User from '../../models/User';
 
@@ -26,9 +27,27 @@ function Copyright(props) {
 }
 
 function Register() {
+  const [isValid, setIsValid] = useState(false);
+  const [message, setMessage] = useState('');
+  const [emailInput, setEmailInput] = useState('');
+  const [usernameInput, setUsernameInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
   const history = useHistory();
   const [_cookies, setCookie] = useCookies(['id', 'token']);
   const theme = createTheme();
+
+  const emailRegex = /\S+@\S+\.\S+/;
+
+  const validateEmail = (event) => {
+    const email = event;
+    if (emailRegex.test(email)) {
+      setIsValid(true);
+      setMessage('Your email looks good!');
+    } else {
+      setIsValid(false);
+      setMessage('Please enter a valid email!');
+    }
+  };
 
   const doRegistration = async (username, password, email) => {
     try {
@@ -99,8 +118,9 @@ function Register() {
             <Typography component="h1" variant="h5">
               Register
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
               <TextField
+                onChange={(un) => setUsernameInput(un.target.value)}
                 margin="normal"
                 required
                 fullWidth
@@ -110,6 +130,7 @@ function Register() {
                 autoFocus
               />
               <TextField
+                onChange={(em) => { validateEmail(em.target.value); setEmailInput(em.target.value); }}
                 margin="normal"
                 required
                 fullWidth
@@ -118,7 +139,11 @@ function Register() {
                 type="email"
                 id="email"
               />
+              <Typography variant="button" style={{ color: `${isValid ? 'green' : 'red'}` }}>
+                {message}
+              </Typography>
               <TextField
+                onChange={(pw) => setPasswordInput(pw.target.value)}
                 margin="normal"
                 required
                 fullWidth
@@ -128,6 +153,7 @@ function Register() {
                 id="password"
               />
               <Button
+                disabled={!isValid || !emailInput || !usernameInput || !passwordInput}
                 type="submit"
                 fullWidth
                 variant="contained"

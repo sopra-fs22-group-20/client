@@ -3,7 +3,7 @@
  * Copyright 2011-2016 Twitter, Inc.
  * Licensed under the MIT license
  */
-// TODO: clean code in order to prevent errors/warnings
+
 if (typeof jQuery === 'undefined') {
   throw new Error('Bootstrap\'s JavaScript requires jQuery')
 }
@@ -1573,7 +1573,7 @@ if (typeof jQuery === 'undefined') {
 
     function complete() {
       if (that.hoverState != 'in') $tip.detach()
-      if (that.$element) { // TODO: Check whether guarding this code with this `if` is really necessary.
+      if (that.$element) {
         that.$element
           .removeAttr('aria-describedby')
           .trigger('hidden.bs.' + that.type)

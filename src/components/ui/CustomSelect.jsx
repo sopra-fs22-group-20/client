@@ -1,58 +1,59 @@
 import {
-  FormControl, Grid, InputLabel, MenuItem, Select,
+  FormControl, InputLabel, MenuItem, Select,
 } from '@mui/material';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const CATEGORIES = [
-  { value: 'Autos', name: 'Autos' },
-  { value: 'Katzen', name: 'Katzen' },
-  { value: 'Hunde', name: 'Hunde' },
-  { value: 'New', name: '...suggest new category' },
-];
-// TODO: categories must be different on different views (f.e. upload with new category and home rating only categories)
-
-/*
-const handleSetCategory = (event) => {
-  const newValue = event.target.value;
-  if (newValue === 'New') {
-    setIsNewCategory(true);
+function CustomSelect({
+  autoWidth, categories, label, value, onChange, getMenuItemValue,
+}) {
+  if (categories.length === 0) {
+    return null;
   }
-  setCategory(event.target.value);
-};
 
-if (CATEGORIES.length === 0) {
-  return null;
-}
-*/
+  const getMenuItemFunc = (x) => {
+    if (getMenuItemValue === undefined) {
+      return x.name;
+    }
+    return getMenuItemValue(x);
+  };
 
-const CustomSelect = (props) => {
-  <Grid item>
-    <FormControl>
+  return (
+    <FormControl sx={{ m: 1, minWidth: 80 }}>
       <InputLabel id="demo-simple-select-label">Category</InputLabel>
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
-        value={props.value}
-        label={props.label}
-//        onChange={(e) => handleSetCategory(e.target.value)}
+        value={value}
+        label={label}
+        onChange={(e) => {
+          onChange(e.target.value);
+        }}
+        autoWidth={autoWidth}
       >
         {
-          CATEGORIES.map((x, index) => (
-            <MenuItem value={x.value} key={`${index}_value`}>
+          categories.map((x, index) => (
+            <MenuItem value={getMenuItemFunc(x)} key={`${index}_value`}>
               {x.name}
             </MenuItem>
           ))
         }
       </Select>
     </FormControl>
-  </Grid>;
+  );
+}
+
+CustomSelect.defaultProps = {
+  getMenuItemValue: undefined,
 };
 
 CustomSelect.propTypes = {
-  label: PropTypes.string,
-  value: PropTypes.string,
-  onChange: PropTypes.func,
+  label: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  categories: PropTypes.array.isRequired,
+  onChange: PropTypes.func.isRequired,
+  autoWidth: PropTypes.any.isRequired,
+  getMenuItemValue: PropTypes.func,
 };
 
 export default CustomSelect;

@@ -8,6 +8,7 @@ import Accordion from '@mui/material/Accordion';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 import {
   Grid,
@@ -23,7 +24,7 @@ import {
   Menu,
   Dialog,
   DialogTitle,
-  DialogContent, DialogContentText, DialogActions, ImageList, ImageListItem, Rating,
+  DialogContent, DialogContentText, DialogActions, ImageList, ImageListItem, Rating, Alert, Badge, IconButton, Tooltip,
 } from '@mui/material';
 import { useCookies } from 'react-cookie';
 import mapboxgl from '!mapbox-gl';
@@ -68,7 +69,10 @@ function Pictures() {
   // more information can be found under https://reactjs.org/docs/hooks-state.html
   const [users, setUsers] = useState(null);
   const [images, setImages] = useState(null);
-  const [cookies, _setCookie] = useCookies(['id']);
+  const [cookies, _setCookie] = useCookies(['id', 'userData']);
+  const [errorImageId, setErrorImageId] = useState({ imageId: null, type: 'error', message: '' });
+  const { userData } = cookies;
+  const [user, setUser] = useState(null);
 
   // delete request
 
@@ -88,7 +92,22 @@ function Pictures() {
       const response = await api.delete(`/images/${imageId}`, { headers: { userId } });
     } catch (error) {
       console.log(error.response);
-      alert(`Something went wrong during the registration: \n${handleError(error)}`);
+      alert(`Something went wrong during the Deletion: \n${handleError(error)}`);
+    }
+  };
+  console.log(userData);
+
+  const boostImage = async (imageId) => {
+    try {
+      // formerly: isRegistrationProcess: for server to decide how to handle passed object (login or registration process)
+      const { id: userId } = cookies;
+      const requestBody = JSON.stringify({ userId, imageId });
+      const response = await api.put('/images/boost', requestBody, { headers: { userId } });
+      _setCookie('userData', { ...userData, trophies: userData.trophies - 10 }, { path: '/' });
+      setUser((f) => ({ ...f, trophies: f.trophies - 10 }));
+      setErrorImageId({ imageId, type: 'success', message: 'The boost was successfully activated. The duration of the boost is 24 hours.' });
+    } catch (error) {
+      setErrorImageId({ imageId, type: 'warning', message: error.response.data.message });
     }
   };
 
@@ -118,6 +137,28 @@ function Pictures() {
     fetchPictures();
   }, []);
 
+  useEffect(() => {
+    // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
+    async function fetchData() {
+      try {
+        const { id: userId } = cookies;
+        const response = await api.get(`/users/${userId}`, { headers: { userId } });
+
+        // Get the returned profile
+        console.log(response.data);
+        setUser(response.data);
+        console.log(user);
+        // console.log("User has been set");
+      } catch (error) {
+        console.error(`Something went wrong while fetching the User: \n${handleError(error)}`);
+        console.error('Details:', error);
+        alert('Something went wrong while fetching the User! See the console for details.');
+      }
+    }
+
+    fetchData();
+  }, []);
+
   let content = <Spinner />;
 
   // This is from individual assignment
@@ -145,13 +186,13 @@ function Pictures() {
         alignItems="flex-start"
       >
 
-        <item>
+        <div style={{ margin: '0 auto' }}>
           <ul className="image list">
             {images.map((image) => (
-              <DisplayImage image={image} deleteImage={deleteImage} />
+              <DisplayImage image={image} errorImageId={errorImageId} setErrorImageId={setErrorImageId} deleteImage={deleteImage} boostImage={boostImage} />
             ))}
           </ul>
-        </item>
+        </div>
 
       </Grid>
     );
@@ -159,17 +200,40 @@ function Pictures() {
 
   return (
 
-    <div>
+    <div style={{ textAlign: 'center' }}>
       <h2>Pictures</h2>
-      <p>On this page, you can see your uploaded pictures!</p>
 
+      <p>
+        On this page, you can see your uploaded pictures! - You have
+      </p>
+      <p style={{ fontWeight: 'bold' }}>
+        {' '}
+        {user && user.trophies}
+        {' '}
+        Trophies
+        {' '}
+        <Tooltip
+          style={{ fontSize: 16 }}
+          title=<Typography fontSize={14}>
+            You can use trophies to boost your images. One boost per image costs you 10 trophies. The boost will increase the likelihood that your images will be shown to other users for 24h.
+            You can earn trophies by playing the game in the Home Screen. For each round that you win, you will receive 10 Trophies.
+          </Typography>
+        >
+          <IconButton>
+            <EmojiEventsIcon color="primary" fontSize="large" />
+          </IconButton>
+        </Tooltip>
+      </p>
+      <p />
       {content}
     </div>
 
   );
 }
 
-function DisplayImage({ image, deleteImage }) {
+function DisplayImage({
+  image, deleteImage, boostImage, errorImageId, setErrorImageId,
+}) {
   const [value, setValue] = React.useState(2);
 
   mapboxgl.accessToken = mapboxAccessToken;
@@ -216,15 +280,16 @@ function DisplayImage({ image, deleteImage }) {
               style={{ objectFit: 'contain', width: '100%' }}
               src={image.storageLink}
               height={250}
-
               alt="new"
             />
           </Item>
         </Grid>
         <Grid item xs={6}>
           <Item>
+            {errorImageId.imageId === image.imageId && <Alert severity={errorImageId.type} onClose={() => setErrorImageId((f) => ({ ...f, imageId: null }))}>{errorImageId.message}</Alert>}
             <div className="image">
               <div className="image title">
+
                 <p align="center">
                   Title:
                   {' '}
@@ -240,6 +305,7 @@ function DisplayImage({ image, deleteImage }) {
               {' '}
             </p>
 
+            {location && (
             <p>
               <Accordion>
                 <AccordionSummary
@@ -255,6 +321,7 @@ function DisplayImage({ image, deleteImage }) {
                 </AccordionDetails>
               </Accordion>
             </p>
+            )}
             <p>
               <Box
                 sx={{
@@ -270,7 +337,10 @@ function DisplayImage({ image, deleteImage }) {
                 <Rating name="read-only" value={image.rating} readOnly size="large" />
               </Box>
             </p>
-            <Button variant="contained" onClick={() => deleteImage(image.imageId)} size="large" color="error">Delete</Button>
+            <div style={{ display: 'flex' }}>
+              <Button variant="contained" style={{ margin: '0 0.5rem' }} fullWidth onClick={() => deleteImage(image.imageId)} size="large" color="error">Delete</Button>
+              <Button variant="contained" style={{ margin: '0 0.5rem' }} fullWidth onClick={() => boostImage(image.imageId)} size="large" color="success">Boost</Button>
+            </div>
             <p />
           </Item>
         </Grid>

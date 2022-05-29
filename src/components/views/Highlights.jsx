@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Grid,
   Typography,
@@ -13,14 +13,20 @@ import {
   Menu,
   Dialog,
   DialogTitle,
-  DialogContent, DialogContentText, DialogActions, ImageList, ImageListItem, Rating,
+  DialogContent, DialogContentText, DialogActions, ImageList, ImageListItem, Rating, Alert,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import { useHistory, Link } from 'react-router-dom';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AccordionDetails from '@mui/material/AccordionDetails';
 import { api, handleError } from '../../helpers/api';
 import { Spinner } from '../ui/Spinner';
+import mapboxgl from '!mapbox-gl';
+import { mapboxAccessToken } from '../../helpers/mapboxConfig';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -30,11 +36,86 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+function DisplayImage({
+  image,
+}) {
+  const [value, setValue] = React.useState(2);
+
+  mapboxgl.accessToken = mapboxAccessToken;
+  const mapContainerRef = useRef(null);
+  const [zoom, setZoom] = useState(5);
+  const location = JSON.parse(image.location);
+  console.log(location);
+  // Initialize map when component mounts
+
+  useEffect(() => {
+    if (location) {
+      const map = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [location.lng, location.lat],
+        zoom,
+      });
+
+      /*
+    // Add navigation control (the +/- zoom buttons)
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    map.on('move', () => {
+      setLng(map.getCenter().lng.toFixed(4));
+      setLat(map.getCenter().lat.toFixed(4));
+      setZoom(map.getZoom().toFixed(2));
+    });
+*/
+      const marker = new mapboxgl.Marker({
+        draggable: false,
+      })
+        .setLngLat([location.lng, location.lat])
+        .addTo(map);
+    }
+  }, []);
+
+  return (
+
+    <Box sx={{ width: '100%' }}>
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+
+        <Grid item xs={12}>
+
+          <Item>
+            {location && (
+              <p>
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography><p> Show the Location</p></Typography>
+                  </AccordionSummary>
+                  <AccordionDetails style={{ overflow: 'hidden' }}>
+                    <div ref={mapContainerRef} className="map-container" />
+
+                  </AccordionDetails>
+                </Accordion>
+              </p>
+            )}
+          </Item>
+        </Grid>
+
+      </Grid>
+      <br />
+    </Box>
+
+  );
+}
+
 function Highlights() {
   const [category, setCategory] = useState('Car');
   const [loading, setLoading] = useState(true);
   const [highlights, setHighlights] = useState({ podest1: null, podest2: null, podest3: null });
   const { podest1, podest3, podest2 } = highlights;
+  const [catArray, setCatArray] = useState([]);
   // Send the requesat whenever component is loaded
   const history = useHistory();
   /* useEffect(() => {
@@ -68,6 +149,18 @@ function Highlights() {
     }
     fetchPictures();
   }, [category]);
+
+  useEffect(() => {
+    async function fetchCat() {
+      try {
+        const categoryArray = await api.get('/categories');
+        setCatArray(categoryArray.data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchCat();
+  }, []);
 
   // fetching pictures
   /* useEffect(() => {
@@ -138,11 +231,7 @@ function Highlights() {
         <div>
           <label htmlFor="cars">Choose a Category:</label>
           <select onChange={changeCat} value={category} name="cars" id="cars">
-            <option selected value="Car">Car</option>
-            <option value="Cat">Cat</option>
-            <option value="Dog">Dog</option>
-            <option value="Fish">Fish</option>
-            <option value="Motorcycle">Motorcycle</option>
+            {catArray.filter((item) => item.name !== 'Random').map((item) => <option selected value={item.name}>{item.name}</option>)}
 
           </select>
         </div>
@@ -177,6 +266,8 @@ function Highlights() {
                 alt="new"
               />
             </Item>
+
+            {podest2.location && <DisplayImage image={podest2} />}
 
             <img src="/images/SecondPodest.png" className="PodestImage" />
           </Grid>
@@ -216,6 +307,8 @@ function Highlights() {
               />
             </Item>
 
+            {podest1.location && <DisplayImage image={podest1} />}
+
             <img src="/images/FirstPodest.png" className="PodestImage" />
 
           </Grid>
@@ -253,6 +346,8 @@ function Highlights() {
                 alt="new"
               />
             </Item>
+
+            {podest3.location && <DisplayImage image={podest3} />}
 
             <img src="/images/ThirdPodest.png" className="PodestImage" />
 

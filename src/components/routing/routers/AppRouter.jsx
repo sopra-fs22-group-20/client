@@ -13,6 +13,7 @@ import Pictures from '../../views/Pictures';
 import Application from '../../views/Application';
 import Upload from '../../views/Upload';
 import ProfilePage from '../../views/ProfilePage';
+import Game from '../../views/Game';
 
 /**
  * Main router of your application.
@@ -31,6 +32,7 @@ function AppRouter() {
         {
           [{ path: '/home', component: <Home /> },
             { path: '/highlights', component: <Highlights /> },
+            { path: '/game', component: <Game /> },
             { path: '/settings', component: <Settings /> },
             { path: '/pictures', component: <Pictures /> },
             { path: '/upload', component: <Upload /> },
