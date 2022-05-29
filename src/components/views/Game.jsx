@@ -35,9 +35,6 @@ export default function Game() {
     step3Image: '',
     step4Image: '',
   });
-
-  const [isSearching, setIsSearching] = useState(false);
-  const [isFirstLandOnPage, setIsFirstLandOnPage] = useState(true);
   const [winner, setWinner] = useState('');
   const [error, setError] = useState('');
   const [clickScore1, setClickScore1] = useState(userData.user1Score);
@@ -93,7 +90,7 @@ export default function Game() {
     } else {
       setClickable(true);
       setExitGame(false);
-      setWinner('🏅 No winner yet, hurry!');
+      setWinner('🏅 Winner will be here');
     }
   }
 
@@ -134,17 +131,18 @@ export default function Game() {
       if (res.status === 226) {
         console.log('1');
         fetchGameByUserId(cookies.id);
-        /* TODO:Cancel
+        /*
       } else if (isFirstLandOnPage) {
         setIsFirstLandOnPage(false);
         fetchGameByUserId(cookies.id);
-         */
+        */
       } else {
+        // you can update the time of automation by changing the last param
         fetchGameByUserId(cookies.id);
-        /* TODO:Cancel
+        /*
         alert('No other player has joined the lobby yet, '
           + 'please refresh by clicking the refresh button in a couple of seconds');
-         */
+        */
       }
     }).catch((err) => {
       console.log('3');
@@ -154,7 +152,7 @@ export default function Game() {
   }
 
   useEffect(() => {
-  //  if (res.status === 226) {
+    //  if (res.status === 226) {
     checkPartiesAvailabilityAndFetchData();
     //   res.status == -1;
     // }
@@ -162,7 +160,6 @@ export default function Game() {
 
   // Functions
   async function createGame() {
-    // setIsSearching(true); TODO: Cancel
     const baseUrl = getDomain();
     return await axios.post(`${baseUrl}/game/create`, {
       user1Id: cookies.id,
@@ -178,8 +175,8 @@ export default function Game() {
     });
   }
 
-  /* TODO CANCEL
-  async function cancelGame() {
+  /*
+    async function cancelGame() {
     const baseUrl = getDomain();
     await axios.delete(`${baseUrl}/game/quit/${userData.gameCode}/${cookies.id}`).then((res) => {
       console.log(res.data);
@@ -196,9 +193,11 @@ export default function Game() {
   async function joinGame() {
     setClickable(true);
     if (userData.user1Id == cookies.id) {
-
+      // placeholder for upward compatibility
+      console.log('user1=cookiesId');
     } else if (userData.user2Id == cookies.id) {
-
+      // placeholder for upward compatibility
+      console.log('user2=cookiesId');
     } else {
       const baseUrl = getDomain();
       return await axios.post(`${baseUrl}/game/joinGame`, {
@@ -326,6 +325,11 @@ export default function Game() {
     await fetchGameByUserId(cookies.id);
   }
 
+  async function cancelGame() {
+    await giveUp();
+    history.push('/home');
+  }
+
   return (
     <Grid
       container
@@ -341,170 +345,171 @@ export default function Game() {
         >
           {error}
         </Typography>
-
-        <h2 style={{ color: '#0027ff', fontFamily: 'bold' }}>{winner}</h2>
-
-        {
-                        userData.active === false
-                        && (
-                        <Button onClick={() => createGame()} style={{ fontSize: '14px' }} size="large" variant="contained">
-                          Create Game
-                        </Button>
-                        )
-                    }
+        <h2 style={{ color: 'black', fontFamily: 'bold' }}>{winner}</h2>
 
         {
-                        userData.active === true && (userData.user2Id == null || userData.user1Id == null) && showJoin === true && userData.user1Id != cookies.id
-                        && (
-                        <Button onClick={() => joinGame()} style={{ fontSize: '14px', marginLeft: '10px' }} size="large" variant="contained">
-                          Join Game
-                        </Button>
-                        )
-                    }
-        {/* add refresh button and call the fresh data without any refresh page */}
-        {/* TODO: Cancel
-        {
-          isSearching && (
-          <Button
-            color="inherit"
-            size="large"
-            startIcon={<RefreshIcon />}
-            onClick={() => refreshComponent()}
-          >
-            Refresh lobby
-          </Button>
+          userData.active === false
+          && (
+            <Button onClick={() => createGame()} style={{ fontSize: '14px' }} size="large" variant="contained">
+              Create Game
+            </Button>
           )
         }
 
-        <button
-          style={{ marginLeft: '15px' }}
-          className="btn btn-danger btn-sm"
-          onClick={() => {
-            (isSearching)
-              ? cancelGame()
-              : history.push('/home');
-          }}
-        >
-          Cancel
-        </button>
-        */}
+        {
+          userData.active === true && (userData.user2Id == null || userData.user1Id == null) && showJoin === true && userData.user1Id != cookies.id
+          && (
+            <Button onClick={() => joinGame()} style={{ fontSize: '14px', marginLeft: '10px' }} size="large" variant="contained">
+              Join Game
+            </Button>
+          )
+        }
+        {/* add refresh button and call the fresh data without any refresh page */}
+        {
+          (userData.user2Joined || userData.active) && (
+            <Button
+              color="inherit"
+              size="large"
+              startIcon={<RefreshIcon />}
+              onClick={() => { refreshComponent(); }}
+            >
+              Refresh opponent search
+            </Button>
+          )
+        }
+        {
+          (!userData.user2Joined) && (
+            <button
+              style={{ marginLeft: '15px' }}
+              className="btn btn-danger btn-sm"
+              onClick={() => {
+                // eslint-disable-next-line no-unused-expressions
+                (!userData.active)
+                  ? history.push('/home')
+                  : cancelGame();
+              }}
+            >
+              Cancel
+            </button>
+          )
+        }
 
         {
-                        exitGame === true
-                        && (
-                        <Button onClick={() => exitGameNow()} style={{ fontSize: '14px', marginLeft: '10px' }} size="large" variant="contained">
-                          Exit the Game Now
-                        </Button>
-                        )
-                    }
+          exitGame === true
+          && (
+            <Button onClick={() => exitGameNow()} style={{ fontSize: '14px', marginLeft: '10px' }} size="large" variant="contained">
+              Exit the Game Now
+            </Button>
+          )
+        }
       </Grid>
 
       {
-                    userData.active === true && (
-                    <Grid item xs={12} md={6} lg={4}>
-                      <Card sx={{ maxWidth: 345 }}>
-                        <CardHeader
-                          avatar={(
-                            <Typography variant="h5" aria-label="recipe">
-                              {cookies.id == userData.user1Id ? <span>You</span> : <span>Your opponent</span>}
-                            </Typography>
-                                  )}
-                          action={(
-                            <div>
-                              <h4 className="mt-3">
-                                Score:
-                                {clickScore1}
-                              </h4>
-                              {userData.user1Id == cookies.id ? <button onClick={() => giveUp()} className="btn btn-danger btn-sm">Give Up</button> : <br />}
-                            </div>
-                                  )}
-                        />
-                        <CardContent>
-                          <Typography variant="p" color="text.secondary">
-                            {userData.user2Name !== null && (
-                            <span>
-                              Your opponent is
-                              {' '}
-                              {userData.user2Name}
-                            </span>
-                            ) }
-                          </Typography>
-                        </CardContent>
-                        {userData.user1Id == cookies.id && clickable == true ? (
-                          <CardMedia
-                            component="img"
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => handleIncrement1()}
-                            image={image1}
-                            width={250}
-                            height={450}
-                            alt="Paella dish"
-                          />
-                        ) : (
-                          <CardMedia
-                            component="img"
-                            image={image1}
-                            width={250}
-                            height={450}
-                            alt="Paella dish"
-                          />
-                        )}
-                      </Card>
-                    </Grid>
-                    )
-                }
+        userData.active === true && (
+          <Grid item xs={12} md={6} lg={4}>
+            <Card sx={{ maxWidth: 345 }}>
+              <CardHeader
+                avatar={(
+                  <Typography variant="h5" aria-label="recipe">
+                    {cookies.id == userData.user1Id ? <span>You</span> : <span>Your opponent</span>}
+                  </Typography>
+                )}
+                action={(
+                  <div>
+                    <h4 className="mt-3">
+                      Score:
+                      {clickScore1}
+                    </h4>
+                    {userData.user1Id == cookies.id ? <button onClick={() => giveUp()} className="btn btn-danger btn-sm">Give Up</button> : <br />}
+                  </div>
+                )}
+              />
+              <CardContent>
+                <Typography variant="p" color="text.secondary">
+                  {userData.user2Name !== null && (
+                    <span>
+                      Your opponent is
+                      {' '}
+                      {userData.user2Name}
+                    </span>
+                  ) }
+                </Typography>
+              </CardContent>
+              {userData.user1Id == cookies.id && clickable == true ? (
+                <CardMedia
+                  component="img"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleIncrement1()}
+                  image={image1}
+                  width={250}
+                  height={450}
+                  alt="Paella dish"
+                />
+              ) : (
+                <CardMedia
+                  component="img"
+                  image={image1}
+                  width={250}
+                  height={450}
+                  alt="Paella dish"
+                />
+              )}
+            </Card>
+          </Grid>
+        )
+      }
 
       {
-                    (
-                      userData.user2Joined == true && userData.active == true) ? (
-                        <Grid item md={6} xs={12} lg={4}>
-                          <Card sx={{ maxWidth: 345 }}>
-                            <CardHeader
-                              avatar={<Typography variant="h5" aria-label="recipe">{cookies.id == userData.user2Id ? <span>You</span> : <span>Your opponent</span>}</Typography>}
-                              action={(
-                                <div>
-                                  <h4 className="mt-3">
-                                    Score:
-                                    {clickScore2}
-                                  </h4>
-                                  {userData.user2Id == cookies.id ? <button onClick={() => giveUp()} className="btn btn-danger btn-sm">Give Up</button> : <br />}
-                                </div>
-                              )}
-                            />
-                            <CardContent>
-                              <Typography variant="p" color="text.secondary">
-                                {userData.user1Name !== null && (
-                                <span>
-                                  Your opponent is
-                                  {' '}
-                                  {userData.user1Name}
-                                </span>
-                                )}
-                              </Typography>
-                            </CardContent>
-                            {userData.user2Id == cookies.id && clickable == true ? (
-                              <CardMedia
-                                component="img"
-                                style={{ cursor: 'pointer' }}
-                                onClick={() => handleIncrement2()}
-                                image={image2}
-                                width={250}
-                                height={450}
-                                alt="Paella dish"
-                              />
-                            ) : (
-                              <CardMedia
-                                component="img"
-                                image={image2}
-                                width={250}
-                                height={450}
-                                alt="Paella dish"
-                              />
-                            )}
-                          </Card>
-                        </Grid>
-                      ) : <Spinner />
-                }
+        (
+          userData.user2Joined == true && userData.active == true) ? (
+            <Grid item md={6} xs={12} lg={4}>
+              <Card sx={{ maxWidth: 345 }}>
+                <CardHeader
+                  avatar={<Typography variant="h5" aria-label="recipe">{cookies.id == userData.user2Id ? <span>You</span> : <span>Your opponent</span>}</Typography>}
+                  action={(
+                    <div>
+                      <h4 className="mt-3">
+                        Score:
+                        {clickScore2}
+                      </h4>
+                      {userData.user2Id == cookies.id ? <button onClick={() => giveUp()} className="btn btn-danger btn-sm">Give Up</button> : <br />}
+                    </div>
+                )}
+                />
+                <CardContent>
+                  <Typography variant="p" color="text.secondary">
+                    {userData.user1Name !== null && (
+                    <span>
+                      Your opponent is
+                      {' '}
+                      {userData.user1Name}
+                    </span>
+                    )}
+                  </Typography>
+                </CardContent>
+                {userData.user2Id == cookies.id && clickable == true ? (
+                  <CardMedia
+                    component="img"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => handleIncrement2()}
+                    image={image2}
+                    width={250}
+                    height={450}
+                    alt="Paella dish"
+                  />
+                ) : (
+                  <CardMedia
+                    component="img"
+                    image={image2}
+                    width={250}
+                    height={450}
+                    alt="Paella dish"
+                  />
+                )}
+              </Card>
+            </Grid>
+          ) : <Spinner />
+      }
     </Grid>
   );
 }

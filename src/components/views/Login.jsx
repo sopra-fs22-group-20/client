@@ -32,6 +32,8 @@ let counter = 1;
 function Login() {
   const history = useHistory();
   const [_cookies, setCookie] = useCookies(['id', 'token']);
+  const [usernameInput, setUsernameInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
   const theme = createTheme();
 
   const doLogin = async (username, password) => {
@@ -281,6 +283,7 @@ function Login() {
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
+                onChange={(un) => setUsernameInput(un.target.value)}
                 margin="normal"
                 required
                 fullWidth
@@ -290,6 +293,7 @@ function Login() {
                 autoFocus
               />
               <TextField
+                onChange={(pw) => setPasswordInput(pw.target.value)}
                 margin="normal"
                 required
                 fullWidth
@@ -299,6 +303,7 @@ function Login() {
                 id="password"
               />
               <Button
+                disabled={!usernameInput || !passwordInput}
                 type="submit"
                 fullWidth
                 variant="contained"
