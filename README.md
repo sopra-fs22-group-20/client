@@ -182,3 +182,5 @@ See also the list of [contributors for the server](https://github.com/sopra-fs22
 [Apache license 2.0](https://github.com/sopra-fs22-group-20/server/blob/main/LICENSE)
 ## Acknowledgments
 We changed the screenshots and added photos from [unsplash](https://unsplash.com) to not get in legal trouble with the copyrights of the images.
+
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=sopra-fs22-group-20_client)
