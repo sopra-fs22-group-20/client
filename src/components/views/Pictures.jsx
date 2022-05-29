@@ -103,7 +103,7 @@ function Pictures() {
       const requestBody = JSON.stringify({ userId, imageId });
       const response = await api.put('/images/boost', requestBody, { headers: { userId } });
       _setCookie('userData', { ...userData, trophies: userData.trophies - 10 }, { path: '/' });
-
+      setUser((f) => ({ ...f, trophies: f.trophies - 10 }));
       setErrorImageId({ imageId, type: 'success', message: 'The boost was successfully activated. The duration of the boost is 24 hours.' });
     } catch (error) {
       setErrorImageId({ imageId, type: 'warning', message: error.response.data.message });
@@ -142,8 +142,6 @@ function Pictures() {
       try {
         const { id: userId } = cookies;
         const response = await api.get(`/users/${userId}`, { headers: { userId } });
-
-        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Get the returned profile
         console.log(response.data);
@@ -187,13 +185,13 @@ function Pictures() {
         alignItems="flex-start"
       >
 
-        <item>
+        <div style={{ margin: '0 auto' }}>
           <ul className="image list">
             {images.map((image) => (
               <DisplayImage image={image} errorImageId={errorImageId} setErrorImageId={setErrorImageId} deleteImage={deleteImage} boostImage={boostImage} />
             ))}
           </ul>
-        </item>
+        </div>
 
       </Grid>
     );
@@ -201,24 +199,15 @@ function Pictures() {
 
   return (
 
-    <div>
+    <div style={{ textAlign: 'center' }}>
       <h2>Pictures</h2>
-      <Button
-        variant="contained"
-        onClick={() => {
-          console.log(user);
-        }}
-      >
-        Update your Instagram
-      </Button>
+
       <p>
         On this page, you can see your uploaded pictures! - You have
-        {userData.trophies}
+        {' '}
+        {user && user.trophies}
         {' '}
         Trophies
-
-        Or right amount
-
       </p>
 
       {content}
@@ -301,6 +290,7 @@ function DisplayImage({
               {' '}
             </p>
 
+            {location && (
             <p>
               <Accordion>
                 <AccordionSummary
@@ -316,6 +306,7 @@ function DisplayImage({
                 </AccordionDetails>
               </Accordion>
             </p>
+            )}
             <p>
               <Box
                 sx={{

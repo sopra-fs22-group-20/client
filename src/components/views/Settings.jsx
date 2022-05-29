@@ -263,37 +263,40 @@ function Settings() {
             </div>
 
             <div>
-
               <Typography variant="h5" gutterBottom component="div">
                 Instagram:
                 {' '}
                 {userData.instagram}
-              </Typography>
-              <Grid item xs={6}>
 
-                <Grid container spacing={6}>
-                  <Grid item xs={6}>
-                    <Box
-                      component="form"
-                      sx={{
-                        '& > :not(style)': { m: 1, width: '25ch' },
-                      }}
-                      noValidate
-                      autoComplete="off"
-                    >
-                      <TextField id="outlined-basic" label="Enter more information" variant="outlined" onChange={(un) => setInstagram(un.target.value)} value={instagram} />
-                    </Box>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Button
-                      variant="contained"
-                      onClick={() => {
-                        changeInstagram();
-                      }}
-                    >
-                      Update your Instagram
-                    </Button>
-                  </Grid>
+              </Typography>
+              <Grid container spacing={6}>
+                <Grid item xs={6}>
+                  <Box
+                    component="form"
+                    sx={{
+                      '& > :not(style)': { m: 1, width: '25ch' },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                  >
+                    <TextField
+                      id="outlined-password-input"
+                      label="Enter your Instagram"
+                      type="password"
+                      autoComplete="current-password"
+                      onChange={(un) => setInstagram(un.target.value)}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      changeInstagram();
+                    }}
+                  >
+                    Change Instagram
+                  </Button>
                 </Grid>
 
               </Grid>

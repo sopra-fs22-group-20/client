@@ -139,14 +139,7 @@ function ProfilePage() {
                     {/* Instead of "AverageRating" write {AverageRating} when its available */}
 
                     {/* Now comes the rating. Replace value with Rating_Average. 4.5 will be rounded to 5 */}
-                    <Box
-                      sx={{
-                        '& > legend': { mt: 2 },
-                      }}
-                    >
-                      <Typography component="legend" variant="h5">Your average Rating</Typography>
-                      <Rating name="read-only" value={3} readOnly />
-                    </Box>
+
                   </Item>
                 </Grid>
                 <Grid item xs={8}>
