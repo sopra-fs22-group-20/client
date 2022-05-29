@@ -1,6 +1,6 @@
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=comfortaa&color=016EEA&size=24&width=500&lines=RateMe!;SoPra+Group+20)](https://git.io/typing-svg)
 
-RateMe! is an online platform, where users can upload and rate each others picture in fast and fun way.
+RateMe! is an online platform, where users can share and rate each others picture in fast and fun way.
 ## Introduction
 This project was done for the course [“Software Engineering Lab” (SoPra)](https://hasel.dev/teachings/fs22-sopra/) at the [University of Zurich](https://www.uzh.ch/en.html). It should teach how to actually develop software in a team by creating our own bigger software project.
 
@@ -10,6 +10,7 @@ We want to create a platform wich is fun and easy to use. Everyone should have t
 ## Built With
 
 * [Springboot](https://spring.io/) - Java framework to create a micro service
+* [Gradle](https://gradle.org/) - Automated building and management tool
 * [H2](https://www.h2database.com/html/main.html) - Database
 * [React](https://reactjs.org/docs/getting-started.html) - Javascript library for the whole frontend
 * [MUI](https://mui.com/) - CSS Component library
@@ -44,17 +45,49 @@ And to start the client you use:
 ```
 npm run dev
 ```
+</br>
+
+The frontend is running now on:
+```
+localhost:3000
+```
+</br>
 
 For the server, you have to run the [Application](https://github.com/sopra-fs22-group-20/server/blob/main/src/main/java/ch/uzh/ifi/hase/soprafs22/Application.java) inside IntelliJ.
 
+### Build
+
+```bash
+./gradlew build
+```
+
+### Run
+
+```bash
+./gradlew bootRun
+```
+
+### Test
+
+```bash
+./gradlew test
+```
+
+</br>
+
+To setup the database and add some test pictures, you can click on the button "Demo Setup" once hte application is running.
+
+</br>
+
 ## Running the tests
 
-To run the test for the server, you have to run the [test directory](https://github.com/sopra-fs22-group-20/server/tree/main/src/test/java/ch/uzh/ifi/hase/soprafs22)
+And to run the tests, you have to run the [Test](https://github.com/sopra-fs22-group-20/server/tree/main/src/test/java/ch/uzh/ifi/hase/soprafs22) package in your IDE.
+
 
 
 ## Deployment
 
-To deploy the software to heroku, you only need to push the code to the main branch. Then, it will get automatically deployed.
+To deploy the software to heroku, you only need to push the code to the master branch. The pipeline will  automatically deploy it over Github Actions.
 
 ## High-level components
 ### User
@@ -73,37 +106,55 @@ Now we want to show you some basic user flows with some screenshots:
 ### Rating
 First of all, the user has to register/login:
 </br>
+
 <img src="https://raw.githubusercontent.com/sopra-fs22-group-20/server/main/readme%20Addons/LoginScreen.png" alt="screenshot" width="500"/>
 </br>
+
 Then, the user sees the home screen and can immediately start to rate the shown pictures by clicking on the stars right under the picture (here a bike):
 </br>
+
 <img src="https://raw.githubusercontent.com/sopra-fs22-group-20/server/main/readme%20Addons/Rating_1.png" alt="screenshot" width="500"/>
 </br>
+
 After the rating, the user can continue with it as long as the user wants to. Or the user can select a specifc category (here random). The photo to rate is here a cat:
 </br>
+
 <img src="https://raw.githubusercontent.com/sopra-fs22-group-20/server/main/readme%20Addons/Rating_2.png" alt="screenshot" width="500"/>
 </br>
+
 If you want to see the best rated pictures of category, for exemple cars, you can go the "Highlights" page and pick your category:
 </br>
+
 <img src="https://raw.githubusercontent.com/sopra-fs22-group-20/server/main/readme%20Addons/Highlights_Cars.png" alt="screenshot" width="500"/>
+</br>
+
 
 ### Uploading
+
 To upload a picture, the user has to click on "Upload" in the menu bar. Then, choose the file to upload and add the credentials. You can also add the location by dragging and dropping marker on the map.
 </br>
+
 <img src="https://raw.githubusercontent.com/sopra-fs22-group-20/server/main/readme%20Addons/Upload.png" alt="screenshot" width="500"/>
 </br>
+
 To see how your picture performs, you have to go to "Pictures":
 </br>
-<img src="https://github.com/sopra-fs22-group-20/server/blob/main/readme%20Addons/Upload2.png" alt="screenshot" width="500"/>
+
+<img src="https://raw.githubusercontent.com/sopra-fs22-group-20/server/main/readme%20Addons/Upload2.png" alt="screenshot" width="500"/>
 </br>
+
 Here you can see the ratings of your picture.
+
 ### Playing the game
 Winning the game gives you trophies, you can spend to boost your image on the "Pictures" page. To play the game, you have to click on the egg on the home screen:
 </br>
+
 <img src="https://raw.githubusercontent.com/sopra-fs22-group-20/server/main/readme%20Addons/Rating_1.png" alt="screenshot" width="500"/>
 </br>
+
 After another player joined the game, you have to click the egg 100 times and be faster than your oponent. After winning, you will receive your trophies.
 </br>
+
 <img src="https://raw.githubusercontent.com/sopra-fs22-group-20/server/main/readme%20Addons/Game.png" alt="screenshot" width="500"/>
 </br>
 
@@ -112,8 +163,8 @@ After another player joined the game, you have to click the egg 100 times and be
 The following features could be implemented next to improve RateMe!
 ### Tournament mode in the game
 The game could get a new mode, where the users could earn more trophies by adding several game rounds and be the champion!
-### Sharing directly to social media
-Another improvement would be, that the posters of new images could share their images directly via social media (twitter, fb, etc).
+### Mobile App feature
+Optimize the application, so it is compatible for mobile users (smartphones iOS and Android).
 ### Advanced user profiles
 The user profiles will be getting more settings, so the user could invidualise his profile by adding more credentials and a profile image. New user should get a generated profile image.
 ## Authors
